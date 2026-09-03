@@ -1,289 +1,301 @@
-# Website-Analysis-and-Search-Career
+# JobPilot — Website Analysis and Search Career
 
 <p align="center">
-  <a href="https://www.uit.edu.vn/" title="University of Information Technology" style="border: none;">
+  <a href="https://www.uit.edu.vn/" title="University of Information Technology">
     <img src="https://i.imgur.com/WmMnSRt.png" alt="University of Information Technology | Trường Đại học Công nghệ Thông tin">
   </a>
 </p>
 
 <h1 align="center"><b>IE303 Project: Website Analysis and Search Career</b></h1>
 
-## Course Introduction
+<p align="center">
+  <img src="https://img.shields.io/badge/Java-21-orange?style=for-the-badge&logo=openjdk" alt="Java 21" />
+  <img src="https://img.shields.io/badge/Spring%20Boot-4.0.0-brightgreen?style=for-the-badge&logo=springboot" alt="Spring Boot 4" />
+  <img src="https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js" alt="Next.js 14" />
+  <img src="https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react" alt="React 18" />
+  <img src="https://img.shields.io/badge/PostgreSQL-15-336791?style=for-the-badge&logo=postgresql" alt="PostgreSQL 15" />
+  <img src="https://img.shields.io/badge/LangChain4j-RAG-blueviolet?style=for-the-badge" alt="LangChain4j RAG" />
+</p>
 
-- **Course Name:** Java Technology
-- **Course Code:** IE303
-- **Class Code:** IE303.Q21.CNVN
-- **Academic Year:** Semester 2 (2025 - 2026)
+## Course Information
+
+- **Course:** Java Technology (IE303)
+- **Class:** IE303.Q21.CNVN
+- **Academic year:** Semester 2, 2025–2026
 - **Lecturer:** Mr. Huynh Van Tin
 
 ## Team Members
 
-| No. | Student ID | Full Name | Role | GitHub | Email |
-| :-- | :--------- | :---------------- | :---------------- | :------------------------------- | :--------------------- |
-| 1   | 23521416   | Le Hoang Thai     | Team Leader       | [thai2602](https://github.com/thai2602) | <23521416@gm.uit.edu.vn> |
-| 2   | 23521478   | Le Tran Duc Thien | Member            | — | <23521478@gm.uit.edu.vn> |
-| 3   | 23521664   | Nguyen Tan Trong  | Member            | — | <23521664@gm.uit.edu.vn> |
-| 4   | 23521720   | Nguyen Minh Tuan  | Member            | [MinhTuan-K18](https://github.com/MinhTuan-K18) | <23521720@gm.uit.edu.vn> |
+| No. | Student ID | Full name | Role | GitHub | Email |
+| :-- | :--------- | :-------- | :--- | :----- | :---- |
+| 1 | 23521416 | Le Hoang Thai | Team Leader | [thai2602](https://github.com/thai2602) | <23521416@gm.uit.edu.vn> |
+| 2 | 23521478 | Le Tran Duc Thien | Member | — | <23521478@gm.uit.edu.vn> |
+| 3 | 23521664 | Nguyen Tan Trong | Member | — | <23521664@gm.uit.edu.vn> |
+| 4 | 23521720 | Nguyen Minh Tuan | Member | [MinhTuan-K18](https://github.com/MinhTuan-K18) | <23521720@gm.uit.edu.vn> |
 
 ## Links
 
-- **Project Report:** []()
-- **Task Assignment:** [IE303_ProjectManagement](https://docs.google.com/spreadsheets/d/1uTk0Fm5hLVeCZlcBdFD41b2_mcxjzoDZoWpbaZZQnUc/edit?usp=sharing)
-
-## Project Description
-
-<p align="center">
-  <img src="https://img.shields.io/badge/Java-21-orange?style=for-the-badge&logo=java" />
-  <img src="https://img.shields.io/badge/Spring%20Boot-4.0.0-brightgreen?style=for-the-badge&logo=springboot" />
-  <img src="https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react" />
-  <img src="https://img.shields.io/badge/TypeScript-5.2-3178C6?style=for-the-badge&logo=typescript" />
-  <img src="https://img.shields.io/badge/PostgreSQL-15-336791?style=for-the-badge&logo=postgresql" />
-  <img src="https://img.shields.io/badge/LangChain4j-RAG-blueviolet?style=for-the-badge" />
-</p>
-
----
+- **Project report:** To be added
+- **Task assignment:** [IE303 Project Management](https://docs.google.com/spreadsheets/d/1uTk0Fm5hLVeCZlcBdFD41b2_mcxjzoDZoWpbaZZQnUc/edit?usp=sharing)
+- **Database ERD:** [docs/db-erd.png](docs/db-erd.png)
 
 ## Table of Contents
 
-- [Introduction](#introduction)
-- [System Architecture](#system-architecture)
-- [Key Features](#key-features)
-- [Tech Stack](#tech-stack)
-- [Directory Structure](#directory-structure)
-- [Installation & Setup Guide](#installation--setup-guide)
-- [API Documentation](#api-documentation)
-- [Team Members](#team-members)
-- [Important Links](#links)
+- [Overview](#overview)
+- [Architecture](#architecture)
+- [Features](#features)
+- [RAG Pipeline](#rag-pipeline)
+- [Technology Stack](#technology-stack)
+- [Project Structure](#project-structure)
+- [Local Setup](#local-setup)
+- [Testing and CI](#testing-and-ci)
+- [API Overview](#api-overview)
 
----
+## Overview
 
-## Introduction
+**JobPilot** is a full-stack career platform that combines job discovery, company profiles, CV management, job applications and AI-assisted career guidance. The application uses a Next.js frontend, a Spring Boot REST API and PostgreSQL/ParadeDB for transactional data, vector retrieval and lexical search.
 
-**JobPilot** is an intelligent, AI-integrated web platform for **job search and career analysis**. The project is built with the goal of helping users:
+The current data flow treats PostgreSQL as the canonical source for jobs and companies. Active and historical jobs are embedded into separate pgvector stores and retrieved through a hybrid RAG pipeline.
 
-- **Search for jobs** matching their skills, location, and preferred companies.
-- **Build & assess CVs** automatically based on recruiter/HR criteria.
-- **Get smart career advice** via an AI chatbot powered by RAG (Retrieval-Augmented Generation).
-- **Analyze the labor market** using visual data from thousands of job postings.
-- **Explore company information** with detailed company profiles.
+## Architecture
 
----
-
-## System Architecture
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                     CLIENT (Browser)                     │
-│           React 18 + TypeScript + TailwindCSS           │
-│         Vite · React Router · Firebase Auth             │
-└────────────────────────┬────────────────────────────────┘
-                         │ REST API (HTTP/JSON)
-┌────────────────────────▼────────────────────────────────┐
-│               BACKEND (Spring Boot 4.0)                  │
-│   Spring Web · Spring Security · JWT · Spring Data JPA  │
-│         LangChain4j · RAG Engine · PDFBox               │
-└──────────┬──────────────────────────┬───────────────────┘
-           │                          │
-┌──────────▼──────────┐   ┌──────────▼──────────────────┐
-│  PostgreSQL DB       │   │  OpenRouter (Cloud LLM)      │
-│  (Docker / Cloud)    │   │  Gemma-3 · OpenAI Embeddings │
-└─────────────────────┘   └─────────────────────────────┘
+```text
+┌─────────────────────────────────────────────────────────────┐
+│ Next.js 14 App Router · React 18 · TypeScript · TailwindCSS │
+│                         :3000                               │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ REST / JSON / SSE
+┌──────────────────────────────▼──────────────────────────────┐
+│ Spring Boot 4 · Security/JWT · JPA · LangChain4j           │
+│                         :8080                               │
+└───────────────┬───────────────────────┬─────────────────────┘
+                │                       │
+┌───────────────▼────────────────┐  ┌───▼─────────────────────┐
+│ ParadeDB / PostgreSQL 15       │  │ OpenRouter             │
+│ Canonical jobs and companies   │  │ Chat + embedding model │
+│ pgvector + pg_search + FTS     │  └─────────────────────────┘
+│ Active and historical RAG data │
+└───────────────┬────────────────┘
+                │ optional
+        ┌───────▼────────┐
+        │ Local reranker │
+        │ :8000/rerank   │
+        └────────────────┘
 ```
 
----
+Crawler data is isolated from application data:
 
-## Key Features
+```text
+crawler.companies / crawler.jobs
+                 │ normalize and upsert
+                 ▼
+ public.companies / public.jobs
+                 │ incremental synchronization
+                 ├────────► rag_job_embeddings
+                 └────────► rag_historical_job_embeddings
+```
 
-### Authentication & User Management
+## Features
 
-- Register / Login with email & password
-- Login with **Google OAuth** (Firebase)
-- Personal profile management
+### Authentication and user account
 
-### Job Search & Management
+- Email/password registration and login.
+- Google Sign-In.
+- JWT-protected account operations.
+- User profile management.
+- Persistent saved jobs and submitted applications through backend APIs, with local state fallback in the frontend.
 
-- Search for jobs by keywords, categories, and location
-- View job posting details
-- Save favorite jobs
+### Job discovery
 
-### CV Builder & Assessment
+- Paginated job search by keyword and filters.
+- Job detail pages using Next.js dynamic slugs.
+- Save/unsave job state that remains after reloading.
+- Apply to jobs and review submitted applications.
+- Dedicated recommendation module that scores jobs against the user's CV/profile context.
 
-- Build visual CVs directly in the browser
-- **Extract CV information** from PDF files (Apache PDFBox)
-- **Automatic CV evaluation** based on HR evaluation frameworks
+### Company directory
 
-### AI Chatbot & RAG Engine (Advanced Upgrade)
+- Search, industry filtering, sorting and progressive “load more” pagination.
+- Dynamic company detail routes at `/cong-ty/[companySlug]`.
+- The directory requests `completeOnly=true` by default and hides profiles missing any core field: description, industry, headquarters or company size.
+- Company headquarters is preferred as the displayed location, with active job locations as fallback.
 
-The career consulting, JD analysis, and job market Q&A chatbot is backed by an advanced, highly optimized RAG (Retrieval-Augmented Generation) pipeline:
-- **Two-Stage Retrieval:**
-  - **Stage 1 (Vector DB):** Retrieves candidate chunks (HR Store: Top-24, Job Market Store: Top-18) using the local embedding model `nomic-embed-text-v1.5` to maximize recall.
-  - **Stage 2 (Local Reranking):** Integrates a local BAAI Reranker API (`http://localhost:8000/rerank`) to re-score and filter down to the most relevant context chunks (HR: Top-8, Job Market: Top-6), featuring an automatic graceful fallback to raw Vector DB results if the Reranker API is offline.
-- **Context-Aware Routing & Dynamic Metadata Filtering:**
-  - Intelligent intent routing based on keyword signals. Automatically routes queries to the HR Store, Job Market Store, or merges them dynamically.
-  - **Dynamic Metadata Filtering:** Injects dynamic metadata filters for technical queries (e.g. Java-related queries automatically filter segments tagged with `java` or `technical_skills` topics) to eliminate irrelevant context.
-- **Smart Semantic Chunking & Overlap Windowing:**
-  - Markdown header-based chunking that prepends `[Preceding Context]` (15% overlap) and appends `[Succeeding Context]` (12% overlap) to prevent semantic boundary loss.
-  - Auto-categorizes document topics during ingestion into specific tags: `java`, `red_flag`, `ATS`, `work_experience`, `technical_skills`, `general_hr`.
-- **Dual-mode Endpoint Optimization:**
-  - Separates chat pathways between general conversation (`/chat`) and editor-centric CV auditing (`/chatWithCv`). Bypassing the heavy CV evaluation instructions for general queries significantly reduces token consumption and reduces latency.
-- **RAG Evaluation Endpoint:**
-  - Exposes a dedicated `/api/chatbot/eval` endpoint returning both the LLM's response and the raw retrieved context chunks, facilitating off-line testing and debugging.
-- **LLM Selection:** Leverages the advanced `google/gemma-3-12b-it` model via OpenRouter API.
+Example:
 
-### Company Profiles
+```http
+GET /api/companies?offset=0&limit=6&search=technology&completeOnly=true
+```
 
-- Company directory with comprehensive details
-- Search by industry/sector
+### CV tools
 
-### Blog & Articles
+- Create, edit, preview and persist multiple CVs.
+- Upload and extract data from PDF CVs.
+- Visible upload and AI-scoring progress states.
+- AI-assisted CV audit and content rewriting.
+- Responsive CV editor with a dedicated vertical navigation layout.
 
-- Articles on career trends, soft skills, and interview tips
+### AI chatbot
 
----
+- General career Q&A and CV-aware conversations.
+- Streaming responses through Server-Sent Events.
+- Conversation history APIs.
+- Dedicated audit, rewrite and evaluation endpoints.
+- Graceful fallback when lexical search or the optional reranker is unavailable.
 
-## Tech Stack
+## RAG Pipeline
+
+The current retrieval pipeline is:
+
+1. **Canonical data:** jobs and companies are read from `public.jobs` and `public.companies`; job embeddings are no longer sourced from a bundled JSON job file.
+2. **Incremental synchronization:** changed records are embedded in batches and stale vectors can be deleted safely.
+3. **Separate stores:**
+   - `rag_hr_embeddings` for CV/HR knowledge.
+   - `rag_job_embeddings` for active, published jobs.
+   - `rag_historical_job_embeddings` for closed or expired jobs used in market analysis.
+4. **Intent routing:** each query is routed to HR, active jobs, historical jobs or a merged route.
+5. **Hybrid retrieval:** pgvector semantic candidates are combined with `pg_search` BM25 candidates. Native PostgreSQL full-text search is the lexical fallback.
+6. **Fusion:** weighted Reciprocal Rank Fusion merges vector and lexical rankings.
+7. **Reranking:** an optional local reranker reduces the candidate set; retrieval continues without it when the service is offline.
+8. **Prompt generation:** the final evidence is injected into the LangChain4j prompt and sent to the configured OpenRouter chat model.
+
+RAG, crawler and historical synchronization are disabled by default for safe local startup. Enable the relevant flags in `backend/.env` only when indexing is intended:
+
+```dotenv
+RAG_INCREMENTAL_ENABLED=true
+RAG_INCREMENTAL_RUN_ON_START=true
+RAG_HISTORICAL_ENABLED=true
+RAG_HISTORICAL_RUN_ON_START=true
+```
+
+## Technology Stack
 
 ### Frontend
 
-| Technology | Version | Description |
-|------------|---------|-------------|
-| React | 18.2.0 | UI Framework |
-| TypeScript | 5.2 | Type-safe JavaScript |
-| Vite | 5.0.8 | Build Tool & Dev Server |
-| React Router DOM | 6.20.0 | Client-side Routing |
-| TailwindCSS | 3.4.0 | Utility-first CSS |
-| Lucide React | 0.300.0 | Icon Library |
-| Firebase | 12.x | Google OAuth & Auth |
-| Recharts | 3.8.1 | Data Visualization |
+| Technology | Version | Purpose |
+| :--------- | :------ | :------ |
+| Next.js | 14.2.x | App Router, routing and production build |
+| React | 18.2 | Component UI |
+| TypeScript | 5.2 | Static typing |
+| TailwindCSS | 3.4 | Utility-first styling |
+| Firebase | 12.x | Google authentication |
+| Lucide React | 0.300 | Icons |
+| Recharts | 3.8 | Charts and visualization |
+| React Markdown | 10.x | Chatbot Markdown rendering |
 
 ### Backend
 
-| Technology | Version | Description |
-|------------|---------|-------------|
-| Java | 21 | Programming Language |
-| Spring Boot | 4.0.0 | Application Framework |
-| Spring Security + JJWT | 0.12.6 | Authentication & Authorization |
-| Spring Data JPA + Hibernate | — | ORM & Database Access |
-| PostgreSQL | 15 | Relational Database |
-| LangChain4j | 0.29.1 | AI/LLM Integration & RAG |
-| Apache PDFBox | — | CV PDF Parsing |
-| MapStruct | 1.6.0 | DTO Mapping |
-| Lombok | 1.18.40 | Code Generation |
-| SpringDoc OpenAPI | 2.6.0 | Swagger UI Documentation |
+| Technology | Version | Purpose |
+| :--------- | :------ | :------ |
+| Java | 21 | Runtime and language |
+| Spring Boot | 4.0.0 | REST application framework |
+| Spring Security + JJWT | 0.12.6 | Authentication and authorization |
+| Spring Data JPA | Managed by Spring Boot | Database access |
+| LangChain4j | 0.29.1 | LLM and RAG integration |
+| MapStruct | 1.6.0 | DTO mapping |
+| Lombok | 1.18.40 | Boilerplate reduction |
+| SpringDoc OpenAPI | 2.6.0 | Swagger/OpenAPI UI |
 
-### Infrastructure
+### Data and infrastructure
 
-| Technology | Description |
-|------------|-------------|
-| Docker + Docker Compose | Containerization for PostgreSQL |
-| LM Studio | Local LLM Server (OpenAI-compatible API) |
-| Firebase | Google Authentication Provider |
+| Technology | Purpose |
+| :--------- | :------ |
+| ParadeDB `v0.25.6-pg15` | PostgreSQL 15 image with search extensions |
+| pgvector | Vector embedding storage and similarity search |
+| pg_search | BM25 lexical retrieval |
+| PostgreSQL FTS | Fallback lexical search |
+| Docker Compose | Local database and migration bootstrap |
+| OpenRouter | Chat and embedding API |
+| GitHub Actions | Frontend and backend CI |
 
----
+## Project Structure
 
-## Directory Structure
-
-```
-Website-Analysis-and-Search-Career/
-│
-├── DEPLOY_GUIDE.md                    # Detailed deployment guide for Vercel & Render
-│
-├── frontend/                          # React + TypeScript (Vite)
-│   ├── vercel.json                    # Vercel configuration for SPA client-side routing
-│   ├── src/
-│   │   ├── features/                  # Domain-driven UI modules
-│   │   │   ├── auth/                  # Login / Register
-│   │   │   ├── home/                  # Home page
-│   │   │   ├── jobs/                  # Job search
-│   │   │   ├── companies/             # Company profiles
-│   │   │   ├── cv-builder/            # CV Builder & Evaluation
-│   │   │   ├── chatbot/               # AI Chatbot UI
-│   │   │   ├── blog/                  # Articles / Blog
-│   │   │   └── utilities/             # Miscellaneous utilities
-│   │   ├── components/                # Reusable UI components
-│   │   ├── layouts/                   # Header, Footer, Shared Layouts
-│   │   ├── services/                  # API client calls
-│   │   ├── store/                     # State management
-│   │   ├── hooks/                     # Custom React Hooks
-│   │   ├── routes/                    # Routing configuration
-│   │   └── config/                    # App configuration
-│   ├── public/
-│   ├── package.json
-│   └── vite.config.ts
-│
-├── backend/                           # Spring Boot (Java 21)
-│   ├── Dockerfile                     # Docker container configuration for Render
-│   └── src/main/
-│       ├── java/com/jobportal/
-│       │   ├── modules/               # Business logic modules
-│       │   │   ├── auth/              # Auth (Login/Register/JWT)
-│       │   │   ├── user/              # User management
-│       │   │   ├── job/               # Job postings
-│       │   │   ├── company/           # Company profiles
-│       │   │   ├── cv/                # CV Builder & Extraction
-│       │   │   ├── application/       # Job applications
-│       │   │   ├── savedjob/          # Saved jobs
-│       │   │   ├── chatbot/           # AI Chatbot (RAG)
-│       │   │   ├── article/           # Blog / Articles
-│       │   │   └── utility/           # Utilities
-│       │   ├── config/                # Spring config (Security, CORS, etc.)
-│       │   ├── security/              # JWT Filter, Auth Provider
-│       │   ├── common/                # Shared DTOs, Base classes
-│       │   └── exception/             # Global Exception Handler
-│       └── resources/
-│           ├── application.properties # Application properties
-│           ├── db/                    # SQL migration scripts
-│           └── rag-data/              # RAG pipeline data
-│               ├── raw/               # Raw data (Markdown, CSV)
-│               │   ├── job_postings/  # Job postings
-│               │   └── hr_rules/      # CV evaluation criteria & HR guidelines
-│               ├── processed/         # Processed data (chunks)
-│               └── embeddings/        # Vector embeddings cache
-│
-├── data/                              # Source data (CSV, JSON)
-├── docs/                              # Project documentation
-├── docker-compose.yml                 # Docker config (PostgreSQL)
-└── requirements.txt                   # Environment notes & dependencies
+```text
+jobpilot/
+├── .github/workflows/ci.yml          # Frontend and backend CI
+├── backend/
+│   ├── docker/init-db.sh             # Ordered database migration runner
+│   ├── src/main/java/com/jobportal/
+│   │   ├── modules/auth/             # Registration, login, Google auth
+│   │   ├── modules/user/             # User profile
+│   │   ├── modules/job/              # Jobs API
+│   │   ├── modules/company/          # Company directory API
+│   │   ├── modules/cv/               # CV persistence and PDF extraction
+│   │   ├── modules/application/      # Applications
+│   │   ├── modules/savedjob/         # Saved jobs
+│   │   ├── modules/recommendation/   # CV-aware job recommendations
+│   │   ├── modules/crawler/          # Crawler-to-canonical normalization
+│   │   └── modules/chatbot/          # Chatbot and RAG pipeline
+│   └── src/main/resources/
+│       ├── application.properties
+│       └── db/migration/             # Database and search migrations
+├── frontend/
+│   ├── src/app/                      # Next.js App Router pages
+│   ├── src/features/                 # Domain UI modules
+│   ├── src/components/               # Shared components
+│   ├── src/layouts/                  # Header and footer
+│   ├── src/services/                 # Typed backend API clients
+│   ├── src/hooks/                    # Reusable hooks
+│   └── src/utils/                    # Shared frontend utilities
+├── docs/                             # Project documentation and ERD
+├── docker-compose.yml                # ParadeDB/PostgreSQL service
+├── .env.example                      # Complete environment reference
+└── README.md
 ```
 
----
+## Local Setup
 
-## Installation & Setup Guide
+### Requirements
 
-### Environment Requirements
-
-- **Node.js** ≥ 18.x & **npm** ≥ 9.x
-- **Java** 21 (JDK)
-- **Maven** ≥ 3.9.x
-- **Docker** & **Docker Compose**
-- **LM Studio** (Optional, if you wish to run the local AI Chatbot)
+- Node.js 18+ and npm 9+.
+- JDK 21.
+- Maven 3.9+.
+- Docker and Docker Compose.
+- An OpenRouter-compatible API key for AI features.
 
 ### 1. Clone the repository
 
 ```bash
 git clone https://github.com/thai2602/IE303---Website-Analysis-and-Search-Career.git
-cd Website-Analysis-and-Search-Career
+cd IE303---Website-Analysis-and-Search-Career
 ```
 
-### 2. Start the Database (PostgreSQL via Docker)
+### 2. Create local environment files
+
+PowerShell:
+
+```powershell
+Copy-Item backend/.env.example backend/.env
+Copy-Item frontend/.env.example frontend/.env.local
+```
+
+Bash:
 
 ```bash
-docker-compose up -d
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env.local
 ```
 
-> The database will run at `localhost:5432` with DB name: `jobpilot`, user: `postgres`, password: `123456`
+Update database credentials, `JWT_SECRET_KEY`, `GOOGLE_CLIENT_ID` and `OPENAI_API_KEY`. Never commit the generated `.env` files.
 
-### 3. Run the Backend (Spring Boot)
+### 3. Start PostgreSQL/ParadeDB
+
+```bash
+docker compose up -d db
+```
+
+The container exposes PostgreSQL on `localhost:5432` by default and applies the ordered SQL migrations from `backend/src/main/resources/db/migration` when a fresh data volume is created.
+
+### 4. Start the backend
 
 ```bash
 cd backend
 mvn spring-boot:run
 ```
 
-> The Backend API will be available at: **<http://localhost:8080>**  
-> Swagger UI: **<http://localhost:8080/swagger-ui.html>**
+- REST API: <http://localhost:8080>
+- Swagger UI: <http://localhost:8080/swagger-ui.html>
 
-### 4. Run the Frontend (React + Vite)
+### 5. Start the frontend
 
 ```bash
 cd frontend
@@ -291,66 +303,47 @@ npm install
 npm run dev
 ```
 
-> The Frontend will run at: **<http://localhost:5173>**
+- Web application: <http://localhost:3000>
 
-### 5. Configure the AI Chatbot & Reranker
+### Optional reranker
 
-The AI Chatbot in **JobPilot** integrates an LLM (via OpenRouter API) combined with a local Embedding model and a local Rerank service to ensure low latency and high accuracy.
+Run an HTTP service at `http://localhost:8000/rerank` and configure `RAG_RERANKER_URL` if reranking is required. When it is unavailable, JobPilot automatically keeps the vector/lexical results instead of failing the chat request.
 
-#### 5.1. Configure the Embedding Model (LM Studio)
-1. Download and install **LM Studio**.
-2. Search and download the embedding model **`nomic-embed-text-v1.5`**.
-3. Under LM Studio's **Local Server** tab, select the downloaded embedding model and click **Start Server** on port `1234`.
-4. The Backend is configured to connect to it via `http://localhost:1234/v1` (as defined in `application.properties`).
+## Testing and CI
 
-#### 5.2. Configure the Reranker API (Optional)
-To enable the high-performance **Two-Stage Retrieval (Reranking)** pipeline, run a local Reranker service at `http://localhost:8000/rerank`:
-1. Use a simple Python server (e.g., FastAPI + HuggingFace Transformers) to load the **`BAAI/bge-reranker-large`** or **`BAAI/bge-reranker-base`** model.
-2. The server must expose a POST `/rerank` endpoint accepting the following payload:
-   ```json
-   {
-     "query": "your query string",
-     "documents": ["document 1", "document 2", ...]
-   }
-   ```
-   And return the sorted results:
-   ```json
-   {
-     "results": [
-       { "document": "document x", "score": 0.85 },
-       ...
-     ]
-   }
-   ```
-3. Run the Reranker API at `http://localhost:8000`.
-   *(Note: If the Reranker API is unavailable at port 8000, the RAG engine will **automatically fall back** to standard Vector DB search without interrupting the chat experience).*
+Frontend checks:
 
-#### 5.3. Configure the Chat Model (LLM)
-- By default, the system is pre-configured with OpenRouter API using the **`google/gemma-3-12b-it`** model for both conversational QA and deep CV auditing.
-- You can customize `langchain.chat.api-key` and `langchain.chat.model-name` in `backend/src/main/resources/application.properties` to connect to alternative providers or models.
+```bash
+cd frontend
+npm run typecheck
+npm run build
+```
 
----
+Backend checks:
 
-## API Documentation
+```bash
+cd backend
+mvn test
+```
 
-Once the backend is running, access Swagger UI to view the comprehensive REST API documentation:
+GitHub Actions runs frontend type-check/build and backend `mvn verify` for pushes and pull requests according to [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
 
-🔗 **<http://localhost:8080/swagger-ui.html>**
+## API Overview
 
-Main API Modules:
+| Module | Endpoint | Description |
+| :----- | :------- | :---------- |
+| Auth | `/api/auth/**` | Registration, email login and Google login |
+| Users | `/api/users/**` | User profile lookup and management |
+| Jobs | `/api/jobs/**` | Paginated job list and job details |
+| Companies | `/api/companies/**` | Company directory, details and complete-profile filtering |
+| CVs | `/api/cvs/**` | CV CRUD, templates and PDF extraction |
+| Applications | `/api/applications/**` | Submit, list and delete job applications |
+| Saved jobs | `/api/saved-jobs/**` | Save, list and remove saved jobs |
+| Recommendations | `/api/recommendations/**` | CV-aware job suggestions and LLM-ready context |
+| Chatbot | `/api/chatbot/**` | Chat, SSE stream, history, audit, rewrite and RAG evaluation |
 
-| Module | Endpoint prefix | Description |
-|--------|-----------------|-------------|
-| Auth | `/api/auth/**` | Registration, login, Google OAuth |
-| Users | `/api/users/**` | User profile management |
-| Jobs | `/api/jobs/**` | CRUD job postings |
-| Companies | `/api/companies/**` | Company profile information |
-| CVs | `/api/cvs/**` | Upload, extract, and evaluate CVs |
-| Applications | `/api/applications/**` | Job application management |
-| Saved Jobs | `/api/saved-jobs/**` | Save favorite jobs |
-| Chatbot | `/api/chatbot/**` | AI Chatbot (RAG) |
-| Articles | `/api/articles/**` | Blog & articles |
+Once the backend is running, use <http://localhost:8080/swagger-ui.html> for the generated OpenAPI documentation.
 
 ---
 
-<p align="center">Made with ❤️ by Team JobPilot – UIT IE303 2025-2026</p>
+<p align="center">Made with ❤️ by Team JobPilot — UIT IE303 2025–2026</p>
