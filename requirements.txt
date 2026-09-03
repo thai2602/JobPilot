@@ -1,0 +1,40 @@
+# Project Requirements & Notes
+
+## Frontend Environment (Vite + React)
+Các gói thư viện (đã được cấu hình tự động trong `frontend/package.json`):
+- `react` & `react-dom` (^18.2.0)
+- `react-router-dom` (^6.20.0) : Quản lý các router/chuyển trang
+- `lucide-react` (Latest) : Thư viện các icon UI
+- `tailwindcss` (^3.4.0) : Tiện ích style CSS & Layout
+- `vite` (^5.0.8) : Trình biên dịch/dev server
+
+### Hướng dẫn cài đặt & chạy Frontend:
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### Cấu trúc Frontend hiện tại:
+- `frontend/index.html`: Entry point bắt buộc của Vite, khởi tạo thẻ `#root` và gọi `src/main.tsx`.
+- `frontend/src/features/`: Chứa các Component trang (Page) phân loại theo domain theo hướng Domain-Driven Design (VD: auth, blog, companies, cv-builder, home, jobs).
+- `frontend/src/layouts/`: Chứa các bộ phận khung tĩnh (Header, Footer).
+- `frontend/src/components/`: Chứa các vi mạch UI tái sử dụng (như `PageHero`).
+
+---
+
+## Backend Environment (Java / Spring Boot)
+Các gói thư viện và framework chính (được quản lý bằng file `backend/pom.xml`):
+- `Spring Web` : Xây dựng RESTful API
+- `Spring Data JPA` : Giao tiếp CSDL
+- `PostgreSQL JDBC Driver` : Kết nối PostgreSQL Database (`postgresql`)
+- `Spring Security` & `JJWT` : Xác thực và cấp phát JWT token
+- `Lombok` & `MapStruct` : Tự động sinh getter/setter và map dữ liệu DTO
+- `Spring Validation` : Validate dữ liệu đầu vào
+- `SpringDoc OpenAPI` : Sinh tài liệu API tự động (Swagger UI)
+
+### Hướng dẫn chạy Backend nội bộ:
+```bash
+cd backend
+mvn spring-boot:run
+```

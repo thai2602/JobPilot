@@ -1,0 +1,123 @@
+/* ================================================================
+   cv-builder.css
+   Chỉ khai báo CSS custom property cho từng template.
+   Không chứa "inline style" — chỉ là class đặt CSS vars.
+   ================================================================ */
+
+/* --- Hero gradient (static) --- */
+.cv-hero-bg {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 50%, #5b21b6 100%);
+}
+
+/* --- Per-template CSS token classes --- */
+.tmpl-0 {
+  --t-accent:  #10b981;
+  --t-preview: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 50%, #a7f3d0 100%);
+  --t-l0: #34d399; --t-l1: #6ee7b7; --t-l2: #a7f3d0;
+  --t-l3: #34d399; --t-l4: #6ee7b7;
+  --t-shadow:  rgba(16,185,129,0.28);
+  --t-tag-bg:  rgba(16,185,129,0.10);
+  --t-overlay: rgba(16,185,129,0.09);
+}
+.tmpl-1 {
+  --t-accent:  #6366f1;
+  --t-preview: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 50%, #c7d2fe 100%);
+  --t-l0: #818cf8; --t-l1: #a5b4fc; --t-l2: #c7d2fe;
+  --t-l3: #818cf8; --t-l4: #a5b4fc;
+  --t-shadow:  rgba(99,102,241,0.28);
+  --t-tag-bg:  rgba(99,102,241,0.10);
+  --t-overlay: rgba(99,102,241,0.09);
+}
+.tmpl-2 {
+  --t-accent:  #0ea5e9;
+  --t-preview: linear-gradient(135deg, #f0f9ff 0%, #bae6fd 50%, #7dd3fc 100%);
+  --t-l0: #38bdf8; --t-l1: #7dd3fc; --t-l2: #bae6fd;
+  --t-l3: #38bdf8; --t-l4: #7dd3fc;
+  --t-shadow:  rgba(14,165,233,0.28);
+  --t-tag-bg:  rgba(14,165,233,0.10);
+  --t-overlay: rgba(14,165,233,0.09);
+}
+.tmpl-3 {
+  --t-accent:  #ec4899;
+  --t-preview: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 50%, #fbcfe8 100%);
+  --t-l0: #f472b6; --t-l1: #f9a8d4; --t-l2: #fbcfe8;
+  --t-l3: #f472b6; --t-l4: #f9a8d4;
+  --t-shadow:  rgba(236,72,153,0.28);
+  --t-tag-bg:  rgba(236,72,153,0.10);
+  --t-overlay: rgba(236,72,153,0.09);
+}
+
+/* --- Card hover (reads vars from .tmpl-N) --- */
+.tmpl-card {
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.tmpl-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 44px var(--t-shadow);
+}
+
+/* --- Preview area background --- */
+.tmpl-preview-bg { background: var(--t-preview); }
+
+/* --- Skeleton colored elements --- */
+.tmpl-sk-avatar { background: var(--t-accent); }
+.tmpl-sk-l0 { background: var(--t-l0); }
+.tmpl-sk-l1 { background: var(--t-l1); }
+.tmpl-sk-l2 { background: var(--t-l2); }
+.tmpl-sk-l3 { background: var(--t-l3); }
+.tmpl-sk-l4 { background: var(--t-l4); }
+
+/* --- Hover overlay --- */
+.tmpl-overlay { background: var(--t-overlay); }
+
+/* --- Preview button color --- */
+.tmpl-preview-btn { color: var(--t-accent); }
+
+/* --- Card tag badge --- */
+.tmpl-tag-badge { background: var(--t-tag-bg); color: var(--t-accent); }
+
+/* --- "Dùng mẫu" button --- */
+.tmpl-use-btn {
+  background: var(--t-accent);
+  box-shadow: 0 4px 12px var(--t-shadow);
+  color: #fff;
+}
+
+.cv-editor-sidebar-scrollbar {
+  scrollbar-color: #cbd5e1 transparent;
+  scrollbar-width: thin;
+}
+
+/* Preserve mobile touch sizes, then make the desktop editor 10% denser while
+   compensating its box so the workspace still spans the full viewport. */
+@media (min-width: 1024px) {
+  .cv-editor-workspace-shell {
+    min-height: 111.111111vh;
+    zoom: 0.9;
+  }
+
+  .cv-editor-workspace-shell > aside {
+    height: calc(111.111111vh - 16px);
+  }
+}
+
+.cv-editor-sidebar-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.cv-editor-sidebar-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cv-editor-workspace-shell *,
+  .cv-editor-workspace-shell *::before,
+  .cv-editor-workspace-shell *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

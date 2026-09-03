@@ -1,0 +1,299 @@
+/* ============================================================
+   RESPONSIVE.CSS — Centralized Mobile Responsive Module
+   JobPilot — All breakpoints, all pages, managed here only.
+   Never scatter responsive fixes inside individual page files.
+   ============================================================
+
+   Breakpoints (mirrors Tailwind defaults):
+     mobile  : < 640px     (default)
+     sm      : 640–767px
+     md      : 768–1023px  (Tailwind handles most of this)
+     lg      : 1024px+     (desktop baseline)
+   ============================================================ */
+
+/* =================== MOBILE  (< 640px) =================== */
+@media (max-width: 639px) {
+
+  /* ------------------------------------------------------------------ */
+  /* GLOBAL — prevent horizontal overflow on all pages                   */
+  /* ------------------------------------------------------------------ */
+  body {
+    overflow-x: hidden;
+  }
+
+  /* Reduce the outer main padding on mobile */
+  main {
+    padding-top: 1.25rem !important;
+    padding-bottom: 2rem !important;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* JOBS PAGE — Hero section                                             */
+  /* ------------------------------------------------------------------ */
+  .res-jobs-hero {
+    padding: 24px 18px !important;
+    border-radius: 16px !important;
+  }
+
+  .res-jobs-hero-title {
+    font-size: 22px !important;
+    margin-bottom: 6px !important;
+    line-height: 1.3 !important;
+  }
+
+  .res-jobs-hero-subtitle {
+    font-size: 13px !important;
+    margin-bottom: 16px !important;
+    line-height: 1.6 !important;
+  }
+
+  /* Search bar: stack button below input on mobile */
+  .res-jobs-searchbar {
+    flex-direction: column !important;
+    gap: 8px !important;
+    padding: 8px !important;
+  }
+
+  .res-jobs-searchbar-btn {
+    width: 100% !important;
+    padding: 12px !important;
+    text-align: center !important;
+    white-space: normal !important;
+    border-radius: 10px !important;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* JOBS PAGE — Selected job detail banner                               */
+  /* ------------------------------------------------------------------ */
+  .res-job-detail-banner {
+    padding: 18px !important;
+    border-radius: 14px !important;
+    margin-top: 16px !important;
+  }
+
+  /* Stack image + text vertically on mobile */
+  .res-job-detail-inner {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    align-items: flex-start !important;
+    position: relative !important;
+  }
+
+  /* Shrink company image */
+  .res-job-detail-img {
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 10px !important;
+  }
+
+  /* Move close button to absolute top-right */
+  .res-job-detail-close {
+    position: absolute !important;
+    top: 0 !important;
+    right: 0 !important;
+    margin-left: 0 !important;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* COMPANIES PAGE — Rotating banner                                     */
+  /* ------------------------------------------------------------------ */
+  .res-companies-banner img {
+    height: 220px !important;
+    object-position: center top !important;
+  }
+
+  .res-companies-banner-text {
+    left: 14px !important;
+    right: 14px !important;
+    bottom: 14px !important;
+  }
+
+  .res-companies-banner-text h2 {
+    font-size: 18px !important;
+    margin-bottom: 6px !important;
+    line-height: 1.25 !important;
+  }
+
+  .res-companies-banner-text p {
+    max-width: 100% !important;
+    font-size: 12px !important;
+    line-height: 1.55 !important;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* AUTH PAGES — Login & Register: hide decorative panel on mobile      */
+  /* ------------------------------------------------------------------ */
+
+  /* Stack panels vertically */
+  .res-auth-layout {
+    flex-direction: column !important;
+    gap: 0 !important;
+  }
+
+  /* Hide the decorative/illustration panel — not useful on small screens */
+  .res-auth-deco {
+    display: none !important;
+  }
+
+  /* Reduce inner card padding */
+  .res-auth-form-card {
+    padding: 24px 18px !important;
+    border-radius: 18px !important;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* HOME PAGE — Banner stat grid: tighten gap                           */
+  /* ------------------------------------------------------------------ */
+  .home-stat-grid {
+    gap: 8px !important;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* JOBS PAGE — Modal job card grid                                      */
+  /* ------------------------------------------------------------------ */
+
+  /* Stack the 3-column grid (logo | text | actions) on mobile */
+  .res-jobs-modal-card-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* GLOBAL CARD / SECTION padding adjustments                           */
+  /* ------------------------------------------------------------------ */
+
+  /* Reduce heavy section padding on mobile */
+  .res-section-pad {
+    padding: 20px 16px !important;
+  }
+}
+
+/* =================== SMALL TABLET  (640px – 767px) =================== */
+@media (min-width: 640px) and (max-width: 767px) {
+
+  /* Jobs hero */
+  .res-jobs-hero {
+    padding: 32px 24px !important;
+  }
+
+  .res-jobs-hero-title {
+    font-size: 28px !important;
+  }
+
+  /* Companies banner */
+  .res-companies-banner img {
+    height: 300px !important;
+  }
+
+  .res-companies-banner-text p {
+    max-width: 80% !important;
+  }
+
+  /* Auth deco: allow it to show but shorter */
+  .res-auth-deco {
+    min-height: 220px !important;
+  }
+
+  .res-auth-form-card {
+    padding: 28px 24px !important;
+  }
+}
+
+/* =================== TABLET  (768px – 1023px) =================== */
+@media (min-width: 768px) and (max-width: 1023px) {
+
+  /* Companies banner */
+  .res-companies-banner img {
+    height: 360px !important;
+  }
+
+  /* Auth deco: compact */
+  .res-auth-deco {
+    min-height: 320px !important;
+    padding: 32px 28px !important;
+  }
+}
+
+/* =================== TABLET & MOBILE (< 1024px) =================== */
+@media (max-width: 1023px) {
+  .res-job-detail-layout {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ============================================================
+   FLOATING WIDGETS — Chatbot & Saved Tray
+   ============================================================ */
+
+/* Desktop / Default styles */
+.saved-tray-toggle {
+  position: fixed !important;
+  z-index: 1000 !important;
+  right: 24px !important;
+  bottom: 24px !important;
+  width: 60px !important;
+  height: 60px !important;
+}
+
+.saved-tray-panel {
+  position: fixed !important;
+  right: 24px !important;
+  bottom: 94px !important;
+  width: min(420px, calc(100vw - 32px)) !important;
+  max-height: 72vh !important;
+  z-index: 1101 !important;
+}
+
+.chatbot-toggle {
+  position: fixed !important;
+  z-index: 1000 !important;
+  right: 100px !important;
+  bottom: 24px !important;
+  width: 60px !important;
+  height: 60px !important;
+}
+
+.chatbot-panel {
+  position: fixed !important;
+  right: 100px !important;
+  bottom: 94px !important;
+  width: min(390px, calc(100vw - 32px)) !important;
+  height: min(590px, calc(80vh - 120px)) !important;
+  z-index: 1100 !important;
+}
+
+/* Mobile responsive overrides (< 640px) */
+@media (max-width: 639px) {
+  .saved-tray-toggle {
+    right: 16px !important;
+    bottom: 16px !important;
+    width: 50px !important;
+    height: 50px !important;
+  }
+
+  .saved-tray-panel {
+    right: 16px !important;
+    bottom: 82px !important;
+    width: calc(100vw - 32px) !important;
+    max-height: 80vh !important;
+    border-radius: 20px !important;
+  }
+
+  .chatbot-toggle {
+    right: 82px !important; /* 16px + 50px + 16px spacing */
+    bottom: 16px !important;
+    width: 50px !important;
+    height: 50px !important;
+  }
+
+  .chatbot-panel {
+    right: 16px !important;
+    bottom: 82px !important;
+    width: calc(100vw - 32px) !important;
+    height: calc(100vh - 120px) !important;
+    max-height: 520px !important;
+    border-radius: 20px !important;
+  }
+}
+
