@@ -33,9 +33,74 @@ import companyLogo1 from "../../assets/company_logo/image_1.png";
 import companyLogo4 from "../../assets/company_logo/image_4.png";
 import companyLogo7 from "../../assets/company_logo/image_7.png";
 import companyLogo8 from "../../assets/company_logo/image_8.png";
+import { API_URL } from "../../config/env";
+import { applicationsApi, type ApiApplication } from "../../services/applicationsApi";
+import { companiesApi, type ApiCompany } from "../../services/companiesApi";
+import { jobsApi, type ApiJob } from "../../services/jobsApi";
+import { recommendationsApi, type JobRecommendation } from "../../services/recommendationsApi";
 import { readAuthUser } from "../../utils/auth";
-import { hasCreatedCv } from "../../utils/cv";
+import { cleanApiText, splitApiText } from "../../utils/content";
+import { getActiveCvId, hasCreatedCv } from "../../utils/cv";
+import { toVietnameseJobTitle } from "../../utils/jobTitle";
+import { formatSalaryRange } from "../../utils/salary";
 import ApplyCvModal from "../../components/ApplyCvModal";
+
+type HomeJob = {
+   id?: number;
+   slug?: string;
+   title: string;
+   company: string;
+   companySlug?: string;
+   place: string;
+   salary: string;
+   tags: string[];
+   industry?: string;
+};
+
+type HomeIndustry = {
+   industry: string;
+   color: string;
+   jobs: HomeJob[];
+};
+
+type HomeCompany = {
+   name: string;
+   slug?: string;
+   rating?: string;
+   employees: string;
+   location: string;
+   openJobs: number;
+   color: string;
+   initial: string;
+   avatar?: string;
+   category: string;
+};
+
+type RecruitmentTrendPoint = {
+   month: string;
+   jobs: number;
+   companies: number;
+   salary: number;
+};
+
+type DistributionPoint = {
+   name: string;
+   value: number;
+   color: string;
+};
+
+type SalaryPoint = {
+   position: string;
+   salary: number;
+   applicants?: number;
+   color: string;
+};
+
+type MarketStat = {
+   label: string;
+   value: string;
+   accent: string;
+};
 
 const quickLinks = [
    {
@@ -64,7 +129,7 @@ const quickLinks = [
    },
 ];
 
-const topIndustryJobs = [
+const fallbackTopIndustryJobs: HomeIndustry[] = [
    {
       industry: "Công nghệ thông tin",
       color: "#059669",
@@ -148,7 +213,7 @@ const topIndustryJobs = [
    },
 ];
 
-const featuredCompanies = [
+const fallbackFeaturedCompanies: HomeCompany[] = [
    {
       name: "NovaTech",
       rating: "4.8",
@@ -195,7 +260,7 @@ const featuredCompanies = [
    },
 ];
 
-const recruitmentTrendData = [
+const fallbackRecruitmentTrendData: RecruitmentTrendPoint[] = [
    { month: "T1", jobs: 450, companies: 85, salary: 28 },
    { month: "T2", jobs: 520, companies: 92, salary: 29 },
    { month: "T3", jobs: 580, companies: 102, salary: 30 },
@@ -204,7 +269,7 @@ const recruitmentTrendData = [
    { month: "T6", jobs: 1050, companies: 156, salary: 34 },
 ];
 
-const jobDistributionData = [
+const fallbackJobDistributionData: DistributionPoint[] = [
    { name: "Công nghệ", value: 780, color: "#059669" },
    { name: "Marketing", value: 450, color: "#0284c7" },
    { name: "Thiết kế", value: 320, color: "#7c3aed" },
@@ -212,7 +277,7 @@ const jobDistributionData = [
    { name: "Bán hàng", value: 370, color: "#facc15" },
 ];
 
-const salaryByPositionData = [
+const fallbackSalaryByPositionData: SalaryPoint[] = [
    { position: "Intern", salary: 5, applicants: 450, color: "#60a5fa" },
    { position: "Junior", salary: 12, applicants: 680, color: "#34d399" },
    { position: "Senior", salary: 28, applicants: 320, color: "#7c3aed" },
@@ -241,16 +306,187 @@ const companyHighlights = [
    },
 ];
 
-const bannerMarketStats = [
+const fallbackBannerMarketStats: MarketStat[] = [
    { label: "Việc mới hôm nay", value: "25", accent: "#f59e0b" },
    { label: "Việc làm đang tuyển", value: "320+", accent: "#22c55e" },
-   { label: "Ứng viên hài lòng", value: "98%", accent: "#6366f1" },
+   { label: "Doanh nghiệp nổi bật", value: "4", accent: "#6366f1" },
 ];
 
-function CompanyCard({ company }: { company: (typeof featuredCompanies)[0] }) {
+const industryColors = ["#059669", "#0284c7", "#7c3aed", "#ea580c", "#f59e0b"];
+const fallbackCompanyLogos = [companyLogo1, companyLogo7, companyLogo8, companyLogo4].map((logo) =>
+   typeof logo === "string" ? logo : (logo as { src?: string }).src || "",
+);
+
+const resolveAssetUrl = (value?: string): string | undefined => {
+   const source = value?.trim();
+   if (!source) return undefined;
+   if (/^(https?:|data:|blob:)/i.test(source)) return source;
+   return `${API_URL}${source.startsWith("/") ? "" : "/"}${source}`;
+};
+
+const jobKey = (industryName: string, job: HomeJob): string =>
+   job.id ? `job:${job.id}` : `${industryName}-${job.company}-${job.title}`;
+
+const readStoredApplicationKeys = (): Set<string> => {
+   const keys = new Set<string>();
+   if (typeof window === "undefined") return keys;
+
+   try {
+      const raw = localStorage.getItem("jobpilot_applications");
+      const stored = raw ? JSON.parse(raw) : [];
+      if (!Array.isArray(stored)) return keys;
+
+      stored.filter(Boolean).forEach((item: any) => {
+         const apiJobId = item.jobId ?? item.job?.id;
+         if (apiJobId) keys.add(`job:${apiJobId}`);
+         if (item.industry && item.company && item.title) {
+            keys.add(`${item.industry}-${item.company}-${item.title}`);
+         }
+         if (typeof item.id === "string") keys.add(item.id);
+      });
+   } catch {
+      return keys;
+   }
+
+   return keys;
+};
+
+const mapApiJob = (job: ApiJob): HomeJob => ({
+   id: job.id,
+   slug: job.slug,
+   title: toVietnameseJobTitle(job.title),
+   company: cleanApiText(job.company?.name) || "Doanh nghiệp đang cập nhật",
+   companySlug: job.company?.slug,
+   place: cleanApiText(job.locationCity) || cleanApiText(job.locationAddress) || "Địa điểm linh hoạt",
+   salary: formatSalaryRange(job.salaryMin, job.salaryMax),
+   industry: cleanApiText(job.industry) || "Ngành nghề khác",
+   tags: Array.from(new Set([
+      cleanApiText(job.jobLevel),
+      cleanApiText(job.jobType),
+      cleanApiText(job.experienceYears),
+      ...splitApiText(job.requirements, 2),
+   ].filter(Boolean))).slice(0, 3),
+});
+
+const mapRecommendation = (job: JobRecommendation): HomeJob => ({
+   id: job.jobId,
+   slug: job.slug,
+   title: toVietnameseJobTitle(job.title),
+   company: cleanApiText(job.company?.name) || "Doanh nghiệp đang cập nhật",
+   companySlug: job.company?.slug,
+   place: cleanApiText(job.locationCity) || cleanApiText(job.locationAddress) || "Địa điểm linh hoạt",
+   salary: formatSalaryRange(job.salaryMin, job.salaryMax),
+   industry: "Gợi ý phù hợp với CV",
+   tags: (job.matchedSkills.length ? job.matchedSkills : [job.jobLevel, job.jobType])
+      .filter((tag): tag is string => Boolean(tag))
+      .slice(0, 3),
+});
+
+const buildIndustryGroups = (jobs: ApiJob[]): HomeIndustry[] => {
+   const grouped = new Map<string, HomeJob[]>();
+   jobs.forEach((job) => {
+      const mapped = mapApiJob(job);
+      const group = grouped.get(mapped.industry!) ?? [];
+      group.push(mapped);
+      grouped.set(mapped.industry!, group);
+   });
+
+   return Array.from(grouped.entries())
+      .sort((left, right) => right[1].length - left[1].length)
+      .slice(0, 3)
+      .map(([industry, groupedJobs], index) => ({
+         industry,
+         color: industryColors[index % industryColors.length],
+         jobs: groupedJobs.slice(0, 3),
+      }));
+};
+
+const buildRecruitmentTrend = (jobs: ApiJob[]): RecruitmentTrendPoint[] => {
+   const now = new Date();
+   const months = Array.from({ length: 6 }, (_, index) =>
+      new Date(now.getFullYear(), now.getMonth() - 5 + index, 1),
+   );
+
+   return months.map((month) => {
+      const monthlyJobs = jobs.filter((job) => {
+         const createdAt = job.createdAt ? new Date(job.createdAt) : null;
+         return createdAt
+            && !Number.isNaN(createdAt.getTime())
+            && createdAt.getFullYear() === month.getFullYear()
+            && createdAt.getMonth() === month.getMonth();
+      });
+      const salaries = monthlyJobs
+         .map((job) => {
+            const values = [job.salaryMin, job.salaryMax]
+               .filter((value): value is number => typeof value === "number" && value > 0)
+               .map((value) => value >= 100_000 ? value / 1_000_000 : value);
+            return values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : 0;
+         })
+         .filter((value) => value > 0);
+
+      return {
+         month: `T${month.getMonth() + 1}`,
+         jobs: monthlyJobs.length,
+         companies: new Set(monthlyJobs.map((job) => job.company?.id ?? job.company?.name).filter(Boolean)).size,
+         salary: salaries.length
+            ? Math.round(salaries.reduce((sum, value) => sum + value, 0) / salaries.length)
+            : 0,
+      };
+   });
+};
+
+const buildJobDistribution = (jobs: ApiJob[]): DistributionPoint[] => {
+   const counts = new Map<string, number>();
+   jobs.forEach((job) => {
+      const industry = cleanApiText(job.industry) || "Ngành khác";
+      counts.set(industry, (counts.get(industry) ?? 0) + 1);
+   });
+   return Array.from(counts.entries())
+      .sort((left, right) => right[1] - left[1])
+      .slice(0, 5)
+      .map(([name, value], index) => ({ name, value, color: industryColors[index % industryColors.length] }));
+};
+
+const buildSalaryByPosition = (jobs: ApiJob[]): SalaryPoint[] => {
+   const groups = new Map<string, number[]>();
+   jobs.forEach((job) => {
+      const salaryValues = [job.salaryMin, job.salaryMax]
+         .filter((value): value is number => typeof value === "number" && value > 0)
+         .map((value) => value >= 100_000 ? value / 1_000_000 : value);
+      if (!salaryValues.length) return;
+      const level = cleanApiText(job.jobLevel) || "Khác";
+      const midpoint = salaryValues.reduce((sum, value) => sum + value, 0) / salaryValues.length;
+      groups.set(level, [...(groups.get(level) ?? []), midpoint]);
+   });
+
+   return Array.from(groups.entries())
+      .sort((left, right) => right[1].length - left[1].length)
+      .slice(0, 5)
+      .map(([position, salaries], index) => ({
+         position,
+         salary: Math.round((salaries.reduce((sum, value) => sum + value, 0) / salaries.length) * 10) / 10,
+         color: industryColors[index % industryColors.length],
+      }));
+};
+
+const mapApiCompany = (company: ApiCompany, index: number): HomeCompany => ({
+   name: company.name,
+   slug: company.slug,
+   employees: cleanApiText(company.size) || "Đang cập nhật",
+   location: cleanApiText(company.headquarters)
+      || cleanApiText(company.positions?.find((job) => job.locationCity)?.locationCity)
+      || "Đang cập nhật",
+   openJobs: company.positions?.length ?? 0,
+   color: company.color || industryColors[index % industryColors.length],
+   initial: company.name.slice(0, 1).toUpperCase(),
+   avatar: resolveAssetUrl(company.logoUrl) || fallbackCompanyLogos[index % fallbackCompanyLogos.length],
+   category: cleanApiText(company.industry) || "Lĩnh vực đang cập nhật",
+});
+
+function CompanyCard({ company }: { company: HomeCompany }) {
    return (
       <Link
-         href="/cong-ty"
+         href={company.slug ? `/cong-ty/${company.slug}` : "/cong-ty"}
          className="group relative overflow-hidden rounded-[20px] border border-gray-200/80 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
       >
          <div className="flex items-start justify-between gap-4">
@@ -271,10 +507,12 @@ function CompanyCard({ company }: { company: (typeof featuredCompanies)[0] }) {
                   <p className="mt-1 text-xs text-slate-700">{company.category}</p>
                </div>
             </div>
-            <div className="flex items-center gap-1 rounded-full bg-transparent border border-amber-100/40 px-2 py-1">
-               <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
-               <span className="text-xs font-bold text-amber-700">{company.rating}</span>
-            </div>
+            {company.rating && (
+               <div className="flex items-center gap-1 rounded-full bg-transparent border border-amber-100/40 px-2 py-1">
+                  <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                  <span className="text-xs font-bold text-amber-700">{company.rating}</span>
+               </div>
+            )}
          </div>
          <div className="mt-4 space-y-2 text-sm text-slate-700">
             <div className="flex items-center gap-2">
@@ -298,9 +536,9 @@ function TopIndustryCard({
    appliedJobIds,
    onApply,
 }: {
-   industry: (typeof topIndustryJobs)[0];
+   industry: HomeIndustry;
    appliedJobIds: Set<string>;
-   onApply: (industryName: string, job: (typeof topIndustryJobs)[0]["jobs"][0]) => void;
+   onApply: (industryName: string, job: HomeJob) => void;
 }) {
    return (
       <div className="rounded-[24px] border border-gray-200/80 bg-white p-6 shadow-sm">
@@ -312,11 +550,16 @@ function TopIndustryCard({
             <h3 className="text-lg font-bold text-gray-900">{industry.industry}</h3>
          </div>
          <div className="space-y-3">
-            {industry.jobs.map((job, index) => (
-               <div key={index} className="rounded-lg border border-gray-100 bg-gray-50/50 p-4">
+            {industry.jobs.map((job) => (
+               <div key={jobKey(industry.industry, job)} className="rounded-lg border border-gray-100 bg-gray-50/50 p-4">
                   <div className="flex items-start justify-between gap-3">
                      <div className="flex-1">
-                        <h4 className="font-semibold text-gray-900 text-sm">{job.title}</h4>
+                        <Link
+                           href={job.slug ? `/tim-viec/${job.slug}` : "/tim-viec"}
+                           className="font-semibold text-gray-900 text-sm hover:text-emerald-700"
+                        >
+                           {job.title}
+                        </Link>
                         <p className="text-xs text-slate-700 mt-1">{job.company}</p>
                         <div className="mt-3 flex flex-wrap gap-2">
                            <span className="inline-flex items-center gap-2 rounded-full bg-transparent border border-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
@@ -343,10 +586,10 @@ function TopIndustryCard({
                   <button
                      type="button"
                      onClick={() => onApply(industry.industry, job)}
-                     disabled={appliedJobIds.has(`${industry.industry}-${job.company}-${job.title}`)}
+                     disabled={appliedJobIds.has(jobKey(industry.industry, job))}
                      className="mt-4 inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-3.5 py-2 text-xs font-semibold text-white transition-colors hover:bg-emerald-500 disabled:cursor-not-allowed disabled:bg-gray-300"
                   >
-                     {appliedJobIds.has(`${industry.industry}-${job.company}-${job.title}`) ? "Đã ứng tuyển" : "Ứng tuyển"}
+                     {appliedJobIds.has(jobKey(industry.industry, job)) ? "Đã ứng tuyển" : "Ứng tuyển"}
                   </button>
                </div>
             ))}
@@ -362,23 +605,115 @@ function TopIndustryCard({
 }
 
 export default function HomePage() {
-   const [appliedJobIds, setAppliedJobIds] = useState<Set<string>>(() => {
-      try {
-         if (typeof window === "undefined") return new Set<string>();
-         const raw = localStorage.getItem("jobpilot_applications");
-         if (!raw) return new Set<string>();
-         const saved = JSON.parse(raw) as Array<{ id?: string; company?: string; title?: string; industry?: string }>;
-         const ids = (Array.isArray(saved) ? saved : [])
-            .filter(Boolean)
-            .map((item) => item.id ?? `${item.industry ?? ""}-${item.company ?? ""}-${item.title ?? ""}`)
-            .filter((id): id is string => Boolean(id));
-         return new Set(ids);
-      } catch {
-         return new Set<string>();
-      }
-   });
+   const [topIndustryJobs, setTopIndustryJobs] = useState<HomeIndustry[]>(fallbackTopIndustryJobs);
+   const [featuredCompanies, setFeaturedCompanies] = useState<HomeCompany[]>(fallbackFeaturedCompanies);
+   const [recruitmentTrendData, setRecruitmentTrendData] = useState<RecruitmentTrendPoint[]>(fallbackRecruitmentTrendData);
+   const [jobDistributionData, setJobDistributionData] = useState<DistributionPoint[]>(fallbackJobDistributionData);
+   const [salaryByPositionData, setSalaryByPositionData] = useState<SalaryPoint[]>(fallbackSalaryByPositionData);
+   const [bannerMarketStats, setBannerMarketStats] = useState<MarketStat[]>(fallbackBannerMarketStats);
+   const [appliedJobIds, setAppliedJobIds] = useState<Set<string>>(readStoredApplicationKeys);
    const [toast, setToast] = useState<{ kind: "success" | "error"; message: string } | null>(null);
-   const [applyingJob, setApplyingJob] = useState<{ industryName: string; job: any } | null>(null);
+   const [applyingJob, setApplyingJob] = useState<{ industryName: string; job: HomeJob } | null>(null);
+
+   useEffect(() => {
+      let cancelled = false;
+
+      const loadHomepageData = async () => {
+         const authUser = readAuthUser();
+         const cvId = getActiveCvId();
+         const recommendationRequest = authUser && cvId
+            ? recommendationsApi.forCv({ cvId, limit: 3 })
+            : Promise.resolve(null);
+         const applicationRequest: Promise<ApiApplication[] | null> = authUser
+            ? applicationsApi.listMine()
+            : Promise.resolve(null);
+
+         const [jobsResult, companiesResult, recommendationsResult, applicationsResult] = await Promise.allSettled([
+            jobsApi.list({ offset: 0, limit: 100 }),
+            companiesApi.list({ offset: 0, limit: 100, completeOnly: true }),
+            recommendationRequest,
+            applicationRequest,
+         ]);
+         if (cancelled) return;
+
+         const apiJobs = jobsResult.status === "fulfilled" ? jobsResult.value : [];
+         const apiCompanies = companiesResult.status === "fulfilled" ? companiesResult.value : [];
+         const recommendedJobs = recommendationsResult.status === "fulfilled"
+            ? recommendationsResult.value?.recommendations ?? []
+            : [];
+         const recommendationGroup: HomeIndustry[] = recommendedJobs.length
+            ? [{
+               industry: "Gợi ý phù hợp với CV",
+               color: "#059669",
+               jobs: recommendedJobs.map(mapRecommendation),
+            }]
+            : [];
+
+         if (apiJobs.length) {
+            const industryGroups = buildIndustryGroups(apiJobs);
+            setTopIndustryJobs([...recommendationGroup, ...industryGroups]
+               .filter((group) => group.jobs.length > 0)
+               .slice(0, 3));
+            setRecruitmentTrendData(buildRecruitmentTrend(apiJobs));
+            const distribution = buildJobDistribution(apiJobs);
+            const salaryByPosition = buildSalaryByPosition(apiJobs);
+            setJobDistributionData(distribution.length ? distribution : fallbackJobDistributionData);
+            setSalaryByPositionData(salaryByPosition.length ? salaryByPosition : fallbackSalaryByPositionData);
+         } else if (jobsResult.status === "rejected") {
+            console.warn("Không thể tải dữ liệu việc làm cho homepage, đang dùng dữ liệu dự phòng.", jobsResult.reason);
+            if (recommendationGroup.length) {
+               setTopIndustryJobs([...recommendationGroup, ...fallbackTopIndustryJobs].slice(0, 3));
+            }
+         }
+
+         if (apiCompanies.length) {
+            const companies = [...apiCompanies]
+               .sort((left, right) => Number(Boolean(right.isFeatured)) - Number(Boolean(left.isFeatured))
+                  || (right.positions?.length ?? 0) - (left.positions?.length ?? 0))
+               .slice(0, 4)
+               .map(mapApiCompany);
+            setFeaturedCompanies(companies);
+         } else if (companiesResult.status === "rejected") {
+            console.warn("Không thể tải dữ liệu công ty cho homepage, đang dùng dữ liệu dự phòng.", companiesResult.reason);
+         }
+
+         const today = new Date();
+         const newJobsToday = apiJobs.filter((job) => {
+            if (!job.createdAt) return false;
+            const createdAt = new Date(job.createdAt);
+            return !Number.isNaN(createdAt.getTime())
+               && createdAt.getFullYear() === today.getFullYear()
+               && createdAt.getMonth() === today.getMonth()
+               && createdAt.getDate() === today.getDate();
+         }).length;
+         setBannerMarketStats([
+            jobsResult.status === "fulfilled"
+               ? { label: "Việc mới hôm nay", value: String(newJobsToday), accent: "#f59e0b" }
+               : fallbackBannerMarketStats[0],
+            jobsResult.status === "fulfilled"
+               ? { label: "Việc làm đang tuyển", value: `${apiJobs.length}${apiJobs.length === 100 ? "+" : ""}`, accent: "#22c55e" }
+               : fallbackBannerMarketStats[1],
+            companiesResult.status === "fulfilled"
+               ? { label: "Doanh nghiệp đầy đủ hồ sơ", value: `${apiCompanies.length}${apiCompanies.length === 100 ? "+" : ""}`, accent: "#6366f1" }
+               : fallbackBannerMarketStats[2],
+         ]);
+
+         if (applicationsResult.status === "fulfilled" && applicationsResult.value) {
+            setAppliedJobIds((current) => {
+               const next = new Set(current);
+               applicationsResult.value?.forEach((application) => {
+                  if (application.job?.id) next.add(`job:${application.job.id}`);
+               });
+               return next;
+            });
+         }
+      };
+
+      void loadHomepageData();
+      return () => {
+         cancelled = true;
+      };
+   }, []);
 
    useEffect(() => {
       if (!toast) {
@@ -393,7 +728,7 @@ export default function HomePage() {
       setToast({ message, kind });
    };
 
-   const handleApplyJob = (industryName: string, job: (typeof topIndustryJobs)[0]["jobs"][0]) => {
+   const handleApplyJob = (industryName: string, job: HomeJob) => {
       if (!readAuthUser()) {
          showToast("Bạn cần đăng nhập trước khi ứng tuyển.", "error");
          return;
@@ -404,8 +739,8 @@ export default function HomePage() {
          return;
       }
 
-      const id = `${industryName}-${job.company}-${job.title}`;
-      if (appliedJobIds.has(id)) {
+      const key = jobKey(industryName, job);
+      if (appliedJobIds.has(key)) {
          showToast("Bạn đã ứng tuyển vị trí này rồi.", "error");
          return;
       }
@@ -413,19 +748,34 @@ export default function HomePage() {
       setApplyingJob({ industryName, job });
    };
 
-   const handleConfirmApply = (cvId: number) => {
+   const handleConfirmApply = async (cvId: number) => {
       if (!applyingJob) return;
       const { industryName, job } = applyingJob;
       setApplyingJob(null);
 
-      const id = `${industryName}-${job.company}-${job.title}`;
-      if (appliedJobIds.has(id)) {
+      const key = jobKey(industryName, job);
+      if (appliedJobIds.has(key)) {
          showToast("Bạn đã ứng tuyển vị trí này rồi.", "error");
          return;
       }
 
+      let serverApplication: ApiApplication | null = null;
+      if (job.id) {
+         try {
+            serverApplication = await applicationsApi.create({ jobId: job.id, cvId });
+         } catch (error) {
+            console.error("Không thể gửi hồ sơ ứng tuyển từ homepage.", error);
+            showToast(error instanceof Error ? error.message : "Không thể ứng tuyển lúc này.", "error");
+            return;
+         }
+      }
+
+      const id = serverApplication ? `api-${serverApplication.id}` : key;
       const application = {
          id,
+         serverId: serverApplication?.id,
+         jobId: job.id,
+         slug: job.slug,
          company: job.company,
          title: job.title,
          salary: job.salary,
@@ -439,16 +789,18 @@ export default function HomePage() {
 
       try {
          const raw = localStorage.getItem("jobpilot_applications");
-         const current = raw ? (JSON.parse(raw) as Array<Record<string, string>>) : [];
+         const current = raw ? (JSON.parse(raw) as Array<Record<string, unknown>>) : [];
          const filteredCurrent = (Array.isArray(current) ? current : []).filter(Boolean);
-         const updated = [application, ...filteredCurrent.filter((item) => item && item.id !== id)];
+         const updated = [application, ...filteredCurrent.filter((item) =>
+            item && item.id !== id && (!job.id || item.jobId !== job.id),
+         )];
          localStorage.setItem("jobpilot_applications", JSON.stringify(updated));
          window.dispatchEvent(new Event("jobpilot-data-updated"));
-         setAppliedJobIds((prev) => new Set([...prev, id]));
-         showToast(`Đã ứng tuyển thành công: ${job.title} tại ${job.company}.`);
-      } catch {
-         showToast("Không thể lưu hồ sơ ứng tuyển vào trình duyệt.", "error");
+      } catch (error) {
+         console.error("Không thể đồng bộ hồ sơ ứng tuyển vào localStorage.", error);
       }
+      setAppliedJobIds((prev) => new Set([...prev, key]));
+      showToast(`Đã ứng tuyển thành công: ${job.title} tại ${job.company}.`);
    };
 
    return (
