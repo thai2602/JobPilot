@@ -1,12 +1,12 @@
-# JobPilot — Nền tảng Phân tích và Tìm kiếm Việc làm
+# JobPilot — Career Analysis and Job Search Platform
 
 <p align="center">
-  <a href="https://www.uit.edu.vn/" title="Trường Đại học Công nghệ Thông tin">
-    <img src="https://i.imgur.com/WmMnSRt.png" alt="University of Information Technology | Trường Đại học Công nghệ Thông tin">
+  <a href="https://www.uit.edu.vn/" title="University of Information Technology">
+    <img src="https://i.imgur.com/WmMnSRt.png" alt="University of Information Technology">
   </a>
 </p>
 
-<h1 align="center"><b>Đồ án IE303: Nền tảng Phân tích và Tìm kiếm Việc làm</b></h1>
+<h1 align="center"><b>IE303 Course Project: Career Analysis and Job Search Platform</b></h1>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Java-21-orange?style=for-the-badge&logo=openjdk" alt="Java 21" />
@@ -17,148 +17,149 @@
   <img src="https://img.shields.io/badge/LangChain4j-RAG-blueviolet?style=for-the-badge" alt="LangChain4j RAG" />
 </p>
 
-## Thông tin môn học
+## Course Information
 
-- **Môn học:** Công nghệ Java (IE303)
-- **Lớp:** IE303.Q21.CNVN
-- **Năm học:** Học kỳ 2, 2025–2026
-- **Giảng viên hướng dẫn:** ThS. Huỳnh Văn Tín
+- **Course:** Java Technology (IE303)
+- **Class:** IE303.Q21.CNVN
+- **Academic term:** Semester 2, 2025–2026
+- **Instructor:** Huỳnh Văn Tín, M.Sc.
 
-## Thành viên nhóm
+## Team Members
 
-| STT | MSSV | Họ và tên | Vai trò | GitHub | Email |
+| No. | Student ID | Full Name | Role | GitHub | Email |
 | :-- | :--------- | :-------- | :--- | :----- | :---- |
-| 1 | 23521416 | Lê Hoàng Thái | Trưởng nhóm | [thai2602](https://github.com/thai2602) | <23521416@gm.uit.edu.vn> |
-| 2 | 23521478 | Lê Trần Đức Thiện | Thành viên | — | <23521478@gm.uit.edu.vn> |
-| 3 | 23521664 | Nguyễn Tấn Trọng | Thành viên | — | <23521664@gm.uit.edu.vn> |
-| 4 | 23521720 | Nguyễn Minh Tuấn | Thành viên | [MinhTuan-K18](https://github.com/MinhTuan-K18) | <23521720@gm.uit.edu.vn> |
+| 1 | 23521416 | Lê Hoàng Thái | Team Leader | [thai2602](https://github.com/thai2602) | <23521416@gm.uit.edu.vn> |
+| 2 | 23521478 | Lê Trần Đức Thiện | Member | — | <23521478@gm.uit.edu.vn> |
+| 3 | 23521664 | Nguyễn Tấn Trọng | Member | — | <23521664@gm.uit.edu.vn> |
+| 4 | 23521720 | Nguyễn Minh Tuấn | Member | [MinhTuan-K18](https://github.com/MinhTuan-K18) | <23521720@gm.uit.edu.vn> |
 
-## Liên kết hữu ích
+## Useful Links
 
-- **Báo cáo đồ án:** Đang cập nhật
-- **Phân công nhiệm vụ:** [IE303 Project Management](https://docs.google.com/spreadsheets/d/1uTk0Fm5hLVeCZlcBdFD41b2_mcxjzoDZoWpbaZZQnUc/edit?usp=sharing)
-- **Sơ đồ ERD cơ sở dữ liệu:** [docs/db-erd.png](docs/db-erd.png)
+- **Project report:** Coming soon
+- **Task assignments:** [IE303 Project Management](https://docs.google.com/spreadsheets/d/1uTk0Fm5hLVeCZlcBdFD41b2_mcxjzoDZoWpbaZZQnUc/edit?usp=sharing)
+- **Database ERD:** [docs/db-erd.png](docs/db-erd.png)
+- **Vietnamese README:** [Original Vietnamese version](pri_docs/README.vi.md)
 
-## Mục lục
+## Table of Contents
 
-- [Tổng quan](#tổng-quan)
-- [Kiến trúc hệ thống](#kiến-trúc-hệ-thống)
-- [Tính năng nổi bật](#tính-năng-nổi-bật)
-- [Quy trình RAG (RAG Pipeline)](#quy-trình-rag-rag-pipeline)
-- [Công nghệ sử dụng](#công-nghệ-sử-dụng)
-- [Cấu trúc dự án](#cấu-trúc-dự-án)
-- [Cài đặt cục bộ](#cài-đặt-cục-bộ)
-- [Kiểm thử và CI](#kiểm-thử-và-ci)
-- [Tổng quan API](#tổng-quan-api)
+- [Overview](#overview)
+- [System Architecture](#system-architecture)
+- [Key Features](#key-features)
+- [RAG Pipeline](#rag-pipeline)
+- [Technology Stack](#technology-stack)
+- [Project Structure](#project-structure)
+- [Local Setup](#local-setup)
+- [Testing and CI](#testing-and-ci)
+- [API Overview](#api-overview)
 
-## Tổng quan
+## Overview
 
-**JobPilot** là nền tảng tuyển dụng và tìm kiếm việc làm toàn diện (full-stack career platform), kết hợp giữa khám phá cơ hội nghề nghiệp, hồ sơ doanh nghiệp, quản lý CV, ứng tuyển trực tuyến và trợ lý AI hỗ trợ định hướng nghề nghiệp. Ứng dụng sử dụng frontend viết bằng Next.js, backend REST API bằng Spring Boot và PostgreSQL/ParadeDB để lưu trữ dữ liệu giao dịch, truy xuất vector (vector retrieval) cùng tìm kiếm từ khóa (lexical search).
+**JobPilot** is a full-stack career platform that combines job discovery, company profiles, CV management, online applications, and an AI assistant for career guidance. The application uses a Next.js frontend, a Spring Boot REST API backend, and PostgreSQL/ParadeDB for transactional storage, vector retrieval, and lexical search.
 
-Luồng dữ liệu hiện tại lấy PostgreSQL làm nguồn dữ liệu chuẩn (canonical source) cho các tin tuyển dụng và thông tin công ty. Các công việc đang hoạt động (active) và dữ liệu lịch sử (historical) được nhúng (embed) vào các kho lưu trữ pgvector riêng biệt và được truy xuất thông qua quy trình Hybrid RAG.
+The current data pipeline uses PostgreSQL as the canonical source for job postings and company information. Active jobs and historical records are embedded into separate pgvector stores and retrieved through a Hybrid RAG pipeline.
 
-## Kiến trúc hệ thống
+## System Architecture
 
 ```text
 ┌─────────────────────────────────────────────────────────────┐
-│ Next.js 14 App Router · React 18 · TypeScript · TailwindCSS │
+│ Next.js 14 App Router · React 18 · TypeScript · TailwindCSS    │
 │                         :3000                               │
 └──────────────────────────────┬──────────────────────────────┘
                                │ REST / JSON / SSE
 ┌──────────────────────────────▼──────────────────────────────┐
-│ Spring Boot 4 · Security/JWT · JPA · LangChain4j           │
+│ Spring Boot 4 · Security/JWT · JPA · LangChain4j              │
 │                         :8080                               │
 └───────────────┬───────────────────────┬─────────────────────┘
                 │                       │
 ┌───────────────▼────────────────┐  ┌───▼─────────────────────┐
-│ ParadeDB / PostgreSQL 15       │  │ OpenRouter             │
-│ Dữ liệu chuẩn việc làm/công ty │  │ Model Chat + Embedding  │
+│ ParadeDB / PostgreSQL 15       │  │ OpenRouter              │
+│ Canonical job/company data    │  │ Chat + Embedding Models │
 │ pgvector + pg_search + FTS     │  └─────────────────────────┘
-│ Dữ liệu RAG active & lịch sử   │
+│ Active & historical RAG data  │
 └───────────────┬────────────────┘
-                │ tùy chọn (optional)
+                │ optional
         ┌───────▼────────┐
         │ Local reranker │
         │ :8000/rerank   │
         └────────────────┘
 ```
 
-Dữ liệu crawler được tách biệt độc lập với dữ liệu ứng dụng:
+Crawler data is stored separately from application data:
 
 ```text
 crawler.companies / crawler.jobs
-                 │ chuẩn hóa và cập nhật (normalize & upsert)
+                 │ normalize & upsert
                  ▼
  public.companies / public.jobs
-                 │ đồng bộ hóa gia tăng (incremental sync)
+                 │ incremental sync
                  ├────────► rag_job_embeddings
                  └────────► rag_historical_job_embeddings
 ```
 
-## Tính năng nổi bật
+## Key Features
 
-### Xác thực và tài khoản người dùng
+### Authentication and User Accounts
 
-- Đăng ký và đăng nhập qua tài khoản email/mật khẩu.
-- Đăng nhập nhanh bằng Google (Google Sign-In).
-- Bảo vệ các thao tác tài khoản thông qua JWT.
-- Quản lý thông tin hồ sơ người dùng (User profile).
-- Lưu việc làm và nộp hồ sơ ứng tuyển đồng bộ qua backend API, hỗ trợ lưu trạng thái fallback cục bộ ở frontend.
+- Email/password registration and login.
+- Google Sign-In.
+- JWT protection for account operations.
+- User profile management.
+- Saved jobs and applications synchronized through the backend API, with local fallback state on the frontend.
 
-### Khám phá việc làm
+### Job Discovery
 
-- Tìm kiếm việc làm có phân trang theo từ khóa và nhiều tiêu chí lọc linh hoạt.
-- Trang chi tiết công việc sử dụng dynamic slug của Next.js.
-- Lưu / bỏ lưu công việc với trạng thái được duy trì sau khi tải lại trang.
-- Ứng tuyển công việc và xem lại danh sách các hồ sơ đã nộp.
-- Module gợi ý chuyên biệt giúp chấm điểm và đề xuất công việc dựa trên ngữ cảnh CV/hồ sơ của ứng viên.
+- Paginated job search with keywords and flexible filters.
+- Job detail pages using Next.js dynamic slugs.
+- Save and unsave jobs with state that persists across page reloads.
+- Apply for jobs and review submitted applications.
+- A dedicated recommendation module that scores and suggests jobs based on the candidate's CV and profile context.
 
-### Danh bạ doanh nghiệp
+### Company Directory
 
-- Tìm kiếm, lọc theo ngành nghề, sắp xếp và phân trang lũy tiến dạng "Xem thêm" (load more).
-- Đường dẫn động chi tiết công ty tại `/cong-ty/[companySlug]`.
-- Danh bạ mặc định gửi yêu cầu `completeOnly=true` và ẩn các hồ sơ thiếu các trường thông tin cốt lõi: mô tả, ngành nghề, trụ sở chính hoặc quy mô công ty.
-- Trụ sở công ty được ưu tiên làm địa điểm hiển thị, với địa điểm của các tin tuyển dụng đang mở làm phương án dự phòng.
+- Search, industry filters, sorting, and incremental "Load more" pagination.
+- Dynamic company detail pages at `/cong-ty/[companySlug]`.
+- The directory requests `completeOnly=true` by default and hides profiles missing core fields: description, industry, headquarters, or company size.
+- Company headquarters are the preferred display location, with locations from open job postings used as a fallback.
 
-Ví dụ:
+Example:
 
 ```http
 GET /api/companies?offset=0&limit=6&search=technology&completeOnly=true
 ```
 
-### Công cụ hỗ trợ CV
+### CV Tools
 
-- Tạo, chỉnh sửa, xem trước và lưu trữ nhiều bản CV khác nhau.
-- Tải lên và tự động trích xuất thông tin từ CV định dạng PDF.
-- Hiển thị trực quan trạng thái tiến độ khi tải file và khi AI chấm điểm CV.
-- Hỗ trợ AI đánh giá, kiểm tra (audit) và viết lại/tối ưu nội dung CV.
-- Giao diện chỉnh sửa CV responsive với thanh điều hướng dọc tiện lợi.
+- Create, edit, preview, and save multiple CVs.
+- Upload PDF CVs and automatically extract their information.
+- Visual progress indicators during file uploads and AI CV scoring.
+- AI-assisted CV evaluation, auditing, rewriting, and optimization.
+- A responsive CV editor with convenient vertical navigation.
 
-### AI Chatbot thông minh
+### AI Chatbot
 
-- Hỏi đáp hướng nghiệp tổng quát và trò chuyện thấu hiểu ngữ cảnh CV người dùng.
-- Phản hồi dạng luồng (streaming) theo thời gian thực thông qua Server-Sent Events (SSE).
-- Các API quản lý lịch sử hội thoại.
-- Các endpoint chuyên dụng phục vụ kiểm tra CV (audit), viết lại nội dung (rewrite) và đánh giá độ tương thích.
-- Cơ chế xử lý dự phòng mượt mà khi tìm kiếm từ khóa hoặc dịch vụ reranker tùy chọn không khả dụng.
+- General career guidance and conversations informed by the user's CV context.
+- Real-time streaming responses through Server-Sent Events (SSE).
+- Conversation history APIs.
+- Dedicated endpoints for CV auditing, rewriting, and compatibility assessment.
+- Graceful fallback when lexical search or the optional reranker service is unavailable.
 
-## Quy trình RAG (RAG Pipeline)
+## RAG Pipeline
 
-Quy trình truy xuất dữ liệu (retrieval pipeline) hiện tại:
+The current retrieval pipeline:
 
-1. **Dữ liệu chuẩn (Canonical data):** Dữ liệu công việc và công ty được đọc trực tiếp từ `public.jobs` và `public.companies`; vector nhúng (embedding) của công việc không còn lấy từ file JSON tĩnh đính kèm.
-2. **Đồng bộ hóa gia tăng (Incremental synchronization):** Các bản ghi thay đổi được nhúng theo lô (batch) và các vector cũ/không còn hợp lệ có thể xóa an toàn.
-3. **Các kho lưu trữ riêng biệt (Separate stores):**
-   - `rag_hr_embeddings`: Lưu trữ kiến thức nhân sự và viết CV.
-   - `rag_job_embeddings`: Lưu trữ các công việc đang tuyển dụng (active).
-   - `rag_historical_job_embeddings`: Lưu trữ các công việc đã đóng hoặc hết hạn, phục vụ phân tích xu hướng thị trường.
-4. **Điều hướng ý định (Intent routing):** Phân tích câu truy vấn để điều hướng tới kho kiến thức HR, việc làm hiện tại, việc làm lịch sử, hoặc gộp các nguồn lại.
-5. **Truy xuất lai (Hybrid retrieval):** Kết hợp các ứng viên tìm kiếm ngữ nghĩa từ pgvector với các ứng viên BM25 từ `pg_search`. Sử dụng tìm kiếm toàn văn bản (Full-text search) mặc định của PostgreSQL làm phương án dự phòng.
-6. **Hợp nhất kết quả (Fusion):** Sử dụng thuật toán RRF (Reciprocal Rank Fusion) có trọng số để gộp bảng xếp hạng vector và xếp hạng từ khóa.
-7. **Tái xếp hạng (Reranking):** Mô hình reranker cục bộ tùy chọn giúp tinh chỉnh và rút gọn tập ứng viên; quá trình truy xuất vẫn tiếp tục hoạt động bình thường nếu dịch vụ reranker offline.
-8. **Tạo phản hồi (Prompt generation):** Ngữ cảnh chứng cứ cuối cùng được đưa vào prompt của LangChain4j và gửi đến mô hình chat OpenRouter đã cấu hình.
+1. **Canonical data:** Job and company data are read directly from `public.jobs` and `public.companies`; job embeddings no longer come from bundled static JSON files.
+2. **Incremental synchronization:** Changed records are embedded in batches, and stale or invalid vectors can be safely removed.
+3. **Separate stores:**
+   - `rag_hr_embeddings`: HR and CV-writing knowledge.
+   - `rag_job_embeddings`: Active job postings.
+   - `rag_historical_job_embeddings`: Closed or expired jobs for market trend analysis.
+4. **Intent routing:** Queries are analyzed and routed to HR knowledge, active jobs, historical jobs, or a combination of sources.
+5. **Hybrid retrieval:** Semantic candidates from pgvector are combined with BM25 candidates from `pg_search`. Native PostgreSQL full-text search provides a fallback.
+6. **Fusion:** Weighted Reciprocal Rank Fusion (RRF) merges vector and lexical rankings.
+7. **Reranking:** An optional local reranker refines and reduces the candidate set; retrieval continues to work if the service is offline.
+8. **Response generation:** The final evidence context is added to the LangChain4j prompt and sent to the configured OpenRouter chat model.
 
-Mặc định, các tính năng RAG, crawler và đồng bộ hóa dữ liệu lịch sử được tắt khi khởi động cục bộ để đảm bảo an toàn. Chỉ bật các cờ tương ứng trong `backend/.env` khi bạn muốn thực hiện lập chỉ mục (index):
+By default, RAG, crawler, and historical synchronization features are disabled on local startup as a precaution. Enable the corresponding flags in `backend/.env` only when you intend to run indexing:
 
 ```dotenv
 RAG_INCREMENTAL_ENABLED=true
@@ -167,99 +168,99 @@ RAG_HISTORICAL_ENABLED=true
 RAG_HISTORICAL_RUN_ON_START=true
 ```
 
-## Công nghệ sử dụng
+## Technology Stack
 
 ### Frontend
 
-| Công nghệ | Phiên bản | Mục đích sử dụng |
+| Technology | Version | Purpose |
 | :--------- | :------ | :------ |
-| Next.js | 14.2.x | App Router, định tuyến và build production |
-| React | 18.2 | Xây dựng giao diện component UI |
-| TypeScript | 5.2 | Định kiểu tĩnh (Static typing) |
-| TailwindCSS | 3.4 | Định kiểu giao diện Utility-first |
-| Firebase | 12.x | Xác thực người dùng qua Google |
-| Lucide React | 0.300 | Bộ biểu tượng (Icons) |
-| Recharts | 3.8 | Vẽ biểu đồ và trực quan hóa dữ liệu |
-| React Markdown | 10.x | Render định dạng Markdown cho Chatbot |
+| Next.js | 14.2.x | App Router, routing, and production builds |
+| React | 18.2 | Component-based user interfaces |
+| TypeScript | 5.2 | Static typing |
+| TailwindCSS | 3.4 | Utility-first styling |
+| Firebase | 12.x | Google authentication |
+| Lucide React | 0.300 | Icons |
+| Recharts | 3.8 | Charts and data visualization |
+| React Markdown | 10.x | Markdown rendering for the chatbot |
 
 ### Backend
 
-| Công nghệ | Phiên bản | Mục đích sử dụng |
+| Technology | Version | Purpose |
 | :--------- | :------ | :------ |
-| Java | 21 | Môi trường runtime và ngôn ngữ chính |
-| Spring Boot | 4.0.0 | Framework phát triển REST API |
-| Spring Security + JJWT | 0.12.6 | Xác thực và phân quyền người dùng |
-| Spring Data JPA | Quản lý bởi Spring Boot | Thao tác và truy xuất cơ sở dữ liệu |
-| LangChain4j | 0.29.1 | Tích hợp LLM và quy trình RAG |
-| MapStruct | 1.6.0 | Ánh xạ đối tượng DTO (DTO mapping) |
-| Lombok | 1.18.40 | Giảm thiểu mã lặp (Boilerplate code) |
-| SpringDoc OpenAPI | 2.6.0 | Giao diện tài liệu Swagger/OpenAPI |
+| Java | 21 | Runtime and primary language |
+| Spring Boot | 4.0.0 | REST API framework |
+| Spring Security + JJWT | 0.12.6 | Authentication and authorization |
+| Spring Data JPA | Managed by Spring Boot | Database access and persistence |
+| LangChain4j | 0.29.1 | LLM integration and RAG pipelines |
+| MapStruct | 1.6.0 | DTO mapping |
+| Lombok | 1.18.40 | Boilerplate reduction |
+| SpringDoc OpenAPI | 2.6.0 | Swagger/OpenAPI documentation UI |
 
-### Dữ liệu và hạ tầng
+### Data and Infrastructure
 
-| Công nghệ | Mục đích sử dụng |
+| Technology | Purpose |
 | :--------- | :------ |
-| ParadeDB `v0.25.6-pg15` | Image PostgreSQL 15 tích hợp sẵn các extension tìm kiếm |
-| pgvector | Lưu trữ vector embedding và tìm kiếm tương đồng ngữ nghĩa |
-| pg_search | Truy xuất dữ liệu từ khóa bằng thuật toán BM25 |
-| PostgreSQL FTS | Tìm kiếm toàn văn bản dự phòng (Fallback lexical search) |
-| Docker Compose | Khởi tạo cơ sở dữ liệu và tự động chạy migration cục bộ |
-| OpenRouter | API cung cấp mô hình Chat và Embedding |
-| GitHub Actions | Tự động hóa quy trình CI cho cả Frontend và Backend |
+| ParadeDB `v0.25.6-pg15` | PostgreSQL 15 image with bundled search extensions |
+| pgvector | Embedding storage and semantic similarity search |
+| pg_search | BM25 lexical retrieval |
+| PostgreSQL FTS | Fallback full-text search |
+| Docker Compose | Local database setup and automatic migrations |
+| OpenRouter | Chat and embedding model APIs |
+| GitHub Actions | Frontend and backend CI automation |
 
-## Cấu trúc dự án
+## Project Structure
 
 ```text
 jobpilot/
-├── .github/workflows/ci.yml          # CI tự động cho Frontend và Backend
+├── .github/workflows/ci.yml          # Frontend and backend CI
 ├── backend/
-│   ├── docker/init-db.sh             # Script chạy migration cơ sở dữ liệu theo thứ tự
+│   ├── docker/init-db.sh             # Runs database migrations in order
 │   ├── src/main/java/com/jobportal/
-│   │   ├── modules/auth/             # Đăng ký, đăng nhập, xác thực Google
-│   │   ├── modules/user/             # Quản lý hồ sơ người dùng
-│   │   ├── modules/job/              # API quản lý và tìm kiếm việc làm
-│   │   ├── modules/company/          # API danh bạ và chi tiết công ty
-│   │   ├── modules/cv/               # Lưu trữ CV và trích xuất dữ liệu từ PDF
-│   │   ├── modules/application/      # Quản lý hồ sơ ứng tuyển
-│   │   ├── modules/savedjob/         # Quản lý việc làm đã lưu
-│   │   ├── modules/recommendation/   # Gợi ý việc làm phù hợp với CV
-│   │   ├── modules/crawler/          # Chuẩn hóa dữ liệu từ crawler sang canonical
-│   │   └── modules/chatbot/          # Chatbot và quy trình RAG
+│   │   ├── modules/auth/             # Registration, login, Google authentication
+│   │   ├── modules/user/             # User profile management
+│   │   ├── modules/job/              # Job management and search APIs
+│   │   ├── modules/company/          # Company directory and detail APIs
+│   │   ├── modules/cv/               # CV storage and PDF extraction
+│   │   ├── modules/application/      # Job application management
+│   │   ├── modules/savedjob/         # Saved job management
+│   │   ├── modules/recommendation/   # CV-based job recommendations
+│   │   ├── modules/crawler/          # Crawler-to-canonical data normalization
+│   │   └── modules/chatbot/          # Chatbot and RAG pipeline
 │   └── src/main/resources/
 │       ├── application.properties
-│       └── db/migration/             # Các file migration cho database và tìm kiếm
+│       └── db/migration/             # Database and search migrations
 ├── frontend/
-│   ├── src/app/                      # Các trang theo App Router của Next.js
-│   ├── src/features/                 # Các module UI theo miền nghiệp vụ
-│   ├── src/components/               # Các component dùng chung
-│   ├── src/layouts/                  # Header và footer của ứng dụng
-│   ├── src/services/                 # Các client gọi API backend có định kiểu
-│   ├── src/hooks/                    # Các custom hook tái sử dụng
-│   └── src/utils/                    # Các hàm tiện ích dùng chung ở frontend
-├── docs/                             # Tài liệu dự án và sơ đồ ERD
-├── docker-compose.yml                # Dịch vụ ParadeDB/PostgreSQL
-├── .env.example                      # File mẫu tham khảo toàn bộ biến môi trường
+│   ├── src/app/                      # Next.js App Router pages
+│   ├── src/features/                 # Domain-specific UI modules
+│   ├── src/components/               # Shared components
+│   ├── src/layouts/                  # Application header and footer
+│   ├── src/services/                 # Typed backend API clients
+│   ├── src/hooks/                    # Reusable custom hooks
+│   └── src/utils/                    # Shared frontend utilities
+├── docs/                             # Project documentation and ERD
+├── docker-compose.yml                # ParadeDB/PostgreSQL service
+├── .env.example                      # Reference template for environment variables
 └── README.md
 ```
 
-## Cài đặt cục bộ
+## Local Setup
 
-### Yêu cầu môi trường
+### Prerequisites
 
-- Node.js 18+ và npm 9+.
+- Node.js 18+ and npm 9+.
 - JDK 21.
 - Maven 3.9+.
-- Docker và Docker Compose.
-- Khóa API tương thích với OpenRouter để sử dụng các tính năng AI.
+- Docker and Docker Compose.
+- An OpenRouter-compatible API key for AI features.
 
-### 1. Clone repository
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/thai2602/IE303---Website-Analysis-and-Search-Career.git
 cd IE303---Website-Analysis-and-Search-Career
 ```
 
-### 2. Tạo file cấu hình môi trường cục bộ
+### 2. Create Local Environment Files
 
 PowerShell:
 
@@ -275,17 +276,17 @@ cp backend/.env.example backend/.env
 cp frontend/.env.example frontend/.env.local
 ```
 
-Cập nhật các thông tin kết nối cơ sở dữ liệu, `JWT_SECRET_KEY`, `GOOGLE_CLIENT_ID` và `OPENAI_API_KEY`. Tuyệt đối không commit các file `.env` đã tạo lên hệ thống Git.
+Update the database connection settings, `JWT_SECRET_KEY`, `GOOGLE_CLIENT_ID`, and `OPENAI_API_KEY`. Never commit the generated `.env` files to Git.
 
-### 3. Khởi động PostgreSQL/ParadeDB
+### 3. Start PostgreSQL/ParadeDB
 
 ```bash
 docker compose up -d db
 ```
 
-Container sẽ mở cổng PostgreSQL trên `localhost:5432` theo mặc định và tự động áp dụng các file SQL migration theo thứ tự từ thư mục `backend/src/main/resources/db/migration` khi một volume dữ liệu mới được khởi tạo.
+The container exposes PostgreSQL at `localhost:5432` by default and automatically applies SQL migrations from `backend/src/main/resources/db/migration` in order when a new data volume is initialized.
 
-### 4. Khởi chạy Backend
+### 4. Start the Backend
 
 ```bash
 cd backend
@@ -295,7 +296,7 @@ mvn spring-boot:run
 - REST API: <http://localhost:8080>
 - Swagger UI: <http://localhost:8080/swagger-ui.html>
 
-### 5. Khởi chạy Frontend
+### 5. Start the Frontend
 
 ```bash
 cd frontend
@@ -303,15 +304,15 @@ npm install
 npm run dev
 ```
 
-- Ứng dụng web: <http://localhost:3000>
+- Web application: <http://localhost:3000>
 
-### Reranker tùy chọn (Optional)
+### Optional Reranker
 
-Chạy dịch vụ HTTP tại `http://localhost:8000/rerank` và cấu hình biến môi trường `RAG_RERANKER_URL` nếu bạn muốn dùng tính năng rerank. Khi dịch vụ này không khả dụng, JobPilot sẽ tự động giữ lại kết quả từ vector/từ khóa thay vì báo lỗi yêu cầu chat.
+Run an HTTP service at `http://localhost:8000/rerank` and configure `RAG_RERANKER_URL` to enable reranking. If the service is unavailable, JobPilot automatically retains the vector/lexical results instead of failing the chat request.
 
-## Kiểm thử và CI
+## Testing and CI
 
-Kiểm tra Frontend:
+Frontend checks:
 
 ```bash
 cd frontend
@@ -319,31 +320,31 @@ npm run typecheck
 npm run build
 ```
 
-Kiểm tra Backend:
+Backend checks:
 
 ```bash
 cd backend
 mvn test
 ```
 
-GitHub Actions sẽ tự động kiểm tra type-check/build cho frontend và chạy `mvn verify` cho backend đối với các lệnh push và pull request theo kịch bản trong [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
+GitHub Actions runs frontend type checks and builds, along with `mvn verify` for the backend, on pushes and pull requests as configured in [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
 
-## Tổng quan API
+## API Overview
 
-| Phân hệ | Endpoint | Mô tả |
+| Module | Endpoint | Description |
 | :----- | :------- | :---------- |
-| Auth | `/api/auth/**` | Đăng ký tài khoản, đăng nhập email và đăng nhập bằng Google |
-| Users | `/api/users/**` | Tra cứu và quản lý thông tin hồ sơ người dùng |
-| Jobs | `/api/jobs/**` | Danh sách việc làm có phân trang và thông tin chi tiết công việc |
-| Companies | `/api/companies/**` | Danh bạ công ty, thông tin chi tiết và bộ lọc hồ sơ hoàn thiện |
-| CVs | `/api/cvs/**` | Thao tác CRUD CV, danh sách mẫu và trích xuất dữ liệu từ file PDF |
-| Applications | `/api/applications/**` | Nộp đơn, xem danh sách và xóa hồ sơ ứng tuyển |
-| Saved jobs | `/api/saved-jobs/**` | Lưu tin, xem danh sách và bỏ lưu việc làm |
-| Recommendations | `/api/recommendations/**` | Gợi ý việc làm thông minh dựa trên CV và cung cấp ngữ cảnh cho LLM |
-| Chatbot | `/api/chatbot/**` | Chat, stream SSE, lịch sử chat, kiểm tra CV (audit), viết lại và đánh giá RAG |
+| Auth | `/api/auth/**` | Registration, email login, and Google Sign-In |
+| Users | `/api/users/**` | User profile lookup and management |
+| Jobs | `/api/jobs/**` | Paginated job listings and job details |
+| Companies | `/api/companies/**` | Company directory, details, and profile completeness filtering |
+| CVs | `/api/cvs/**` | CV CRUD, template listings, and PDF extraction |
+| Applications | `/api/applications/**` | Submit, list, and delete job applications |
+| Saved jobs | `/api/saved-jobs/**` | Save, list, and unsave jobs |
+| Recommendations | `/api/recommendations/**` | CV-based job recommendations and context for the LLM |
+| Chatbot | `/api/chatbot/**` | Chat, SSE streaming, chat history, CV auditing, rewriting, and RAG evaluation |
 
-Sau khi backend khởi chạy, truy cập đường dẫn <http://localhost:8080/swagger-ui.html> để xem tài liệu OpenAPI chi tiết được sinh tự động.
+After starting the backend, visit <http://localhost:8080/swagger-ui.html> for the full generated OpenAPI documentation.
 
 ---
 
-<p align="center">Được phát triển với ❤️ bởi Nhóm JobPilot — UIT IE303 2025–2026</p>
+<p align="center">Developed with ❤️ by the JobPilot Team — UIT IE303 2025–2026</p>
