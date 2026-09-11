@@ -1,5 +1,0 @@
-{
-    "java.configuration.updateBuildConfiguration": "interactive",
-    "java.compile.nullAnalysis.mode": "automatic",
-    "css.customData": [".vscode/css_custom_data.json"]
-}
