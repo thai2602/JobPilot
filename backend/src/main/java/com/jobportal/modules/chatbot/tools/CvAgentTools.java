@@ -17,10 +17,17 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * CV tools for the chatbot. Every tool is scoped to the authenticated user bound in
+ * {@link CvContextHolder#getOwnerUserId()} (from the JWT, never from the prompt or request body):
+ * CVs owned by other users are reported as not found, and anonymous callers get no CV access.
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class CvAgentTools {
+
+    static final String LOGIN_REQUIRED = "[The user is not logged in. Ask them to log in to access their CVs.]";
 
     private final CvService cvService;
     private final UserCvRepository userCvRepository;
@@ -47,15 +54,19 @@ public class CvAgentTools {
     }
 
     // ──────────────────────────────────────────────────────────────────────────
-    // Explicit tools (dùng khi user chỉ định cvId hoặc userId)
+    // Explicit tools (dùng khi user chỉ định cvId)
     // ──────────────────────────────────────────────────────────────────────────
 
-    @Tool("Get all CVs of a specific user by their user ID. Returns basic info including CV IDs.")
-    public String getUserCvs(Long userId) {
-        log.info("Tool called: getUserCvs for userId: {}", userId);
-        List<UserCv> cvs = cvService.getUserCvs(userId);
+    @Tool("Get all CVs of the current logged-in user. Returns basic info including CV IDs.")
+    public String getUserCvs() {
+        Long ownerId = CvContextHolder.getOwnerUserId();
+        if (ownerId == null) {
+            return LOGIN_REQUIRED;
+        }
+        log.info("Tool called: getUserCvs for current userId: {}", ownerId);
+        List<UserCv> cvs = cvService.getUserCvs(ownerId);
         if (cvs == null || cvs.isEmpty()) {
-            return "No CVs found for user ID: " + userId;
+            return "The current user has no CVs yet.";
         }
         StringBuilder sb = new StringBuilder();
         for (UserCv cv : cvs) {
@@ -68,24 +79,30 @@ public class CvAgentTools {
     }
 
     @Transactional(readOnly = true)
-    @Tool("Get detailed information of a specific CV by its CV ID.")
+    @Tool("Get detailed information of one of the current user's CVs by its CV ID.")
     public String getCvDetails(Long cvId) {
         log.info("Tool called: getCvDetails for cvId: {}", cvId);
         return buildCvSnapshot(cvId);
     }
 
     @Transactional
-    @Tool("Update the job title and/or summary of the currently open CV (or a specified CV). " +
+    @Tool("Update the job title and/or summary of the currently open CV (or a specified CV of the current user). " +
           "Pass cvId=null to use the currently open CV.")
     public String updateCvBasicInfo(Long cvId, String newJobTitle, String newSummary) {
+        Long ownerId = CvContextHolder.getOwnerUserId();
+        if (ownerId == null) {
+            return LOGIN_REQUIRED;
+        }
         Long targetId = (cvId != null) ? cvId : CvContextHolder.get();
         if (targetId == null) {
             return "Error: No CV is open and no cvId was provided.";
         }
         log.info("Tool called: updateCvBasicInfo for cvId: {}", targetId);
+        UserCv cv = userCvRepository.findByIdAndUserIdAndIsDeletedFalse(targetId, ownerId).orElse(null);
+        if (cv == null) {
+            return "CV not found for ID: " + targetId;
+        }
         try {
-            UserCv cv = userCvRepository.findById(targetId)
-                    .orElseThrow(() -> new RuntimeException("CV not found"));
             if (newJobTitle != null && !newJobTitle.trim().isEmpty()) cv.setJobTitle(newJobTitle);
             if (newSummary  != null && !newSummary.trim().isEmpty())  cv.setSummary(newSummary);
             userCvRepository.save(cv);
@@ -101,7 +118,11 @@ public class CvAgentTools {
     // ──────────────────────────────────────────────────────────────────────────
 
     private String buildCvSnapshot(Long cvId) {
-        return userCvRepository.findById(cvId).map(cv -> {
+        Long ownerId = CvContextHolder.getOwnerUserId();
+        if (ownerId == null) {
+            return LOGIN_REQUIRED;
+        }
+        return userCvRepository.findByIdAndUserIdAndIsDeletedFalse(cvId, ownerId).map(cv -> {
             StringBuilder sb = new StringBuilder();
             sb.append("=== CV SNAPSHOT (ID: ").append(cvId).append(") ===\n");
             sb.append("Full Name    : ").append(cv.getFullName()).append("\n");

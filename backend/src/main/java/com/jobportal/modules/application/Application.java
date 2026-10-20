@@ -2,6 +2,7 @@ package com.jobportal.modules.application;
 
 import com.jobportal.modules.user.User;
 import com.jobportal.modules.job.Job;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ public class Application {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore // never serialize the owning User (password hash, roles, ...)
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

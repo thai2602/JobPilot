@@ -3,12 +3,10 @@ package com.jobportal.modules.savedjob;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import com.jobportal.modules.user.User;
-import com.jobportal.modules.user.UserRepository;
 import com.jobportal.modules.job.Job;
 import com.jobportal.modules.job.JobRepository;
+import com.jobportal.security.CurrentUserService;
 import java.util.List;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.Authentication;
 
 @RestController
 @RequestMapping("/api/saved-jobs")
@@ -16,33 +14,28 @@ import org.springframework.security.core.Authentication;
 public class SavedJobController {
 
     private final SavedJobRepository savedJobRepository;
-    private final UserRepository userRepository;
     private final JobRepository jobRepository;
+    private final CurrentUserService currentUserService;
 
-    public SavedJobController(SavedJobRepository savedJobRepository, UserRepository userRepository, JobRepository jobRepository) {
+    public SavedJobController(SavedJobRepository savedJobRepository, JobRepository jobRepository,
+                              CurrentUserService currentUserService) {
         this.savedJobRepository = savedJobRepository;
-        this.userRepository = userRepository;
         this.jobRepository = jobRepository;
-    }
-
-    private User getAuthenticatedUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated() || auth.getPrincipal().equals("anonymousUser")) {
-            return null;
-        }
-        return userRepository.findByEmail(auth.getName()).orElse(null);
+        this.currentUserService = currentUserService;
     }
 
     @GetMapping
-    public ResponseEntity<List<SavedJob>> getMySavedJobs() {
-        User user = getAuthenticatedUser();
+    public ResponseEntity<List<SavedJobResponse>> getMySavedJobs() {
+        User user = currentUserService.currentUser().orElse(null);
         if (user == null) return ResponseEntity.status(401).build();
-        return ResponseEntity.ok(savedJobRepository.findByUserIdOrderBySavedAtDesc(user.getId()));
+        return ResponseEntity.ok(savedJobRepository.findByUserIdOrderBySavedAtDesc(user.getId()).stream()
+                .map(SavedJobResponse::from)
+                .toList());
     }
 
     @PostMapping
     public ResponseEntity<?> saveJob(@RequestBody SavedJobRequest req) {
-        User user = getAuthenticatedUser();
+        User user = currentUserService.currentUser().orElse(null);
         if (user == null) return ResponseEntity.status(401).body("Chưa đăng nhập");
         
         if (savedJobRepository.existsByUserIdAndJobId(user.getId(), req.getJobId())) {
@@ -57,12 +50,12 @@ public class SavedJobController {
         savedJob.setJob(job);
         savedJobRepository.save(savedJob);
 
-        return ResponseEntity.ok(savedJob);
+        return ResponseEntity.ok(SavedJobResponse.from(savedJob));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteSavedJob(@PathVariable Long id) {
-        User user = getAuthenticatedUser();
+        User user = currentUserService.currentUser().orElse(null);
         if (user == null) return ResponseEntity.status(401).build();
 
         SavedJob savedJob = savedJobRepository.findById(id).orElse(null);

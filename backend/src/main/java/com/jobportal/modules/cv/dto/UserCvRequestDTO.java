@@ -6,7 +6,6 @@ import java.util.Map;
 
 @Data
 public class UserCvRequestDTO {
-    private Long userId;
     private Long templateId;
     private String cvName;
     private String fullName;

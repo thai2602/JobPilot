@@ -12,6 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -65,15 +67,13 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/companies/**", "/api/jobs/**").permitAll()
                 .requestMatchers("/api/chatbot/**").permitAll()
-                // CV endpoints - explicitly permit all HTTP methods
-                .requestMatchers(HttpMethod.GET,    "/api/cvs", "/api/cvs/**").permitAll()
-                .requestMatchers(HttpMethod.POST,   "/api/cvs", "/api/cvs/**").permitAll()
-                .requestMatchers(HttpMethod.PUT,    "/api/cvs/**").permitAll()
-                .requestMatchers(HttpMethod.DELETE, "/api/cvs/**").permitAll()
-                .requestMatchers("/api/users/by-email").permitAll()
+                // CV templates are public; every other /api/cvs/** endpoint is owner-scoped and needs a JWT
+                .requestMatchers(HttpMethod.GET, "/api/cvs/templates").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/api-docs/**").permitAll()
                 .anyRequest().authenticated()
-            );
+            )
+            // Stateless API: anonymous access to a protected endpoint is 401, not 403
+            .exceptionHandling(ex -> ex.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
