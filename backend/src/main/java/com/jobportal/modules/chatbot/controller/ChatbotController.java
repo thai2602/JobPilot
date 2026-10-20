@@ -5,6 +5,7 @@ import com.jobportal.modules.chatbot.rag.chains.RewriteChain;
 import com.jobportal.modules.chatbot.rag.ContextAwareContentRetriever;
 import com.jobportal.modules.chatbot.service.CvAiService;
 import com.jobportal.modules.chatbot.service.CvContextHolder;
+import com.jobportal.security.CurrentUserService;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.memory.ChatMemory;
@@ -37,6 +38,7 @@ public class ChatbotController {
     private final RewriteChain rewriteChain;
     private final ChatMemoryProvider chatMemoryProvider;
     private final ContextAwareContentRetriever contentRetriever;
+    private final CurrentUserService currentUserService;
     private final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
 
     // ──────────────────────────────────────────────────────────────────────────
@@ -53,10 +55,12 @@ public class ChatbotController {
     @PostMapping("/chat")
     public ResponseEntity<ChatResponse> chat(@RequestBody ChatRequest request) {
         String memoryId = resolveMemoryId(request.getUserId());
+        Long ownerUserId = currentUserService.currentUserId().orElse(null);
         try {
             String reply;
+            // Always bind the JWT user so CV tools can enforce ownership (null = anonymous → no CV access)
+            CvContextHolder.set(request.getActiveCvId(), ownerUserId);
             if (request.getActiveCvId() != null) {
-                CvContextHolder.set(request.getActiveCvId());
                 reply = cvAiService.chatWithCv(memoryId, request.getMessage());
             } else {
                 reply = cvAiService.chat(memoryId, request.getMessage());
@@ -95,12 +99,14 @@ public class ChatbotController {
 
         SseEmitter emitter = new SseEmitter(300_000L); // 5 phút timeout
         String memoryId = resolveMemoryId(request.getUserId());
+        Long ownerUserId = currentUserService.currentUserId().orElse(null);
 
         executor.submit(() -> {
             try {
                 String reply;
+                // Always bind the JWT user so CV tools can enforce ownership (null = anonymous → no CV access)
+                CvContextHolder.set(request.getActiveCvId(), ownerUserId);
                 if (request.getActiveCvId() != null) {
-                    CvContextHolder.set(request.getActiveCvId());
                     reply = cvAiService.chatWithCv(memoryId, request.getMessage());
                 } else {
                     reply = cvAiService.chat(memoryId, request.getMessage());
@@ -220,6 +226,7 @@ public class ChatbotController {
     @PostMapping("/eval")
     public ResponseEntity<EvalResponse> evaluate(@RequestBody ChatRequest request) {
         String memoryId = resolveMemoryId(request.getUserId());
+        Long ownerUserId = currentUserService.currentUserId().orElse(null);
         try {
             // 1. Retrieve RAG contexts
             Query query = Query.from(request.getMessage());
@@ -232,8 +239,9 @@ public class ChatbotController {
 
             // 2. Generate LLM answer
             String answer;
+            // Always bind the JWT user so CV tools can enforce ownership (null = anonymous → no CV access)
+            CvContextHolder.set(request.getActiveCvId(), ownerUserId);
             if (request.getActiveCvId() != null) {
-                CvContextHolder.set(request.getActiveCvId());
                 answer = cvAiService.chatWithCv(memoryId, request.getMessage());
             } else {
                 answer = cvAiService.chat(memoryId, request.getMessage());

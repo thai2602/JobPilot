@@ -2,13 +2,12 @@ package com.jobportal.modules.application;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
+import com.jobportal.modules.cv.UserCvRepository;
 import com.jobportal.modules.user.User;
-import com.jobportal.modules.user.UserRepository;
 import com.jobportal.modules.job.Job;
 import com.jobportal.modules.job.JobRepository;
+import com.jobportal.security.CurrentUserService;
 import java.util.List;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.Authentication;
 
 @RestController
 @RequestMapping("/api/applications")
@@ -16,37 +15,40 @@ import org.springframework.security.core.Authentication;
 public class ApplicationController {
 
     private final ApplicationRepository applicationRepository;
-    private final UserRepository userRepository;
     private final JobRepository jobRepository;
+    private final UserCvRepository userCvRepository;
+    private final CurrentUserService currentUserService;
 
-    public ApplicationController(ApplicationRepository applicationRepository, UserRepository userRepository, JobRepository jobRepository) {
+    public ApplicationController(ApplicationRepository applicationRepository, JobRepository jobRepository,
+                                 UserCvRepository userCvRepository, CurrentUserService currentUserService) {
         this.applicationRepository = applicationRepository;
-        this.userRepository = userRepository;
         this.jobRepository = jobRepository;
-    }
-
-    private User getAuthenticatedUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated() || auth.getPrincipal().equals("anonymousUser")) {
-            return null;
-        }
-        return userRepository.findByEmail(auth.getName()).orElse(null);
+        this.userCvRepository = userCvRepository;
+        this.currentUserService = currentUserService;
     }
 
     @GetMapping
-    public ResponseEntity<List<Application>> getMyApplications() {
-        User user = getAuthenticatedUser();
+    public ResponseEntity<List<ApplicationResponse>> getMyApplications() {
+        User user = currentUserService.currentUser().orElse(null);
         if (user == null) return ResponseEntity.status(401).build();
-        return ResponseEntity.ok(applicationRepository.findByUserIdOrderByAppliedAtDesc(user.getId()));
+        return ResponseEntity.ok(applicationRepository.findByUserIdOrderByAppliedAtDesc(user.getId()).stream()
+                .map(ApplicationResponse::from)
+                .toList());
     }
 
     @PostMapping
     public ResponseEntity<?> applyForJob(@RequestBody ApplicationRequest req) {
-        User user = getAuthenticatedUser();
+        User user = currentUserService.currentUser().orElse(null);
         if (user == null) return ResponseEntity.status(401).body("Chưa đăng nhập");
         
         if (applicationRepository.existsByUserIdAndJobId(user.getId(), req.getJobId())) {
             return ResponseEntity.badRequest().body("Bạn đã ứng tuyển công việc này rồi");
+        }
+
+        // Only allow attaching a CV the caller owns
+        if (req.getCvId() != null
+                && userCvRepository.findByIdAndUserIdAndIsDeletedFalse(req.getCvId(), user.getId()).isEmpty()) {
+            return ResponseEntity.badRequest().body("CV không hợp lệ");
         }
 
         Job job = jobRepository.findById(req.getJobId()).orElse(null);
@@ -59,12 +61,12 @@ public class ApplicationController {
         app.setStatus("PENDING");
         applicationRepository.save(app);
 
-        return ResponseEntity.ok(app);
+        return ResponseEntity.ok(ApplicationResponse.from(app));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteApplication(@PathVariable Long id) {
-        User user = getAuthenticatedUser();
+        User user = currentUserService.currentUser().orElse(null);
         if (user == null) return ResponseEntity.status(401).build();
 
         Application app = applicationRepository.findById(id).orElse(null);

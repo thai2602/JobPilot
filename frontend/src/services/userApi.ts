@@ -1,13 +1,13 @@
 import { apiRequest } from "./httpClient";
 
-export interface UserLookupResult {
+export interface CurrentUserResult {
   userId: number;
   email: string;
 }
 
 export const userApi = {
-  getByEmail(email: string): Promise<UserLookupResult> {
-    return apiRequest<UserLookupResult>(`/api/users/by-email?email=${encodeURIComponent(email)}`);
+  /** The logged-in user, resolved by the backend from the JWT. */
+  getMe(): Promise<CurrentUserResult> {
+    return apiRequest<CurrentUserResult>("/api/users/me");
   },
 };
-

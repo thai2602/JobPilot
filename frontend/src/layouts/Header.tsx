@@ -14,7 +14,6 @@ import {
    type AuthUser,
 } from "../utils/auth";
 import { saveCvsToLocalStorage } from "../utils/cv";
-import { userApi } from "../services/userApi";
 import { cvApi } from "../services/cvApi";
 import { isCvEditorRoute } from "../utils/routes";
 import logoImg from "../assets/logo/Screenshot_2026-05-07_133557-removebg-preview.png";
@@ -91,11 +90,7 @@ export default function Header() {
          return;
       }
 
-      userApi.getByEmail(currentUser.email)
-         .then(({ userId }) => {
-            if (!userId) return;
-            return cvApi.listByUser(userId);
-         })
+      cvApi.listMine()
          .then((cvList) => {
             if (cvList) {
                saveCvsToLocalStorage(cvList);

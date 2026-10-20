@@ -85,9 +85,11 @@ export interface ApiCvTemplate {
   defaultSettings?: Record<string, unknown>;
 }
 
-/** Request contract of backend UserCvRequestDTO (response-only fields are excluded). */
+/**
+ * Request contract of backend UserCvRequestDTO (response-only fields are excluded).
+ * The owner is always the logged-in user from the JWT, so no userId is sent.
+ */
 export interface SaveCvPayload {
-  userId: number;
   templateId?: number;
   cvName: string;
   fullName?: string;
@@ -171,9 +173,15 @@ const normalizeUserCv = (cv: ApiUserCv): ApiUserCv => ({
 });
 
 export const cvApi = {
-  async listByUser(userId: number): Promise<ApiUserCv[]> {
-    const cvs = await apiRequest<ApiUserCv[]>(`/api/cvs/user/${encodeURIComponent(String(userId))}`);
+  /** CVs of the logged-in user (resolved from the JWT by the backend). */
+  async listMine(): Promise<ApiUserCv[]> {
+    const cvs = await apiRequest<ApiUserCv[]>("/api/cvs");
     return cvs.map(normalizeUserCv);
+  },
+
+  async getById(id: number): Promise<ApiUserCv> {
+    const cv = await apiRequest<ApiUserCv>(`/api/cvs/${encodeURIComponent(String(id))}`);
+    return normalizeUserCv(cv);
   },
 
   listTemplates(): Promise<ApiCvTemplate[]> {
