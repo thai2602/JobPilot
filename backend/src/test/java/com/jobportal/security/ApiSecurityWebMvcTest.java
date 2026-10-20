@@ -3,9 +3,14 @@ package com.jobportal.security;
 import com.jobportal.modules.application.Application;
 import com.jobportal.modules.application.ApplicationController;
 import com.jobportal.modules.application.ApplicationRepository;
+import com.jobportal.modules.application.ApplicationService;
 import com.jobportal.modules.cv.CvController;
 import com.jobportal.modules.cv.CvExtractionAgnosticService;
+import com.jobportal.modules.cv.CvMapperImpl;
 import com.jobportal.modules.cv.CvService;
+import com.jobportal.modules.cv.UserCvSkill;
+import com.jobportal.modules.job.JobService;
+import com.jobportal.modules.savedjob.SavedJobService;
 import com.jobportal.modules.cv.CvTemplateRepository;
 import com.jobportal.modules.cv.UserCv;
 import com.jobportal.modules.cv.UserCvRepository;
@@ -52,7 +57,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * authentication, CV ownership (BOLA) and that no password hash is ever serialized.
  */
 @WebMvcTest(controllers = {CvController.class, UserController.class, ApplicationController.class, SavedJobController.class})
-@Import({SecurityConfig.class, CurrentUserService.class, CvService.class})
+@Import({SecurityConfig.class, CurrentUserService.class, CvService.class, CvMapperImpl.class,
+        ApplicationService.class, SavedJobService.class, JobService.class})
 class ApiSecurityWebMvcTest {
 
     private static final long USER_A = 1L;
@@ -222,6 +228,73 @@ class ApiSecurityWebMvcTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"jobId\":100,\"cvId\":" + CV_OF_B + "}"))
                 .andExpect(status().isBadRequest());
+        verify(applicationRepository, never()).save(any());
+    }
+
+    // ── Response DTOs, validation and error bodies ───────────────────────────
+
+    @Test
+    void cvResponseIsDtoWithoutOwnerOrInternalFlags() throws Exception {
+        UserCv cv = UserCv.builder().id(30L).user(userA).cvName("Mine").isDeleted(false).build();
+        cv.addSkill(UserCvSkill.builder().id(1L).skillName("Java").level("Senior").build());
+        when(userCvRepository.findByIdAndUserIdAndIsDeletedFalse(30L, USER_A)).thenReturn(Optional.of(cv));
+
+        mockMvc.perform(get("/api/cvs/30").with(as(USER_A, "a@example.com")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(30))
+                .andExpect(jsonPath("$.cvName").value("Mine"))
+                .andExpect(jsonPath("$.skills[0].skillName").value("Java"))
+                .andExpect(jsonPath("$.skills[0].cv").doesNotExist())
+                .andExpect(jsonPath("$.experiences").isArray())
+                .andExpect(jsonPath("$.user").doesNotExist())
+                .andExpect(jsonPath("$.isDeleted").doesNotExist())
+                .andExpect(content().string(not(containsString(PASSWORD_HASH))));
+    }
+
+    @Test
+    void notFoundCvHasJsonErrorBody() throws Exception {
+        mockMvc.perform(get("/api/cvs/" + CV_OF_B).with(as(USER_A, "a@example.com")))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.message").value("CV not found"));
+    }
+
+    @Test
+    void createCvWithoutNameIsRejectedWithFieldError() throws Exception {
+        mockMvc.perform(post("/api/cvs").with(as(USER_A, "a@example.com"))
+                        .contentType(MediaType.APPLICATION_JSON).content("{\"cvName\":\"  \"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors.cvName").exists());
+        verify(userCvRepository, never()).save(any());
+    }
+
+    @Test
+    void savingJobWithoutJobIdIsRejectedWithFieldError() throws Exception {
+        mockMvc.perform(post("/api/saved-jobs").with(as(USER_A, "a@example.com"))
+                        .contentType(MediaType.APPLICATION_JSON).content("{}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors.jobId").exists());
+        verify(savedJobRepository, never()).save(any());
+    }
+
+    @Test
+    void duplicateSavedJobReturnsMessage() throws Exception {
+        when(savedJobRepository.existsByUserIdAndJobId(USER_A, 100L)).thenReturn(true);
+
+        mockMvc.perform(post("/api/saved-jobs").with(as(USER_A, "a@example.com"))
+                        .contentType(MediaType.APPLICATION_JSON).content("{\"jobId\":100}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Bạn đã lưu công việc này rồi"));
+    }
+
+    @Test
+    void applyingToUnknownJobIs404() throws Exception {
+        when(jobRepository.findById(999L)).thenReturn(Optional.empty());
+
+        mockMvc.perform(post("/api/applications").with(as(USER_A, "a@example.com"))
+                        .contentType(MediaType.APPLICATION_JSON).content("{\"jobId\":999}"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").isNotEmpty());
         verify(applicationRepository, never()).save(any());
     }
 

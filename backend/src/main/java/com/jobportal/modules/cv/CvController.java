@@ -1,10 +1,15 @@
 package com.jobportal.modules.cv;
 
+import com.jobportal.modules.cv.dto.CvTemplateResponse;
 import com.jobportal.modules.cv.dto.UserCvRequestDTO;
+import com.jobportal.modules.cv.dto.UserCvResponse;
 import com.jobportal.security.CurrentUserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -23,30 +28,28 @@ public class CvController {
     private final CurrentUserService currentUserService;
 
     @GetMapping
-    public ResponseEntity<List<UserCv>> getMyCvs() {
-        return ResponseEntity.ok(cvService.getUserCvs(currentUserService.requireUserId()));
+    public List<UserCvResponse> getMyCvs() {
+        return cvService.listMyCvs(currentUserService.requireUserId());
     }
 
     @GetMapping("/templates")
-    public ResponseEntity<List<CvTemplate>> getAllTemplates() {
-        return ResponseEntity.ok(cvService.getAllTemplates());
+    public List<CvTemplateResponse> getAllTemplates() {
+        return cvService.getAllTemplates();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserCv> getCv(@PathVariable Long id) {
-        return ResponseEntity.ok(cvService.getOwnedCv(id, currentUserService.requireUserId()));
+    public UserCvResponse getCv(@PathVariable Long id) {
+        return cvService.getOwnedCv(id, currentUserService.requireUserId());
     }
 
     @PostMapping
-    public ResponseEntity<UserCv> createCv(@RequestBody UserCvRequestDTO requestDTO) {
-        UserCv savedCv = cvService.createCv(currentUserService.requireUserId(), requestDTO);
-        return ResponseEntity.ok(savedCv);
+    public UserCvResponse createCv(@Valid @RequestBody UserCvRequestDTO requestDTO) {
+        return cvService.createCv(currentUserService.requireUserId(), requestDTO);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserCv> updateCv(@PathVariable Long id, @RequestBody UserCvRequestDTO requestDTO) {
-        UserCv updatedCv = cvService.updateCv(id, currentUserService.requireUserId(), requestDTO);
-        return ResponseEntity.ok(updatedCv);
+    public UserCvResponse updateCv(@PathVariable Long id, @Valid @RequestBody UserCvRequestDTO requestDTO) {
+        return cvService.updateCv(id, currentUserService.requireUserId(), requestDTO);
     }
 
     @DeleteMapping("/{id}")
@@ -55,17 +58,8 @@ public class CvController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping(value = "/extract", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> extractCvData(@RequestParam("file") org.springframework.web.multipart.MultipartFile file) {
-        try {
-            UserCvRequestDTO extractedData = cvExtractionService.extractCvData(file);
-            return ResponseEntity.ok(extractedData);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().body("Lỗi hệ thống khi trích xuất CV: " + e.getMessage());
-        }
+    @PostMapping(value = "/extract", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public UserCvRequestDTO extractCvData(@RequestParam("file") MultipartFile file) {
+        return cvExtractionService.extractCvData(file);
     }
 }

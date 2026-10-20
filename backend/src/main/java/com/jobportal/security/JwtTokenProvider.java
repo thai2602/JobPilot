@@ -3,6 +3,7 @@ package com.jobportal.security;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -11,6 +12,7 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
+@Slf4j
 @Component
 public class JwtTokenProvider {
 
@@ -65,7 +67,7 @@ public class JwtTokenProvider {
                     .parseSignedClaims(authToken);
             return true;
         } catch (JwtException | IllegalArgumentException ex) {
-            System.err.println("Invalid JWT signature/token: " + ex.getMessage());
+            log.debug("Invalid JWT: {}", ex.getMessage());
         }
         return false;
     }

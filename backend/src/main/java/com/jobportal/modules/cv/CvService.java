@@ -1,16 +1,23 @@
 package com.jobportal.modules.cv;
 
+import com.jobportal.common.exception.BadRequestException;
+import com.jobportal.common.exception.NotFoundException;
+import com.jobportal.common.exception.UnauthorizedException;
+import com.jobportal.modules.cv.dto.CvTemplateResponse;
 import com.jobportal.modules.cv.dto.UserCvRequestDTO;
+import com.jobportal.modules.cv.dto.UserCvResponse;
 import com.jobportal.modules.user.User;
 import com.jobportal.modules.user.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
+/**
+ * CV use cases. Every owner-scoped method takes the JWT user id and reports CVs of other users as 404.
+ * Public methods return response DTOs, mapped inside the transaction so lazy collections are loaded.
+ */
 @Service
 @RequiredArgsConstructor
 public class CvService {
@@ -18,34 +25,41 @@ public class CvService {
     private final UserCvRepository userCvRepository;
     private final CvTemplateRepository cvTemplateRepository;
     private final UserRepository userRepository;
+    private final CvMapper cvMapper;
 
+    /** Entities for in-process callers (AI tools); controllers use {@link #listMyCvs}. */
     @Transactional(readOnly = true)
     public List<UserCv> getUserCvs(Long userId) {
         return userCvRepository.findByUserIdAndIsDeletedFalse(userId);
     }
 
     @Transactional(readOnly = true)
-    public List<CvTemplate> getAllTemplates() {
-        return cvTemplateRepository.findAll();
+    public List<UserCvResponse> listMyCvs(Long userId) {
+        return cvMapper.toResponses(getUserCvs(userId));
+    }
+
+    @Transactional(readOnly = true)
+    public List<CvTemplateResponse> getAllTemplates() {
+        return cvMapper.toTemplateResponses(cvTemplateRepository.findAll());
     }
 
     /** Returns the CV only if it belongs to {@code ownerId}; otherwise 404 (never reveal other users' CVs). */
     @Transactional(readOnly = true)
-    public UserCv getOwnedCv(Long id, Long ownerId) {
-        return findOwnedCv(id, ownerId);
+    public UserCvResponse getOwnedCv(Long id, Long ownerId) {
+        return cvMapper.toResponse(findOwnedCv(id, ownerId));
     }
 
     @Transactional
-    public UserCv createCv(Long ownerId, UserCvRequestDTO dto) {
+    public UserCvResponse createCv(Long ownerId, UserCvRequestDTO dto) {
         UserCv cv = new UserCv();
         User user = userRepository.findById(ownerId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+                .orElseThrow(() -> new UnauthorizedException("Bạn cần đăng nhập để tiếp tục"));
         cv.setUser(user);
-        return applyDtoAndSave(cv, dto);
+        return cvMapper.toResponse(applyDtoAndSave(cv, dto));
     }
 
     @Transactional
-    public UserCv updateCv(Long id, Long ownerId, UserCvRequestDTO dto) {
+    public UserCvResponse updateCv(Long id, Long ownerId, UserCvRequestDTO dto) {
         UserCv cv = findOwnedCv(id, ownerId);
         // Clear existing elements to replace with new data from DTO
         cv.getSkills().clear();
@@ -54,18 +68,18 @@ public class CvService {
         cv.getEducations().clear();
         cv.getAttachments().clear();
         cv.getSocials().clear();
-        return applyDtoAndSave(cv, dto);
+        return cvMapper.toResponse(applyDtoAndSave(cv, dto));
     }
 
     private UserCv findOwnedCv(Long id, Long ownerId) {
         return userCvRepository.findByIdAndUserIdAndIsDeletedFalse(id, ownerId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "CV not found"));
+                .orElseThrow(() -> new NotFoundException("CV not found"));
     }
 
     private UserCv applyDtoAndSave(UserCv cv, UserCvRequestDTO dto) {
         if (dto.getTemplateId() != null) {
             CvTemplate template = cvTemplateRepository.findById(dto.getTemplateId())
-                    .orElseThrow(() -> new RuntimeException("Template not found"));
+                    .orElseThrow(() -> new BadRequestException("Template không tồn tại"));
             cv.setTemplate(template);
         }
 
