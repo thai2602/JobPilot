@@ -109,6 +109,10 @@ public class AuthController {
         if (request.getIdToken() == null || request.getIdToken().isBlank()) {
             return ResponseEntity.badRequest().body("Thiếu Google idToken");
         }
+        // Không có client ID thì không kiểm tra được aud: token cấp cho app khác cũng sẽ lọt qua
+        if (googleClientId == null || googleClientId.isBlank()) {
+            return ResponseEntity.status(503).body("Đăng nhập Google chưa được cấu hình");
+        }
 
         try {
             System.out.println("Đang xác thực Google token...");
@@ -136,8 +140,8 @@ public class AuthController {
                 return ResponseEntity.status(401).body("Không xác minh được email Google");
             }
 
-            // Kiểm tra Client ID nếu có cấu hình
-            if (googleClientId != null && !googleClientId.isBlank() && !googleClientId.equals(aud)) {
+            // Token phải được cấp cho chính client ID của JobPilot
+            if (!googleClientId.equals(aud)) {
                 System.err.println("Cảnh báo: Google Client ID không khớp! Cấu hình: " + googleClientId + ", Thực tế: " + aud);
                 return ResponseEntity.status(401).body("Google client id không khớp");
             }

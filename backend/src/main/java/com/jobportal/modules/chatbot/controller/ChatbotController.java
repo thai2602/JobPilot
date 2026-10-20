@@ -1,5 +1,6 @@
 package com.jobportal.modules.chatbot.controller;
 
+import com.jobportal.modules.chatbot.config.ChatbotRateLimitProperties;
 import com.jobportal.modules.chatbot.rag.chains.AuditChain;
 import com.jobportal.modules.chatbot.rag.chains.RewriteChain;
 import com.jobportal.modules.chatbot.rag.ContextAwareContentRetriever;
@@ -41,6 +42,7 @@ public class ChatbotController {
     private final ChatMemoryProvider chatMemoryProvider;
     private final ContextAwareContentRetriever contentRetriever;
     private final CurrentUserService currentUserService;
+    private final ChatbotRateLimitProperties limits;
     private final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
 
     // ──────────────────────────────────────────────────────────────────────────
@@ -56,6 +58,10 @@ public class ChatbotController {
      */
     @PostMapping("/chat")
     public ResponseEntity<ChatResponse> chat(@RequestBody ChatRequest request) {
+        String invalid = validateMessage(request.getMessage());
+        if (invalid != null) {
+            return ResponseEntity.badRequest().body(new ChatResponse(invalid));
+        }
         String memoryId = resolveMemoryId(request.getConversationId());
         Long ownerUserId = currentUserService.currentUserId().orElse(null);
         try {
@@ -99,6 +105,17 @@ public class ChatbotController {
     public SseEmitter streamChat(@RequestBody ChatRequest request) {
 
         SseEmitter emitter = new SseEmitter(300_000L); // 5 phút timeout
+        String invalid = validateMessage(request.getMessage());
+        if (invalid != null) {
+            // Frontend đọc lỗi qua event "error" của stream
+            try {
+                emitter.send(SseEmitter.event().name("error").data(invalid));
+                emitter.complete();
+            } catch (IOException e) {
+                emitter.completeWithError(e);
+            }
+            return emitter;
+        }
         String memoryId = resolveMemoryId(request.getConversationId());
         Long ownerUserId = currentUserService.currentUserId().orElse(null);
 
@@ -203,6 +220,10 @@ public class ChatbotController {
         if (request.getCvContent() == null || request.getCvContent().isBlank()) {
             return ResponseEntity.badRequest().body(new ChatResponse("cvContent không được để trống."));
         }
+        if (request.getCvContent().length() > limits.getMaxDocumentLength()) {
+            return ResponseEntity.badRequest().body(new ChatResponse(
+                    "cvContent quá dài (tối đa " + limits.getMaxDocumentLength() + " ký tự)."));
+        }
         try {
             return ResponseEntity.ok(new ChatResponse(auditChain.executeAudit(request.getCvContent())));
         } catch (Exception e) {
@@ -215,6 +236,10 @@ public class ChatbotController {
         if (request.getBulletPoints() == null || request.getBulletPoints().isBlank()) {
             return ResponseEntity.badRequest().body(new ChatResponse("bulletPoints không được để trống."));
         }
+        if (request.getBulletPoints().length() > limits.getMaxDocumentLength()) {
+            return ResponseEntity.badRequest().body(new ChatResponse(
+                    "bulletPoints quá dài (tối đa " + limits.getMaxDocumentLength() + " ký tự)."));
+        }
         try {
             return ResponseEntity.ok(new ChatResponse(rewriteChain.executeRewrite(request.getBulletPoints())));
         } catch (Exception e) {
@@ -224,6 +249,9 @@ public class ChatbotController {
 
     @PostMapping("/eval")
     public ResponseEntity<EvalResponse> evaluate(@RequestBody ChatRequest request) {
+        if (validateMessage(request.getMessage()) != null) {
+            return ResponseEntity.badRequest().build();
+        }
         String memoryId = resolveMemoryId(request.getConversationId());
         Long ownerUserId = currentUserService.currentUserId().orElse(null);
         try {
@@ -275,6 +303,17 @@ public class ChatbotController {
         return currentUserService.currentUserId()
                 .map(id -> conversation == null ? userMemoryId(id) : userMemoryId(id) + ":" + conversation)
                 .orElseGet(() -> "anon-" + (conversation != null ? conversation : UUID.randomUUID()));
+    }
+
+    /** @return thông báo lỗi nếu tin nhắn rỗng hoặc quá dài, null nếu hợp lệ. */
+    private String validateMessage(String message) {
+        if (message == null || message.isBlank()) {
+            return "message không được để trống.";
+        }
+        if (message.length() > limits.getMaxMessageLength()) {
+            return "Tin nhắn quá dài (tối đa " + limits.getMaxMessageLength() + " ký tự).";
+        }
+        return null;
     }
 
     private static String userMemoryId(Long userId) {

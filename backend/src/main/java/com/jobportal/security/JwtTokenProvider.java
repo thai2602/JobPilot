@@ -2,6 +2,7 @@ package com.jobportal.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,14 @@ public class JwtTokenProvider {
 
     @Value("${jwt.expiration}")
     private int jwtExpirationMs;
+
+    /** Dừng lúc khởi động thay vì lỗi ở lần đăng nhập đầu tiên khi secret quá ngắn cho HS256. */
+    @PostConstruct
+    void validateSecret() {
+        if (jwtSecret == null || jwtSecret.getBytes(StandardCharsets.UTF_8).length < 32) {
+            throw new IllegalStateException("JWT_SECRET_KEY phải dài ít nhất 32 byte (256 bit)");
+        }
+    }
 
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
