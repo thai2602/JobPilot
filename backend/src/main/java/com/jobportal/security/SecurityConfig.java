@@ -66,6 +66,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/companies/**", "/api/jobs/**").permitAll()
+                // Chat history is per-user; the rest of the chatbot also serves anonymous visitors
+                .requestMatchers("/api/chatbot/history").authenticated()
                 .requestMatchers("/api/chatbot/**").permitAll()
                 // CV templates are public; every other /api/cvs/** endpoint is owner-scoped and needs a JWT
                 .requestMatchers(HttpMethod.GET, "/api/cvs/templates").permitAll()

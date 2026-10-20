@@ -8,8 +8,44 @@ import {
 
 export interface ChatRequest {
   message: string;
-  userId?: string;
+  /**
+   * Optional side conversation (e.g. CV scoring). The backend keys memory by the JWT user;
+   * anonymous visitors are told apart by a random per-browser id added in buildChatRequest.
+   */
+  conversationId?: string;
   activeCvId?: number;
+}
+
+const ANON_CHAT_ID_KEY = "jobpilot.anonChatId";
+
+/** Random id that keeps an anonymous visitor's chat memory for this browser tab session. */
+function getAnonymousChatId(): string {
+  const fresh = () =>
+    typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? crypto.randomUUID()
+      : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+  try {
+    let id = sessionStorage.getItem(ANON_CHAT_ID_KEY);
+    if (!id) {
+      id = fresh();
+      sessionStorage.setItem(ANON_CHAT_ID_KEY, id);
+    }
+    return id;
+  } catch {
+    return fresh();
+  }
+}
+
+function buildChatRequest(message: string, conversationId?: string, activeCvId?: number): ChatRequest {
+  const body: ChatRequest = { message };
+  if (getAccessToken()) {
+    if (conversationId) body.conversationId = conversationId;
+  } else {
+    const anonId = getAnonymousChatId();
+    body.conversationId = conversationId ? `${anonId}:${conversationId}` : anonId;
+  }
+  if (activeCvId !== undefined) body.activeCvId = activeCvId;
+  return body;
 }
 
 export interface ChatResponse {
@@ -28,31 +64,24 @@ export interface ChatEvalResponse {
 
 /** Blocking POST — fallback khi SSE không khả dụng */
 export const chatApi = {
-  sendMessage: async (message: string, userId?: string, activeCvId?: number): Promise<string> => {
-    const body: ChatRequest = { message };
-    if (userId) body.userId = userId;
-    if (activeCvId !== undefined) body.activeCvId = activeCvId;
-
+  sendMessage: async (message: string, conversationId?: string, activeCvId?: number): Promise<string> => {
     const data = await apiRequest<ChatResponse>("/api/chatbot/chat", {
       method: 'POST',
-      json: body,
+      json: buildChatRequest(message, conversationId, activeCvId),
     });
     return data.reply;
   },
 
-  getHistory: (userId?: string): Promise<ChatHistoryMessage[]> =>
-    apiRequest<ChatHistoryMessage[]>(
-      `/api/chatbot/history${userId ? `?userId=${encodeURIComponent(userId)}` : ""}`,
-    ),
+  /** History of the logged-in user's main conversation (requires login). */
+  getHistory: (): Promise<ChatHistoryMessage[]> =>
+    apiRequest<ChatHistoryMessage[]>("/api/chatbot/history"),
 
-  clearHistory: async (userId?: string): Promise<void> => {
-    await apiRequest<void>(
-      `/api/chatbot/history${userId ? `?userId=${encodeURIComponent(userId)}` : ""}`,
-      {
+  /** Clears the logged-in user's main conversation (requires login). */
+  clearHistory: async (): Promise<void> => {
+    await apiRequest<void>("/api/chatbot/history", {
       method: "DELETE",
       responseType: "void",
-      },
-    );
+    });
   },
 
   auditCv: async (cvContent: string): Promise<string> => {
@@ -71,10 +100,10 @@ export const chatApi = {
     return data.reply;
   },
 
-  evaluate: (message: string, userId?: string, activeCvId?: number): Promise<ChatEvalResponse> =>
+  evaluate: (message: string, conversationId?: string, activeCvId?: number): Promise<ChatEvalResponse> =>
     apiRequest<ChatEvalResponse>("/api/chatbot/eval", {
       method: "POST",
-      json: { message, userId, activeCvId },
+      json: buildChatRequest(message, conversationId, activeCvId),
     }),
 };
 
@@ -85,7 +114,7 @@ export const chatApi = {
  * @param onToken   Callback mỗi khi nhận được token mới
  * @param onDone    Callback khi stream hoàn thành
  * @param onError   Callback khi có lỗi
- * @param userId    Memory ID phân tách per-user
+ * @param conversationId  Hội thoại phụ (vd. chấm điểm CV); bỏ trống = hội thoại chính của user
  * @param activeCvId  CV đang mở — backend sẽ inject vào context AI
  * @returns Hàm cleanup để hủy request/đóng stream
  */
@@ -94,13 +123,11 @@ export function streamChat(
   onToken: (token: string) => void,
   onDone: () => void,
   onError: (err: string) => void,
-  userId?: string,
+  conversationId?: string,
   activeCvId?: number,
 ): () => void {
   const abortController = new AbortController();
-  const body: ChatRequest = { message };
-  if (userId) body.userId = userId;
-  if (activeCvId !== undefined) body.activeCvId = activeCvId;
+  const body = buildChatRequest(message, conversationId, activeCvId);
 
   const token = getAccessToken();
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };

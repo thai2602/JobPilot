@@ -47,8 +47,6 @@ export default function ChatbotPage() {
   const inputRef   = useRef<HTMLTextAreaElement>(null);
   const cleanupRef = useRef<(() => void) | null>(null);
 
-  const userId = currentUser?.email as string | undefined;
-
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -107,7 +105,6 @@ export default function ChatbotPage() {
             setIsLoading(false);
             cleanupRef.current = null;
           },
-          userId
         );
 
         cleanupRef.current = cleanup;
@@ -116,7 +113,7 @@ export default function ChatbotPage() {
         setIsLoading(false);
       }
     },
-    [isLoading, userId]
+    [isLoading]
   );
 
   const clearHistory = async () => {
@@ -125,7 +122,7 @@ export default function ChatbotPage() {
     }
     setMessages([]);
     setError(null);
-    await chatApi.clearHistory(userId).catch(() => {});
+    await chatApi.clearHistory().catch(() => {});
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {

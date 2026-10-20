@@ -23,8 +23,10 @@ import dev.langchain4j.data.segment.TextSegment;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -47,14 +49,14 @@ public class ChatbotController {
 
     /**
      * POST /api/chatbot/chat
-     * Body: { "message": "...", "userId": "42", "activeCvId": 7 }
+     * Body: { "message": "...", "conversationId": "...", "activeCvId": 7 }
      *
-     * - userId  → phân tách bộ nhớ hội thoại per-user
+     * - Bộ nhớ hội thoại lấy theo user trong JWT (xem resolveMemoryId), không tin userId từ client
      * - activeCvId → inject CV đang mở vào ThreadLocal để AI tự đọc
      */
     @PostMapping("/chat")
     public ResponseEntity<ChatResponse> chat(@RequestBody ChatRequest request) {
-        String memoryId = resolveMemoryId(request.getUserId());
+        String memoryId = resolveMemoryId(request.getConversationId());
         Long ownerUserId = currentUserService.currentUserId().orElse(null);
         try {
             String reply;
@@ -80,10 +82,9 @@ public class ChatbotController {
     // ──────────────────────────────────────────────────────────────────────────
 
     /**
-     * GET /api/chatbot/stream?userId=42&activeCvId=7&message=...
+     * POST /api/chatbot/stream  (body giống /chat)
      *
-     * Trả về text/event-stream.  Frontend lắng nghe bằng EventSource:
-     *   const es = new EventSource('/api/chatbot/stream?userId=42&message=...');
+     * Trả về text/event-stream.  Frontend đọc stream (fetch) với các event:
      *   es.addEventListener('token', e => append(e.data));
      *   es.addEventListener('done',  e => es.close());
      *   es.addEventListener('error', e => showError(e.data));
@@ -98,7 +99,7 @@ public class ChatbotController {
     public SseEmitter streamChat(@RequestBody ChatRequest request) {
 
         SseEmitter emitter = new SseEmitter(300_000L); // 5 phút timeout
-        String memoryId = resolveMemoryId(request.getUserId());
+        String memoryId = resolveMemoryId(request.getConversationId());
         Long ownerUserId = currentUserService.currentUserId().orElse(null);
 
         executor.submit(() -> {
@@ -147,14 +148,13 @@ public class ChatbotController {
     // ──────────────────────────────────────────────────────────────────────────
 
     /**
-     * GET /api/chatbot/history?userId=42
-     * Trả về lịch sử hội thoại của user (tối đa 20 messages theo MessageWindowChatMemory).
+     * GET /api/chatbot/history  (cần JWT)
+     * Trả về lịch sử hội thoại chính của user đang đăng nhập (tối đa 20 messages theo MessageWindowChatMemory).
      */
     @GetMapping("/history")
-    public ResponseEntity<List<HistoryMessage>> getHistory(
-            @RequestParam(required = false) String userId) {
+    public ResponseEntity<List<HistoryMessage>> getHistory() {
 
-        String memoryId = resolveMemoryId(userId);
+        String memoryId = userMemoryId(currentUserService.requireUserId());
         try {
             // Lấy memory của user — ChatMemoryProvider tạo mới nếu chưa tồn tại
             ChatMemory memory = chatMemoryProvider.get(memoryId);
@@ -177,14 +177,13 @@ public class ChatbotController {
     }
 
     /**
-     * DELETE /api/chatbot/history?userId=42
-     * Xoá lịch sử hội thoại của user.
+     * DELETE /api/chatbot/history  (cần JWT)
+     * Xoá lịch sử hội thoại chính của user đang đăng nhập.
      */
     @DeleteMapping("/history")
-    public ResponseEntity<Void> clearHistory(
-            @RequestParam(required = false) String userId) {
+    public ResponseEntity<Void> clearHistory() {
 
-        String memoryId = resolveMemoryId(userId);
+        String memoryId = userMemoryId(currentUserService.requireUserId());
         try {
             chatMemoryProvider.get(memoryId).clear();
             log.info("Cleared chat history for memoryId={}", memoryId);
@@ -225,7 +224,7 @@ public class ChatbotController {
 
     @PostMapping("/eval")
     public ResponseEntity<EvalResponse> evaluate(@RequestBody ChatRequest request) {
-        String memoryId = resolveMemoryId(request.getUserId());
+        String memoryId = resolveMemoryId(request.getConversationId());
         Long ownerUserId = currentUserService.currentUserId().orElse(null);
         try {
             // 1. Retrieve RAG contexts
@@ -260,15 +259,36 @@ public class ChatbotController {
     // Helpers & DTOs
     // ──────────────────────────────────────────────────────────────────────────
 
-    private String resolveMemoryId(String userId) {
-        return (userId != null && !userId.isBlank()) ? userId : "anonymous";
+    /** Client-chosen conversation ids are opaque tokens; anything else is dropped. */
+    private static final Pattern CONVERSATION_ID = Pattern.compile("[A-Za-z0-9_:.-]{1,128}");
+
+    /**
+     * Memory id comes from the JWT, never from a client-sent userId:
+     * - authenticated → "user-<id>" (or "user-<id>:<conversationId>" for side conversations such as CV scoring)
+     * - anonymous     → "anon-<conversationId>", where the client sends a random per-browser id;
+     *                   without a usable id the request gets a throwaway memory.
+     * The "user-"/"anon-" prefixes keep the two namespaces from colliding.
+     */
+    private String resolveMemoryId(String conversationId) {
+        String conversation = (conversationId != null && CONVERSATION_ID.matcher(conversationId).matches())
+                ? conversationId : null;
+        return currentUserService.currentUserId()
+                .map(id -> conversation == null ? userMemoryId(id) : userMemoryId(id) + ":" + conversation)
+                .orElseGet(() -> "anon-" + (conversation != null ? conversation : UUID.randomUUID()));
+    }
+
+    private static String userMemoryId(Long userId) {
+        return "user-" + userId;
     }
 
     @Data
     public static class ChatRequest {
         private String message;
-        /** ID người dùng để phân tách bộ nhớ. Nếu null → dùng "anonymous" */
-        private String userId;
+        /**
+         * Optional conversation id. Logged-in users: selects a side conversation inside their own memory.
+         * Anonymous users: a random per-browser id. A client-sent userId is ignored.
+         */
+        private String conversationId;
         /** CV ID đang được mở trong editor — auto-inject vào context AI */
         private Long activeCvId;
     }

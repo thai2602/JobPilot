@@ -41,8 +41,6 @@ export default function FloatingChatbot() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const cleanupRef = useRef<(() => void) | null>(null);
 
-  const userId = authUser?.email;
-
   useEffect(() => {
     setAuthUser(readAuthUser());
     return subscribeAuthUserChange((user) => {
@@ -141,7 +139,6 @@ export default function FloatingChatbot() {
             setIsLoading(false);
             cleanupRef.current = null;
           },
-          userId
         );
 
         cleanupRef.current = cleanup;
@@ -150,14 +147,14 @@ export default function FloatingChatbot() {
         setIsLoading(false);
       }
     },
-    [isLoading, userId]
+    [isLoading]
   );
 
   const clearHistory = async () => {
     cleanupRef.current?.();
     setMessages([]);
     setError(null);
-    await chatApi.clearHistory(userId).catch(() => { });
+    await chatApi.clearHistory().catch(() => { });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
