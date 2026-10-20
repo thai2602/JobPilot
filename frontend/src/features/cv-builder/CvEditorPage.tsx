@@ -8,7 +8,6 @@ import { readAuthUser } from "../../utils/auth";
 import { saveCvsToLocalStorage } from "../../utils/cv";
 import { streamChat } from "../../services/chatbotApi";
 import { cvApi, type ApiUserCv, type SaveCvPayload } from "../../services/cvApi";
-import { userApi } from "../../services/userApi";
 import { ApiError } from "../../services/httpClient";
 import CvEditorShell from "./CvEditorShell";
 import { Plus, Trash2, Upload, FileText, Bot, Eye, EyeOff, User, Briefcase, GraduationCap, Code, FolderGit2, Save, Palette, Mail, Phone, MapPin, ChevronDown, Sparkles, RefreshCw, Linkedin, Github, Globe, ExternalLink } from "lucide-react";
@@ -221,8 +220,7 @@ function CvEditorContent() {
     const currentUser = readAuthUser();
     if (!currentUser?.email) return;
     try {
-      const { userId } = await userApi.getByEmail(currentUser.email);
-      const cvs = await cvApi.listByUser(userId);
+      const cvs = await cvApi.listMine();
       const sorted = [...cvs].sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
       setSavedCvs(sorted);
       saveCvsToLocalStorage(sorted);
@@ -472,10 +470,7 @@ function CvEditorContent() {
     const isUpdate = !!selectedCvId; // PUT nếu đang chỉnh CV có sẵn, POST nếu tạo mới
 
     try {
-      const { userId } = await userApi.getByEmail(currentUser.email);
-
       const cvPayload: SaveCvPayload = {
-        userId,
         cvName: cvData.fullName ? cvData.fullName + ' - CV' : 'CV của tôi',
         fullName: cvData.fullName, jobTitle: cvData.jobTitle,
         email: cvData.email, phone: cvData.phone,

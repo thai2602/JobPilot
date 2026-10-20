@@ -4,8 +4,10 @@ import com.jobportal.modules.cv.dto.UserCvRequestDTO;
 import com.jobportal.modules.user.User;
 import com.jobportal.modules.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -27,26 +29,40 @@ public class CvService {
         return cvTemplateRepository.findAll();
     }
 
-    @Transactional
-    public UserCv createOrUpdateCv(Long id, UserCvRequestDTO dto) {
-        UserCv cv;
-        if (id != null) {
-            cv = userCvRepository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("CV not found"));
-            // Clear existing elements to replace with new data from DTO
-            cv.getSkills().clear();
-            cv.getExperiences().clear();
-            cv.getProjects().clear();
-            cv.getEducations().clear();
-            cv.getAttachments().clear();
-            cv.getSocials().clear();
-        } else {
-            cv = new UserCv();
-            User user = userRepository.findById(dto.getUserId())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-            cv.setUser(user);
-        }
+    /** Returns the CV only if it belongs to {@code ownerId}; otherwise 404 (never reveal other users' CVs). */
+    @Transactional(readOnly = true)
+    public UserCv getOwnedCv(Long id, Long ownerId) {
+        return findOwnedCv(id, ownerId);
+    }
 
+    @Transactional
+    public UserCv createCv(Long ownerId, UserCvRequestDTO dto) {
+        UserCv cv = new UserCv();
+        User user = userRepository.findById(ownerId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+        cv.setUser(user);
+        return applyDtoAndSave(cv, dto);
+    }
+
+    @Transactional
+    public UserCv updateCv(Long id, Long ownerId, UserCvRequestDTO dto) {
+        UserCv cv = findOwnedCv(id, ownerId);
+        // Clear existing elements to replace with new data from DTO
+        cv.getSkills().clear();
+        cv.getExperiences().clear();
+        cv.getProjects().clear();
+        cv.getEducations().clear();
+        cv.getAttachments().clear();
+        cv.getSocials().clear();
+        return applyDtoAndSave(cv, dto);
+    }
+
+    private UserCv findOwnedCv(Long id, Long ownerId) {
+        return userCvRepository.findByIdAndUserIdAndIsDeletedFalse(id, ownerId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "CV not found"));
+    }
+
+    private UserCv applyDtoAndSave(UserCv cv, UserCvRequestDTO dto) {
         if (dto.getTemplateId() != null) {
             CvTemplate template = cvTemplateRepository.findById(dto.getTemplateId())
                     .orElseThrow(() -> new RuntimeException("Template not found"));
@@ -144,9 +160,8 @@ public class CvService {
     }
     
     @Transactional
-    public void deleteCv(Long id) {
-        UserCv cv = userCvRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("CV not found"));
+    public void deleteCv(Long id, Long ownerId) {
+        UserCv cv = findOwnedCv(id, ownerId);
         cv.setIsDeleted(true);
         userCvRepository.save(cv);
     }

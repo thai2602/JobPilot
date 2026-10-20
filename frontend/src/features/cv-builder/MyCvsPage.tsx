@@ -6,21 +6,11 @@ import { useEffect, useState } from "react";
 import { readAuthUser } from "../../utils/auth";
 import { saveCvsToLocalStorage } from "../../utils/cv";
 import { cvApi, type ApiUserCv } from "../../services/cvApi";
-import { userApi } from "../../services/userApi";
 
 type UserCv = ApiUserCv;
 
-async function fetchUserId(email: string): Promise<number | null> {
-  try {
-    const data = await userApi.getByEmail(email);
-    return data.userId ?? null;
-  } catch {
-    return null;
-  }
-}
-
-async function fetchUserCvs(userId: number): Promise<UserCv[]> {
-  return cvApi.listByUser(userId);
+async function fetchUserCvs(): Promise<UserCv[]> {
+  return cvApi.listMine();
 }
 
 async function deleteCvById(id: number): Promise<void> {
@@ -50,11 +40,7 @@ export default function MyCvsPage() {
     setLoading(true);
     setError("");
 
-    fetchUserId(currentUser.email)
-      .then((userId) => {
-        if (!userId) throw new Error("Không tìm thấy tài khoản. Vui lòng đăng nhập lại.");
-        return fetchUserCvs(userId);
-      })
+    fetchUserCvs()
       .then((data) => {
         setCvs(data);
         saveCvsToLocalStorage(data);
