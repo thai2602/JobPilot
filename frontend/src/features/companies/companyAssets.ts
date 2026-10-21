@@ -127,3 +127,20 @@ export const companyBannerItems = [
       description: "Ứng tuyển vào những vị trí backend, DevOps và cloud trong môi trường công nghệ cao.",
    },
 ];
+
+type ImageSource = string | { src: string };
+
+/** Đường dẫn ảnh dùng được cho thẻ <img>, kể cả khi là ảnh import tĩnh của Next. */
+export const imageSrc = (image?: ImageSource | null): string =>
+   !image ? "" : typeof image === "string" ? image : image.src;
+
+const nameHash = (name: string): number =>
+   Array.from(name).reduce((total, char) => total + char.charCodeAt(0), 0);
+
+/** Logo minh hoạ cố định theo tên công ty, dùng khi API không có logo. */
+export const fallbackCompanyLogo = (name: string): string =>
+   imageSrc(companyAvatars[nameHash(name) % companyAvatars.length]);
+
+/** Ảnh môi trường làm việc minh hoạ cố định theo tên công ty. */
+export const fallbackCompanyImage = (name: string): string =>
+   imageSrc(companyImages[nameHash(name) % companyImages.length]);

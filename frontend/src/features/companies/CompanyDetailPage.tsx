@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
 import { Building2, MapPin, Star, Users, Wallet, Briefcase, ArrowUpRight, Check } from "lucide-react";
-import { mockCompanies as companies } from "./mockCompanies";
-import { companyAvatars, companyImages } from "./companyAssets";
-import { generateSlug } from "../../utils/slug";
+import { fallbackCompanyImage, fallbackCompanyLogo } from "./companyAssets";
+import { isOpenPosition } from "./companyMapping";
+import { ApiError } from "../../services/httpClient";
 import { formatSalaryRange } from "../../utils/salary";
 import { cleanApiText, splitApiText } from "../../utils/content";
 import { companiesApi, type ApiCompany } from "../../services/companiesApi";
@@ -39,10 +39,6 @@ type CompanyItem = {
    openPositions: CompanyPosition[];
 };
 
-function normalizeName(name: string): string {
-   return name.toLowerCase().replace(/[^a-z0-9]/g, "");
-}
-
 const jobLevelLabels: Record<string, string> = {
    NHAN_VIEN: "Nhân viên",
    THUC_TAP_SINH: "Thực tập sinh",
@@ -71,14 +67,6 @@ const formatExperience = (value?: string): string => {
    return `${normalized} năm kinh nghiệm`;
 };
 
-const isOpenPosition = (position: NonNullable<ApiCompany["positions"]>[number]): boolean => {
-   if (position.status && position.status !== "PUBLISHED") return false;
-   if (position.isDeleted) return false;
-   if (!position.expiredAt) return true;
-   const expiredAt = new Date(position.expiredAt);
-   return Number.isNaN(expiredAt.getTime()) || expiredAt.getTime() > Date.now();
-};
-
 const uniqueValues = (values: string[], limit = 8): string[] =>
    Array.from(new Set(values.map((value) => value.trim()).filter(Boolean))).slice(0, limit);
 
@@ -88,6 +76,8 @@ export default function CompanyDetailPage() {
    const companySlug = (params?.companySlug as string) || "";
    const [company, setCompany] = useState<CompanyItem | null>(null);
    const [isLoading, setIsLoading] = useState(true);
+   const [loadError, setLoadError] = useState<string | null>(null);
+   const [reloadKey, setReloadKey] = useState(0);
    const [failedLogoSrc, setFailedLogoSrc] = useState("");
    const [failedHeroSrc, setFailedHeroSrc] = useState("");
 
@@ -98,7 +88,6 @@ export default function CompanyDetailPage() {
       }
       companiesApi.getBySlug(companySlug)
          .then((apiItem: ApiCompany) => {
-            const staticMatch = companies.find((c) => normalizeName(c.name) === normalizeName(apiItem.name));
             const openApiPositions = (apiItem.positions ?? []).filter(isOpenPosition);
             const mappedPositions = openApiPositions.map((pos) => ({
                id: pos.id,
@@ -128,12 +117,6 @@ export default function CompanyDetailPage() {
                   ? positionBenefits
                   : ["Doanh nghiệp chưa cung cấp thông tin phúc lợi."];
             const positionSkills = uniqueValues(mappedPositions.flatMap((position) => position.skills), 8);
-            const staticLogo = staticMatch
-               ? typeof staticMatch.image === "string" ? staticMatch.image : (staticMatch.image as any)?.src || ""
-               : "";
-            const staticHero = staticMatch
-               ? typeof staticMatch.companyImage === "string" ? staticMatch.companyImage : (staticMatch.companyImage as any)?.src || ""
-               : "";
             const location = cleanApiText(openApiPositions[0]?.locationAddress)
                || cleanApiText(openApiPositions[0]?.locationCity)
                || cleanApiText(apiItem.headquarters)
@@ -156,8 +139,8 @@ export default function CompanyDetailPage() {
                id: apiItem.id,
                name: apiItem.name,
                tagline: description || recruitmentSummary,
-               logo: apiItem.logoUrl || staticLogo,
-               heroImage: staticHero,
+               logo: apiItem.logoUrl || fallbackCompanyLogo(apiItem.name),
+               heroImage: fallbackCompanyImage(apiItem.name),
                rating: null,
                reviewCount: 0,
                employees: apiItem.size || "Chưa được cung cấp",
@@ -171,42 +154,42 @@ export default function CompanyDetailPage() {
             });
          })
          .catch((err) => {
-            console.error("Lỗi lấy thông tin công ty từ API, dùng dữ liệu dự phòng:", err);
-            const found = companies.find((c) => {
-               const slug = generateSlug(c.name);
-               return slug === companySlug || normalizeName(c.name) === normalizeName(companySlug);
-            });
-            if (found) {
-               setCompany({
-                  id: 0,
-                  name: found.name,
-                  tagline: found.description || "Doanh nghiệp uy tín hàng đầu",
-                  logo: typeof found.image === 'string' ? found.image : (found.image as any)?.src || (companyAvatars[0] as any)?.src || "",
-                  heroImage: typeof found.companyImage === 'string' ? found.companyImage : (found.companyImage as any)?.src || (companyImages[0] as any)?.src || "",
-                  rating: found.rating || "4.8",
-                  reviewCount: 15,
-                  employees: found.employees || "100-500 nhân viên",
-                  location: found.location || "Việt Nam",
-                  openPositionsCount: found.positions?.length || 0,
-                  field: found.field || "Công nghệ",
-                  benefits: found.benefits || [],
-                  overview: found.introduction ? [found.introduction] : [found.description || ""],
-                  skills: ["Phát triển sản phẩm", "Làm việc nhóm", "Chuyên môn cao"],
-                  openPositions: found.positions || [],
-               });
-            } else {
-               setCompany(null);
+            console.error("Không tải được thông tin công ty:", err);
+            setCompany(null);
+            // 404 là "không tìm thấy"; lỗi khác (mạng, server) thì cho thử lại
+            if (!(err instanceof ApiError && err.status === 404)) {
+               setLoadError(err instanceof Error ? err.message : "Không tải được thông tin công ty.");
             }
          })
          .finally(() => {
             setIsLoading(false);
          });
-   }, [companySlug]);
+   }, [companySlug, reloadKey]);
 
    if (isLoading) {
       return (
          <div className="flex min-h-[400px] items-center justify-center">
             <p className="text-sm font-semibold text-slate-500">Đang tải thông tin công ty...</p>
+         </div>
+      );
+   }
+
+   if (!company && loadError) {
+      return (
+         <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
+            <h2 className="text-xl font-bold text-slate-800">Không tải được thông tin công ty</h2>
+            <p role="alert" className="text-sm text-slate-500">{loadError}</p>
+            <button
+               type="button"
+               onClick={() => {
+                  setIsLoading(true);
+                  setLoadError(null);
+                  setReloadKey((key) => key + 1);
+               }}
+               className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700"
+            >
+               Thử lại
+            </button>
          </div>
       );
    }

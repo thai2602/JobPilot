@@ -13,49 +13,20 @@ import { generateSlug } from "../../utils/slug";
 import { readAuthUser } from "../../utils/auth";
 import { hasCreatedCv } from "../../utils/cv";
 import ApplyCvModal from "../../components/ApplyCvModal";
-import { companyJobs } from "./JobsPage";
-import image1 from "../../assets/company_logo/image_1.png";
-import image2 from "../../assets/company_logo/image_2.png";
-import image3 from "../../assets/company_logo/image_3.png";
 import { jobsApi } from "../../services/jobsApi";
 import { applicationsApi } from "../../services/applicationsApi";
 import { savedJobsApi } from "../../services/savedJobsApi";
-
-type JobDetail = {
-   id?: number;
-   title: string;
-   company: string;
-   companyColor: string;
-   companyDescription: string;
-   description: string;
-   requirements?: string;
-   benefits?: string;
-   place: string;
-   field: string;
-   type: string;
-   salary: string;
-   tags: string[];
-   hot?: boolean;
-   posted?: string;
-   image?: any;
-   companyUrl?: string;
-   slug?: string;
-   jobLevel?: string;
-   experienceYears?: any;
-   expiredAt?: string;
-   locationAddress?: string;
-   [key: string]: any;
-};
-
-const fallbackImages = [image1, image2, image3];
+import { mapApiJob, type Job } from "./jobMapping";
 
 export default function JobDetailPage() {
    const router = useRouter();
    const params = useParams();
    const jobSlug = (params?.jobSlug as string) || "";
 
-   const [job, setJob] = useState<JobDetail | null>(null);
-   const [relatedJobs, setRelatedJobs] = useState<JobDetail[]>([]);
+   const [job, setJob] = useState<Job | null>(null);
+   const [loadError, setLoadError] = useState<string | null>(null);
+   const [reloadKey, setReloadKey] = useState(0);
+   const [relatedJobs, setRelatedJobs] = useState<Job[]>([]);
    const [activeTab, setActiveTab] = useState<"description" | "requirements" | "benefits">("description");
    const [toast, setToast] = useState<{ kind: "success" | "error"; message: string } | null>(null);
    const [isSaved, setIsSaved] = useState(false);
@@ -63,99 +34,36 @@ export default function JobDetailPage() {
    const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
 
    useEffect(() => {
-      if (!job && jobSlug) {
-         jobsApi.getBySlug(jobSlug)
-            .then((data) => {
-               if (!data) {
-                  const fallback = companyJobs.find((j) => {
-                     const s = j.slug || generateSlug(`${j.company}-${j.title}`);
-                     return s === jobSlug;
-                  });
-                  if (fallback) {
-                     setJob({
-                        ...fallback,
-                        companyDescription: fallback.companyDescription || "",
-                        requirements: fallback.requirements || "",
-                        benefits: fallback.benefits || "",
-                     });
-                  }
-               } else {
-                  const levelMap: Record<string, string> = { FRESHER: "Fresher", JUNIOR: "Junior", SENIOR: "Senior", LEADER: "Leader", DIRECTOR: "Giám đốc" };
-                  setJob({
-                     id: data.id,
-                     title: data.title,
-                     company: data.company?.name ?? "",
-                     companyColor: data.company?.color ?? "#0ea5e9",
-                     companyDescription: data.company?.description ?? "",
-                     description: data.description ?? "",
-                     requirements: data.requirements ?? "",
-                     benefits: data.benefits ?? "",
-                     place: data.locationCity ?? "Việt Nam",
-                     locationAddress: data.locationAddress ?? "",
-                     field: "Nhóm ngành khác",
-                     type: data.jobType === "FULL_TIME" ? "Full-time" : data.jobType === "REMOTE" ? "Remote" : "Hybrid",
-                     salary: `${Math.round((data.salaryMin ?? 0) / 1_000_000)}–${Math.round((data.salaryMax ?? 0) / 1_000_000)} triệu`,
-                     tags: [
-                        data.jobLevel ? (levelMap[data.jobLevel] ?? data.jobLevel) : null,
-                        data.experienceYears ? `${data.experienceYears} năm KN` : null,
-                        data.locationCity || null,
-                     ].filter((t): t is string => Boolean(t)),
-                     hot: false,
-                     posted: "Vừa cập nhật",
-                     image: data.company?.logoUrl || fallbackImages[0],
-                     companyUrl: `/cong-ty/${data.company?.slug ?? ""}`,
-                     slug: data.slug,
-                     jobLevel: data.jobLevel,
-                     experienceYears: data.experienceYears,
-                     expiredAt: data.expiredAt,
-                  });
-               }
-            })
-            .catch(() => {
-               const fallback = companyJobs.find((j) => {
-                  const s = j.slug || generateSlug(`${j.company}-${j.title}`);
-                  return s === jobSlug;
-               });
-               if (fallback) {
-                  setJob({
-                     ...fallback,
-                     companyDescription: fallback.companyDescription || "",
-                     requirements: fallback.requirements || "",
-                     benefits: fallback.benefits || "",
-                  });
-               }
-            });
+      if (!jobSlug) {
+         setLoadError("Không tìm thấy việc làm này.");
+         return;
       }
-   }, [job, jobSlug]);
+      let cancelled = false;
+      setJob(null);
+      setLoadError(null);
+      jobsApi.getBySlug(jobSlug)
+         .then((data) => {
+            if (!cancelled) setJob(mapApiJob(data));
+         })
+         .catch((err: unknown) => {
+            if (cancelled) return;
+            console.error("Không tải được việc làm:", err);
+            setLoadError(err instanceof Error ? err.message : "Không tải được thông tin việc làm.");
+         });
+      return () => { cancelled = true; };
+   }, [jobSlug, reloadKey]);
 
    useEffect(() => {
-      if (relatedJobs.length > 0 || !job) return;
-      jobsApi.list()
+      if (!job) return;
+      let cancelled = false;
+      jobsApi.list({ offset: 0, limit: 4 })
          .then((data) => {
-            const related = data
-               .filter((j) => j.slug !== jobSlug)
-               .slice(0, 3)
-               .map((j, i) => ({
-                  title: j.title,
-                  company: j.company?.name ?? "",
-                  companyColor: j.company?.color ?? "#0ea5e9",
-                  companyDescription: j.company?.description ?? "",
-                  description: j.description ?? "",
-                  place: j.locationCity ?? "",
-                  field: "Nhóm ngành khác",
-                  type: j.jobType === "FULL_TIME" ? "Full-time" : j.jobType === "REMOTE" ? "Remote" : "Hybrid",
-                  salary: `${Math.round((j.salaryMin ?? 0) / 1_000_000)}–${Math.round((j.salaryMax ?? 0) / 1_000_000)} triệu`,
-                  tags: [],
-                  hot: false,
-                  posted: "Vừa cập nhật",
-                  image: fallbackImages[i % fallbackImages.length],
-                  companyUrl: "/cong-ty",
-                  slug: j.slug,
-               }));
-            setRelatedJobs(related);
+            if (cancelled) return;
+            setRelatedJobs(data.filter((j) => j.slug !== jobSlug).slice(0, 3).map(mapApiJob));
          })
          .catch(() => {});
-   }, [job, jobSlug, relatedJobs.length]);
+      return () => { cancelled = true; };
+   }, [job, jobSlug]);
 
    useEffect(() => {
       if (!job) return;
@@ -285,7 +193,20 @@ export default function JobDetailPage() {
    if (!job) {
       return (
          <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
-            <p className="text-slate-500 font-medium">Đang tải thông tin việc làm...</p>
+            {loadError ? (
+               <>
+                  <p role="alert" className="text-rose-600 font-semibold">{loadError}</p>
+                  <button
+                     type="button"
+                     onClick={() => setReloadKey((key) => key + 1)}
+                     className="px-4 py-2 rounded-xl border border-slate-200 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                  >
+                     Thử lại
+                  </button>
+               </>
+            ) : (
+               <p className="text-slate-500 font-medium">Đang tải thông tin việc làm...</p>
+            )}
             <Link href="/tim-viec" className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-600 hover:text-emerald-700">
                <ArrowLeft className="w-4 h-4" /> Quay lại danh sách việc làm
             </Link>
