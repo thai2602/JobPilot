@@ -46,6 +46,16 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- 3b. Flyway: áp dụng db/migration khi ứng dụng khởi động -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-flyway</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+        </dependency>
+
         <!-- 4. Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>

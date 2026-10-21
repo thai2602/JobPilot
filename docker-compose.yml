@@ -15,11 +15,8 @@ services:
       - "${POSTGRES_PORT:-5432}:5432"
     shm_size: 512mb
     volumes:
-      # PostgreSQL's default init glob is lexical (V10 would run before V1).
-      # ParadeDB bootstraps extensions at 10_*, then this runner applies the
-      # application migrations with version-aware ordering.
-      - ./backend/src/main/resources/db/migration:/opt/jobpilot/migrations:ro
-      - ./backend/docker/init-db.sh:/docker-entrypoint-initdb.d/20-jobpilot-migrations.sh:ro
+      # Schema migrations are applied by the backend (Flyway) on startup;
+      # the image only bootstraps the ParadeDB extensions on first init.
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
 

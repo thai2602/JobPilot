@@ -204,7 +204,8 @@ RAG_HISTORICAL_RUN_ON_START=true
 | pgvector | Embedding storage and semantic similarity search |
 | pg_search | BM25 lexical retrieval |
 | PostgreSQL FTS | Fallback full-text search |
-| Docker Compose | Local database setup and automatic migrations |
+| Docker Compose | Local database setup |
+| Flyway | Versioned schema migrations applied on backend startup |
 | OpenRouter | Chat and embedding model APIs |
 | GitHub Actions | Frontend and backend CI automation |
 
@@ -214,7 +215,6 @@ RAG_HISTORICAL_RUN_ON_START=true
 jobpilot/
 ├── .github/workflows/ci.yml          # Frontend and backend CI
 ├── backend/
-│   ├── docker/init-db.sh             # Runs database migrations in order
 │   ├── src/main/java/com/jobportal/
 │   │   ├── modules/auth/             # Registration, login, Google authentication
 │   │   ├── modules/user/             # User profile management
@@ -228,7 +228,7 @@ jobpilot/
 │   │   └── modules/chatbot/          # Chatbot and RAG pipeline
 │   └── src/main/resources/
 │       ├── application.properties
-│       └── db/migration/             # Database and search migrations
+│       └── db/migration/             # Flyway migrations (V<n>__<desc>.sql)
 ├── frontend/
 │   ├── src/app/                      # Next.js App Router pages
 │   ├── src/features/                 # Domain-specific UI modules
@@ -284,7 +284,7 @@ Update the database connection settings, `JWT_SECRET_KEY`, `GOOGLE_CLIENT_ID`, a
 docker compose up -d db
 ```
 
-The container exposes PostgreSQL at `localhost:5432` by default and automatically applies SQL migrations from `backend/src/main/resources/db/migration` in order when a new data volume is initialized.
+The container exposes PostgreSQL at `localhost:5432` by default. The schema is created by Flyway when the backend starts (next step): it applies the SQL migrations in `backend/src/main/resources/db/migration` and records them in `flyway_schema_history`. A database that was initialised by the old `init-db.sh` script (schema up to V11, no history table) is baselined at version 11 automatically. Add new migrations as `V12__<description>.sql`, `V13__...` and never edit one that has already been applied.
 
 ### 4. Start the Backend
 
