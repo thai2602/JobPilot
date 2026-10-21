@@ -45,6 +45,8 @@ public class ChatbotController {
     private final ChatbotRateLimitProperties limits;
     private final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
 
+    private static final String GENERIC_ERROR = "Đã xảy ra lỗi khi xử lý yêu cầu. Vui lòng thử lại sau.";
+
     // ──────────────────────────────────────────────────────────────────────────
     // 1. Blocking chat (JSON) — đơn giản, tương thích với client cũ
     // ──────────────────────────────────────────────────────────────────────────
@@ -74,11 +76,8 @@ public class ChatbotController {
                 reply = cvAiService.chat(memoryId, request.getMessage());
             }
             return ResponseEntity.ok(new ChatResponse(reply));
-        } catch (Exception e) {
-            log.error("Chat error for memoryId={}: {}", memoryId, e.getMessage(), e);
-            return ResponseEntity.internalServerError()
-                    .body(new ChatResponse("Lỗi xử lý yêu cầu: " + e.getMessage()));
         } finally {
+            // Failures propagate to GlobalExceptionHandler (logged there, generic 500 body)
             CvContextHolder.clear();
         }
     }
@@ -146,9 +145,10 @@ public class ChatbotController {
                 emitter.complete();
 
             } catch (Exception e) {
-                log.error("SSE stream error for memoryId={}: {}", memoryId, e.getMessage());
+                log.error("SSE stream error for memoryId={}", memoryId, e);
                 try {
-                    emitter.send(SseEmitter.event().name("error").data(e.getMessage()));
+                    // Never stream internal exception messages to the client
+                    emitter.send(SseEmitter.event().name("error").data(GENERIC_ERROR));
                 } catch (IOException ignored) {}
                 emitter.completeWithError(e);
             } finally {
@@ -224,11 +224,8 @@ public class ChatbotController {
             return ResponseEntity.badRequest().body(new ChatResponse(
                     "cvContent quá dài (tối đa " + limits.getMaxDocumentLength() + " ký tự)."));
         }
-        try {
-            return ResponseEntity.ok(new ChatResponse(auditChain.executeAudit(request.getCvContent())));
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(new ChatResponse("Lỗi audit CV: " + e.getMessage()));
-        }
+        // Failures propagate to GlobalExceptionHandler (logged there, generic 500 body)
+        return ResponseEntity.ok(new ChatResponse(auditChain.executeAudit(request.getCvContent())));
     }
 
     @PostMapping("/rewrite")
@@ -240,11 +237,7 @@ public class ChatbotController {
             return ResponseEntity.badRequest().body(new ChatResponse(
                     "bulletPoints quá dài (tối đa " + limits.getMaxDocumentLength() + " ký tự)."));
         }
-        try {
-            return ResponseEntity.ok(new ChatResponse(rewriteChain.executeRewrite(request.getBulletPoints())));
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(new ChatResponse("Lỗi rewrite: " + e.getMessage()));
-        }
+        return ResponseEntity.ok(new ChatResponse(rewriteChain.executeRewrite(request.getBulletPoints())));
     }
 
     @PostMapping("/eval")

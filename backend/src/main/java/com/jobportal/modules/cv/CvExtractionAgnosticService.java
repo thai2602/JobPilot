@@ -2,10 +2,13 @@ package com.jobportal.modules.cv;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jobportal.common.exception.ApiException;
+import com.jobportal.common.exception.BadRequestException;
 import com.jobportal.modules.cv.dto.UserCvRequestDTO;
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.parser.apache.pdfbox.ApachePdfBoxDocumentParser;
 import dev.langchain4j.model.chat.ChatLanguageModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,6 +18,8 @@ import java.util.regex.Pattern;
 
 @Service
 public class CvExtractionAgnosticService {
+
+    static final String EXTRACTION_FAILED = "Lỗi hệ thống khi trích xuất CV. Vui lòng thử lại sau.";
 
     private final ChatLanguageModel chatLanguageModel;
     private final ObjectMapper objectMapper;
@@ -113,8 +118,11 @@ public class CvExtractionAgnosticService {
 
     /**
      * Hàm chính: Đọc PDF -> Trích xuất Text -> Đưa vào LLM -> Regex bóc tách JSON -> Parse ra Object
+     *
+     * @throws BadRequestException file không phải PDF hoặc không có chữ
+     * @throws ApiException 500 khi đọc PDF / parse JSON thất bại (chi tiết chỉ ghi log)
      */
-    public UserCvRequestDTO extractCvData(MultipartFile file) throws IOException {
+    public UserCvRequestDTO extractCvData(MultipartFile file) {
         // 1. Đọc file PDF sang Text
         String cvText = parsePdfToText(file);
 
@@ -127,21 +135,25 @@ public class CvExtractionAgnosticService {
         // 4. Bóc tách JSON
         String jsonStr = extractJsonFromMarkdown(llmResponse);
         if (jsonStr == null || jsonStr.trim().isEmpty()) {
-            throw new RuntimeException("LLM không trả về định dạng JSON hợp lệ.");
+            throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, EXTRACTION_FAILED,
+                    new IllegalStateException("LLM did not return a JSON block"));
         }
 
         // 5. Parse JSON thành DTO
         try {
             return objectMapper.readValue(jsonStr, UserCvRequestDTO.class);
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi khi parse JSON từ LLM: " + e.getMessage());
+            throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, EXTRACTION_FAILED, e);
         }
     }
 
-    private String parsePdfToText(MultipartFile file) throws IOException {
+    private String parsePdfToText(MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new BadRequestException("Vui lòng chọn file PDF để trích xuất.");
+        }
         String filename = file.getOriginalFilename();
         if (filename != null && !filename.toLowerCase().endsWith(".pdf")) {
-            throw new IllegalArgumentException("Chỉ hỗ trợ file PDF. File tải lên: " + filename);
+            throw new BadRequestException("Chỉ hỗ trợ file PDF. File tải lên: " + filename);
         }
         try {
             ApachePdfBoxDocumentParser parser = new ApachePdfBoxDocumentParser();
@@ -154,11 +166,11 @@ public class CvExtractionAgnosticService {
             return text;
         } catch (IllegalArgumentException e) {
             if (e.getMessage() != null && e.getMessage().contains("text cannot be null or blank")) {
-                throw new IllegalArgumentException("Không thể trích xuất văn bản từ file PDF. File PDF này có thể là file ảnh/scan hoặc không có chữ. Vui lòng sử dụng file PDF có thể bôi đen chữ.");
+                throw new BadRequestException("Không thể trích xuất văn bản từ file PDF. File PDF này có thể là file ảnh/scan hoặc không có chữ. Vui lòng sử dụng file PDF có thể bôi đen chữ.");
             }
-            throw new IOException("Lỗi khi đọc file PDF: " + e.getMessage(), e);
-        } catch (Exception e) {
-            throw new IOException("Lỗi khi đọc file PDF: " + e.getMessage(), e);
+            throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, EXTRACTION_FAILED, e);
+        } catch (IOException | RuntimeException e) {
+            throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, EXTRACTION_FAILED, e);
         }
     }
 
