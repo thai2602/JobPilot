@@ -22,35 +22,42 @@ public interface JobRepository extends JpaRepository<Job, Long> {
             @Param("now") LocalDateTime now,
             Pageable pageable);
 
+    /**
+     * Job board listing. Shows open jobs and, when {@code includeExpired}, also CLOSED / past-deadline
+     * ones (open jobs first). DRAFT rows (incomplete crawls) are never shown.
+     */
     @Query("SELECT j FROM Job j JOIN FETCH j.company c WHERE " +
            "(:search IS NULL OR :search = '' OR LOWER(j.title) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(j.description) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(j.company.name) LIKE LOWER(CONCAT('%', :search, '%'))) AND " +
            "(:location IS NULL OR :location = '' OR LOWER(j.locationCity) LIKE LOWER(CONCAT('%', :location, '%')) OR LOWER(j.locationAddress) LIKE LOWER(CONCAT('%', :location, '%'))) AND " +
            "(:jobType IS NULL OR :jobType = '' OR j.jobType = :jobType) AND " +
            "(:jobLevel IS NULL OR :jobLevel = '' OR j.jobLevel = :jobLevel) AND " +
            "(j.isDeleted = false OR j.isDeleted IS NULL) AND " +
-           "j.status = 'PUBLISHED' AND " +
-           "(j.expiredAt IS NULL OR j.expiredAt > :now) AND " +
+           "j.status IN ('PUBLISHED', 'CLOSED') AND " +
+           "(:includeExpired = true OR (j.status = 'PUBLISHED' AND (j.expiredAt IS NULL OR j.expiredAt > :now))) AND " +
            "(c.isDeleted = false OR c.isDeleted IS NULL) " +
-           "ORDER BY j.updatedAt DESC, j.createdAt DESC, j.id DESC")
-    List<Job> searchOpenJobs(
+           "ORDER BY CASE WHEN j.status = 'PUBLISHED' AND (j.expiredAt IS NULL OR j.expiredAt > :now) THEN 0 ELSE 1 END, " +
+           "j.expiredAt DESC NULLS LAST, j.updatedAt DESC, j.id DESC")
+    List<Job> searchJobs(
             @Param("search") String search,
             @Param("location") String location,
             @Param("jobType") String jobType,
             @Param("jobLevel") String jobLevel,
+            @Param("includeExpired") boolean includeExpired,
             @Param("now") LocalDateTime now,
             Pageable pageable);
 
+    /** Detail page: open or expired jobs, never DRAFT or deleted. */
     @Query("SELECT j FROM Job j JOIN FETCH j.company c WHERE " +
            "j.id = :id AND (j.isDeleted = false OR j.isDeleted IS NULL) AND " +
-           "j.status = 'PUBLISHED' AND (j.expiredAt IS NULL OR j.expiredAt > :now) AND " +
+           "j.status IN ('PUBLISHED', 'CLOSED') AND " +
            "(c.isDeleted = false OR c.isDeleted IS NULL)")
-    Optional<Job> findOpenById(@Param("id") Long id, @Param("now") LocalDateTime now);
+    Optional<Job> findVisibleById(@Param("id") Long id);
 
     @Query("SELECT j FROM Job j JOIN FETCH j.company c WHERE " +
            "j.slug = :slug AND (j.isDeleted = false OR j.isDeleted IS NULL) AND " +
-           "j.status = 'PUBLISHED' AND (j.expiredAt IS NULL OR j.expiredAt > :now) AND " +
+           "j.status IN ('PUBLISHED', 'CLOSED') AND " +
            "(c.isDeleted = false OR c.isDeleted IS NULL)")
-    Optional<Job> findOpenBySlug(@Param("slug") String slug, @Param("now") LocalDateTime now);
+    Optional<Job> findVisibleBySlug(@Param("slug") String slug);
 
     @Query("SELECT j FROM Job j JOIN FETCH j.company c WHERE " +
            "c.id IN :companyIds AND (j.isDeleted = false OR j.isDeleted IS NULL) AND " +

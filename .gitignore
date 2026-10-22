@@ -88,3 +88,4 @@ pri_docs/*
 note.txt
 PROJECT_DESCRIPTION.md
 DEPLOYMENT.md
+.vscode/settings.json

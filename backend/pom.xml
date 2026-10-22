@@ -22,6 +22,9 @@
         <mapstruct.version>1.6.0</mapstruct.version>
         <jjwt.version>0.12.6</jjwt.version>
         <springdoc.version>2.6.0</springdoc.version>
+        <!-- VS Code/Eclipse không tự chạy MapStruct (bị lỗi trong JDT); dùng CvMapperImpl do Maven sinh ra.
+             Không ảnh hưởng tới build Maven. Sau khi đổi mapper, chạy lại `mvn compile`. -->
+        <m2e.apt.activation>disabled</m2e.apt.activation>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>

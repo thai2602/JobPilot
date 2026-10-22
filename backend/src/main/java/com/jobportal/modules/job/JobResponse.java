@@ -25,6 +25,8 @@ public record JobResponse(
         String benefits,
         String status,
         LocalDateTime expiredAt,
+        /** true khi tin đã đóng hoặc quá hạn nộp; frontend dùng để gắn nhãn và khoá nút ứng tuyển */
+        boolean expired,
         LocalDateTime createdAt,
         LocalDateTime updatedAt) {
 
@@ -49,6 +51,7 @@ public record JobResponse(
                 job.getBenefits(),
                 job.getStatus(),
                 job.getExpiredAt(),
+                !JobService.isOpen(job, LocalDateTime.now()),
                 job.getCreatedAt(),
                 job.getUpdatedAt());
     }

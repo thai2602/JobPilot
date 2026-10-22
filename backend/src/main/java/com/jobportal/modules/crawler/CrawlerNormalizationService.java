@@ -394,9 +394,7 @@ public class CrawlerNormalizationService {
         Long companyId = companyLookup.get(companyKey);
         SalaryRange salary = parseSalary(raw.salary());
         LocalDateTime expiredAt = toLocalDateTime(raw.deadline());
-        String status = expiredAt != null && expiredAt.isBefore(LocalDateTime.now())
-                ? "CLOSED"
-                : "PUBLISHED";
+        String status = jobStatus(expiredAt, raw.description(), raw.requirements(), LocalDateTime.now());
         String contentHash = hashValues(
                 raw.title(), raw.industry(), raw.company(), raw.salary(), raw.location(),
                 raw.experience(), raw.level(), raw.employmentType(), raw.quantity(),
@@ -432,6 +430,21 @@ public class CrawlerNormalizationService {
                 .addValue("crawledAt", raw.crawledAt())
                 .addValue("rawData", jsonObjectOrEmpty(raw.rawJson()))
                 .addValue("contentHash", contentHash);
+    }
+
+    /**
+     * A crawl that failed to fetch the job page leaves only a title: no description, no
+     * requirements and no deadline. Without a deadline it would otherwise stay PUBLISHED forever,
+     * so such rows are kept as DRAFT and never shown or indexed as open jobs.
+     */
+    static String jobStatus(LocalDateTime expiredAt, String description, String requirements, LocalDateTime now) {
+        if (expiredAt != null && expiredAt.isBefore(now)) return "CLOSED";
+        if (isBlank(description) && isBlank(requirements)) return "DRAFT";
+        return "PUBLISHED";
+    }
+
+    private static boolean isBlank(String value) {
+        return value == null || value.isBlank();
     }
 
     private int executeBatch(String sql, List<MapSqlParameterSource> parameters) {

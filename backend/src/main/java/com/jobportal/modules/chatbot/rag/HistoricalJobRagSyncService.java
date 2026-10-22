@@ -164,6 +164,7 @@ public class HistoricalJobRagSyncService {
                 FROM %s.%s j
                 LEFT JOIN %s.%s c ON c.id = j.company_id
                 WHERE j.is_deleted IS NOT TRUE
+                  AND UPPER(COALESCE(j.status, 'PUBLISHED')) <> 'DRAFT'
                   AND (
                     UPPER(COALESCE(j.status, 'PUBLISHED')) NOT IN ('PUBLISHED', 'ACTIVE', 'OPEN')
                     OR j.expired_at < CURRENT_TIMESTAMP

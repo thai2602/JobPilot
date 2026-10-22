@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestController
@@ -22,6 +23,11 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<Map<String, Object>> getCurrentUser() {
         User user = currentUserService.requireUser();
-        return ResponseEntity.ok(Map.of("userId", user.getId(), "email", user.getEmail()));
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("userId", user.getId());
+        body.put("email", user.getEmail());
+        body.put("authProvider", user.getAuthProvider());
+        body.put("createdAt", user.getCreatedAt());
+        return ResponseEntity.ok(body);
     }
 }

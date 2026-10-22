@@ -40,7 +40,7 @@ public class ApplicationService {
 
         Application application = new Application();
         application.setUser(user);
-        application.setJob(jobService.requireJob(request.getJobId()));
+        application.setJob(jobService.requireOpenJob(request.getJobId()));
         application.setCvId(request.getCvId());
         application.setStatus("PENDING");
         applicationRepository.save(application);

@@ -6,7 +6,7 @@ import com.jobportal.modules.application.ApplicationRepository;
 import com.jobportal.modules.application.ApplicationService;
 import com.jobportal.modules.cv.CvController;
 import com.jobportal.modules.cv.CvExtractionAgnosticService;
-import com.jobportal.modules.cv.CvMapperImpl;
+import com.jobportal.modules.cv.CvMapper;
 import com.jobportal.modules.cv.CvService;
 import com.jobportal.modules.cv.UserCvSkill;
 import com.jobportal.modules.job.JobService;
@@ -25,8 +25,11 @@ import com.jobportal.modules.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -57,9 +60,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * authentication, CV ownership (BOLA) and that no password hash is ever serialized.
  */
 @WebMvcTest(controllers = {CvController.class, UserController.class, ApplicationController.class, SavedJobController.class})
-@Import({SecurityConfig.class, CurrentUserService.class, CvService.class, CvMapperImpl.class,
+@Import({SecurityConfig.class, CurrentUserService.class, CvService.class, ApiSecurityWebMvcTest.MapperConfig.class,
         ApplicationService.class, SavedJobService.class, JobService.class})
 class ApiSecurityWebMvcTest {
+
+    /** Real MapStruct mapper, looked up at runtime so the test does not depend on the generated class at compile time. */
+    @TestConfiguration
+    static class MapperConfig {
+        @Bean
+        CvMapper cvMapper() {
+            return Mappers.getMapper(CvMapper.class);
+        }
+    }
 
     private static final long USER_A = 1L;
     private static final long USER_B = 2L;

@@ -20,17 +20,18 @@ public class JobController {
             @RequestParam(required = false) String search,
             @RequestParam(required = false) String location,
             @RequestParam(required = false) String jobType,
-            @RequestParam(required = false) String jobLevel) {
-        return jobService.searchOpenJobs(offset, limit, search, location, jobType, jobLevel);
+            @RequestParam(required = false) String jobLevel,
+            @RequestParam(defaultValue = "true") boolean includeExpired) {
+        return jobService.searchJobs(offset, limit, search, location, jobType, jobLevel, includeExpired);
     }
 
     @GetMapping("/{id}")
     public JobResponse getJobById(@PathVariable Long id) {
-        return jobService.getOpenJob(id);
+        return jobService.getJob(id);
     }
 
     @GetMapping("/slug/{slug}")
     public JobResponse getJobBySlug(@PathVariable String slug) {
-        return jobService.getOpenJobBySlug(slug);
+        return jobService.getJobBySlug(slug);
     }
 }

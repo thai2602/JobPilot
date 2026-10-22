@@ -52,7 +52,7 @@ class ApplicationServiceTest {
         job.setTitle("Java Developer");
         when(userCvRepository.findByIdAndUserIdAndIsDeletedFalse(CV_ID, USER_ID))
                 .thenReturn(Optional.of(new UserCv()));
-        when(jobService.requireJob(JOB_ID)).thenReturn(job);
+        when(jobService.requireOpenJob(JOB_ID)).thenReturn(job);
 
         ApplicationResponse response = applicationService.apply(user, request(JOB_ID, CV_ID));
 
@@ -85,7 +85,7 @@ class ApplicationServiceTest {
 
     @Test
     void unknownJobIsNotFound() {
-        when(jobService.requireJob(JOB_ID)).thenThrow(new NotFoundException("Không tìm thấy công việc"));
+        when(jobService.requireOpenJob(JOB_ID)).thenThrow(new NotFoundException("Không tìm thấy công việc"));
 
         assertThatThrownBy(() -> applicationService.apply(user, request(JOB_ID, null)))
                 .isInstanceOf(NotFoundException.class);
