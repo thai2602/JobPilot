@@ -49,7 +49,8 @@ public class CompanyService {
         return companyRepository.findActiveBySlug(cleanSlug)
                 .map(company -> CompanyResponse.from(
                         company,
-                        jobRepository.findOpenByCompanyIds(List.of(company.getId()), LocalDateTime.now())))
+                        jobRepository.findOpenByCompanyIds(List.of(company.getId()), LocalDateTime.now()),
+                        countVisibleJobs(List.of(company.getId())).getOrDefault(company.getId(), 0L)))
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy công ty"));
     }
 
@@ -62,10 +63,17 @@ public class CompanyService {
                 .findOpenByCompanyIds(companyIds, LocalDateTime.now())
                 .stream()
                 .collect(Collectors.groupingBy(job -> job.getCompany().getId()));
+        Map<Long, Long> jobCounts = countVisibleJobs(companyIds);
         return companies.stream()
                 .map(company -> CompanyResponse.from(
                         company,
-                        jobsByCompany.getOrDefault(company.getId(), List.of())))
+                        jobsByCompany.getOrDefault(company.getId(), List.of()),
+                        jobCounts.getOrDefault(company.getId(), 0L)))
                 .toList();
+    }
+
+    private Map<Long, Long> countVisibleJobs(List<Long> companyIds) {
+        return jobRepository.countVisibleByCompanyIds(companyIds).stream()
+                .collect(Collectors.toMap(row -> (Long) row[0], row -> (Long) row[1]));
     }
 }

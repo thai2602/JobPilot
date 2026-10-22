@@ -67,4 +67,11 @@ public interface JobRepository extends JpaRepository<Job, Long> {
     List<Job> findOpenByCompanyIds(
             @Param("companyIds") List<Long> companyIds,
             @Param("now") LocalDateTime now);
+
+    /** Số tin hiển thị (kể cả đã hết hạn) theo công ty: mỗi dòng là [companyId, count]. */
+    @Query("SELECT j.company.id, COUNT(j) FROM Job j WHERE " +
+           "j.company.id IN :companyIds AND (j.isDeleted = false OR j.isDeleted IS NULL) AND " +
+           "j.status IN ('PUBLISHED', 'CLOSED') " +
+           "GROUP BY j.company.id")
+    List<Object[]> countVisibleByCompanyIds(@Param("companyIds") List<Long> companyIds);
 }

@@ -23,9 +23,14 @@ public record CompanyResponse(
         Boolean isFeatured,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
-        List<JobResponse> positions) {
+        List<JobResponse> positions,
+        long jobCount) {
 
-    public static CompanyResponse from(Company company, List<Job> openPositions) {
+    /**
+     * @param openPositions tin còn hạn ứng tuyển
+     * @param jobCount      tổng số tin đã đăng, kể cả tin đã hết hạn
+     */
+    public static CompanyResponse from(Company company, List<Job> openPositions, long jobCount) {
         List<JobResponse> positions = openPositions == null
                 ? List.of()
                 : openPositions.stream().map(JobResponse::from).toList();
@@ -46,6 +51,7 @@ public record CompanyResponse(
                 company.getIsFeatured(),
                 company.getCreatedAt(),
                 company.getUpdatedAt(),
-                positions);
+                positions,
+                jobCount);
     }
 }
