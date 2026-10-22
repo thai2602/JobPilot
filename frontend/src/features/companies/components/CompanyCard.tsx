@@ -5,6 +5,12 @@ import { fieldColors, fieldLabels, type CompanyItem } from "../companyMapping";
 
 const defaultTone = { bg: "#f1f5f9", text: "#475569" };
 
+const jobCountLabel = ({ openJobs, totalJobs }: CompanyItem): string => {
+   if (openJobs > 0) return `${openJobs} vị trí đang tuyển`;
+   if (totalJobs > 0) return `${totalJobs} tin đã hết hạn`;
+   return "Chưa có tin tuyển dụng";
+};
+
 export default function CompanyCard({ company, eager }: { company: CompanyItem; eager: boolean }) {
    const tone = fieldColors[company.field] ?? defaultTone;
 
@@ -40,7 +46,7 @@ export default function CompanyCard({ company, eager }: { company: CompanyItem; 
 
                <div className={styles.companyMeta}>
                   <span><Users aria-hidden="true" /> {company.employees}</span>
-                  <span><Briefcase aria-hidden="true" /> {company.openJobs} vị trí</span>
+                  <span><Briefcase aria-hidden="true" /> {jobCountLabel(company)}</span>
                </div>
 
                <div className={styles.benefitList} aria-label="Phúc lợi nổi bật">

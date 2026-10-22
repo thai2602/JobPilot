@@ -249,7 +249,7 @@ export default function FloatingChatbot() {
                   <h3 className="font-extrabold text-[15px] tracking-tight text-slate-800">AI Assistant</h3>
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
                 </div>
-                <p className="text-[10.5px] text-slate-500 font-bold mt-0.5">Trợ lý định hướng nghề nghiệp</p>
+                <p className="text-[11px] text-slate-500 font-bold mt-0.5">Trợ lý định hướng nghề nghiệp</p>
               </div>
             </div>
 
@@ -382,8 +382,9 @@ export default function FloatingChatbot() {
               />
               <button
                 onClick={() => sendMessage(input)}
+                aria-label="Gửi tin nhắn"
                 disabled={!input.trim() || isLoading}
-                className="w-8 h-8 rounded-xl bg-emerald-500 hover:bg-emerald-600 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center flex-shrink-0 transition-all shadow-[0_4px_12px_rgba(16,185,129,0.2)] cursor-pointer active:scale-95"
+                className="w-8 h-8 rounded-xl bg-emerald-700 hover:bg-emerald-800 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center flex-shrink-0 transition-all shadow-[0_4px_12px_rgba(16,185,129,0.2)] cursor-pointer active:scale-95"
               >
                 {isLoading ? (
                   <Loader2 className="w-4 h-4 text-white animate-spin" />

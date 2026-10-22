@@ -6,6 +6,10 @@ import { cleanApiText, splitApiText } from "../../utils/content";
 import { toVietnameseJobTitle } from "../../utils/jobTitle";
 import { formatSalaryRange } from "../../utils/salary";
 import { fallbackCompanyLogo } from "../companies/companyAssets";
+import { jobLevelLabels, jobTypeLabels } from "../jobs/jobMapping";
+
+const levelLabel = (value?: string | null): string => (value && jobLevelLabels[value]) || cleanApiText(value);
+const typeLabel = (value?: string | null): string => (value && jobTypeLabels[value]) || cleanApiText(value);
 
 export type HomeJob = {
    id?: number;
@@ -105,8 +109,8 @@ export const mapHomeJob = (job: ApiJob): HomeJob => ({
    industry: cleanApiText(job.industry) || "Ngành nghề khác",
    expired: Boolean(job.expired),
    tags: Array.from(new Set([
-      cleanApiText(job.jobLevel),
-      cleanApiText(job.jobType),
+      levelLabel(job.jobLevel),
+      typeLabel(job.jobType),
       cleanApiText(job.experienceYears),
       ...splitApiText(job.requirements, 2),
    ].filter(Boolean))).slice(0, 3),
@@ -122,7 +126,7 @@ export const mapRecommendation = (job: JobRecommendation): HomeJob => ({
    salary: formatSalaryRange(job.salaryMin, job.salaryMax),
    industry: RECOMMENDATION_GROUP,
    expired: false,
-   tags: (job.matchedSkills.length ? job.matchedSkills : [job.jobLevel, job.jobType])
+   tags: (job.matchedSkills.length ? job.matchedSkills : [levelLabel(job.jobLevel), typeLabel(job.jobType)])
       .filter((tag): tag is string => Boolean(tag))
       .slice(0, 3),
 });
@@ -191,7 +195,7 @@ export const buildSalaryByPosition = (jobs: ApiJob[]): SalaryPoint[] => {
    jobs.forEach((job) => {
       const values = salaryInMillions(job);
       if (!values.length) return;
-      const level = cleanApiText(job.jobLevel) || "Khác";
+      const level = levelLabel(job.jobLevel) || "Khác";
       groups.set(level, [...(groups.get(level) ?? []), average(values)]);
    });
 

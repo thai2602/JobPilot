@@ -245,18 +245,19 @@
   z-index: 1101 !important;
 }
 
+/* Hai nút nổi xếp dọc ở góc phải để chiếm ít bề ngang nội dung nhất. */
 .chatbot-toggle {
   position: fixed !important;
   z-index: 1000 !important;
-  right: 100px !important;
-  bottom: 24px !important;
+  right: 24px !important;
+  bottom: 96px !important;
   width: 60px !important;
   height: 60px !important;
 }
 
 .chatbot-panel {
   position: fixed !important;
-  right: 100px !important;
+  right: 24px !important;
   bottom: 94px !important;
   width: min(390px, calc(100vw - 32px)) !important;
   height: min(590px, calc(80vh - 120px)) !important;
@@ -268,8 +269,8 @@
   .saved-tray-toggle {
     right: 16px !important;
     bottom: 16px !important;
-    width: 50px !important;
-    height: 50px !important;
+    width: 48px !important;
+    height: 48px !important;
   }
 
   .saved-tray-panel {
@@ -281,10 +282,15 @@
   }
 
   .chatbot-toggle {
-    right: 82px !important; /* 16px + 50px + 16px spacing */
-    bottom: 16px !important;
-    width: 50px !important;
-    height: 50px !important;
+    right: 16px !important;
+    bottom: 76px !important; /* 16px + 48px + 12px khoảng cách */
+    width: 48px !important;
+    height: 48px !important;
+  }
+
+  /* Chừa chỗ cuối trang để nút nổi không che dòng nội dung cuối cùng. */
+  body {
+    padding-bottom: 72px;
   }
 
   .chatbot-panel {

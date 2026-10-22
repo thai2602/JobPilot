@@ -41,7 +41,7 @@ function TopIndustryCard({ industry, isApplied, onApply }: ApplyProps & { indust
                      </div>
                      <div className="flex flex-wrap gap-1 mt-3">
                         {job.tags.map((tag) => (
-                           <span key={tag} className="rounded-full bg-white px-2 py-1 text-[10px] font-medium text-slate-700 border border-gray-200">
+                           <span key={tag} className="rounded-full bg-white px-2 py-1 text-[11px] font-medium text-slate-700 border border-gray-200">
                               {tag}
                            </span>
                         ))}

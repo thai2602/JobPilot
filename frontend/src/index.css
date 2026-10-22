@@ -48,7 +48,7 @@ h4 {
   font-family: var(--font-heading);
   letter-spacing: -0.02em;
   line-height: 1.3;
-  color: var(--text-main);
+  color: inherit;
   margin: 0;
 }
 
@@ -84,7 +84,7 @@ button {
 
 p {
   margin: 0;
-  color: var(--text-muted);
+  color: inherit;
 }
 
 a,

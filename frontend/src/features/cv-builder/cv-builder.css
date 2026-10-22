@@ -121,12 +121,3 @@
     animation-iteration-count: 1 !important;
   }
 }
-
-/*
- * index.css đặt màu cố định cho p và h1–h4. Trong mẫu CV, phần header màu dựa vào
- * màu chữ thừa hưởng (text-white ở khung ngoài), nên trả các thẻ này về "inherit".
- * :where() giữ độ ưu tiên ở mức thẻ, nên class Tailwind như text-slate-600 vẫn thắng.
- */
-:where(.cv-preview) :is(p, h1, h2, h3, h4) {
-  color: inherit;
-}

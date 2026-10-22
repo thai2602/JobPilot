@@ -34,6 +34,10 @@ export default function JobDetailPage() {
    const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
 
    useEffect(() => {
+      if (job) document.title = `${job.title} – ${job.company} | JobPilot`;
+   }, [job]);
+
+   useEffect(() => {
       if (!jobSlug) {
          setLoadError("Không tìm thấy việc làm này.");
          return;

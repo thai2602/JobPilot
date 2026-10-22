@@ -264,15 +264,16 @@ export default function ChatbotPage() {
           />
           <button
             onClick={() => sendMessage(input)}
+            aria-label="Gửi tin nhắn"
             disabled={!input.trim() || isLoading}
-            className="w-8 h-8 rounded-xl bg-emerald-500 hover:bg-emerald-600 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center flex-shrink-0 transition-colors shadow-sm"
+            className="w-8 h-8 rounded-xl bg-emerald-700 hover:bg-emerald-800 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center flex-shrink-0 transition-colors shadow-sm"
           >
             {isLoading
               ? <Loader2 className="w-4 h-4 text-white animate-spin" />
               : <Send className="w-4 h-4 text-white" />}
           </button>
         </div>
-        <p className="text-center text-[10px] text-slate-500 mt-2">
+        <p className="text-center text-[11px] text-slate-500 mt-2">
           AI có thể mắc lỗi. Vui lòng kiểm tra thông tin quan trọng.
         </p>
       </div>

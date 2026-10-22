@@ -248,7 +248,7 @@ export default function Header() {
                            )}
                            <div className="leading-tight text-left">
                               <p className="max-w-[150px] truncate text-sm font-bold text-slate-900">{currentUser.name}</p>
-                              <p className="max-w-[150px] truncate text-[10px] font-medium text-slate-500">{currentUser.email}</p>
+                              <p className="max-w-[150px] truncate text-[11px] font-medium text-slate-500">{currentUser.email}</p>
                            </div>
                            <ChevronDown className={`h-4 w-4 text-emerald-700 transition-transform ${profileMenuOpen ? "rotate-180" : ""}`} aria-hidden="true" />
                         </button>
@@ -382,7 +382,7 @@ export default function Header() {
                               )}
                               <div className="min-w-0 text-left">
                                  <p className="truncate text-sm font-bold text-slate-900">{currentUser.name}</p>
-                                 <p className="truncate text-[10px] font-medium text-slate-500">{currentUser.email}</p>
+                                 <p className="truncate text-[11px] font-medium text-slate-500">{currentUser.email}</p>
                               </div>
                               <ChevronDown className={`ml-auto h-4 w-4 text-emerald-700 transition-transform ${profileMenuOpen ? "rotate-180" : ""}`} aria-hidden="true" />
                            </button>

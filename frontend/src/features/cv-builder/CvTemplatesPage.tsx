@@ -433,7 +433,7 @@ export default function CvTemplatesPage() {
                         <div className="space-y-2">
                            <div className="flex items-center justify-between gap-2">
                               <h3 className="font-extrabold text-slate-900 text-[15px] group-hover:text-emerald-800 transition-colors">{t.name}</h3>
-                              <span className={`px-2.5 py-0.5 rounded-full border text-[10px] font-extrabold uppercase shrink-0 ${t.tagColor}`}>
+                              <span className={`px-2.5 py-0.5 rounded-full border text-[11px] font-extrabold uppercase shrink-0 ${t.tagColor}`}>
                                  {t.tag}
                               </span>
                            </div>
@@ -509,7 +509,7 @@ export default function CvTemplatesPage() {
                      <div className="space-y-3 flex-grow">
                         {/* Good side */}
                         <div className="rounded-2xl bg-emerald-50/60 border border-emerald-100/40 p-3.5 space-y-1">
-                           <p className="text-[10px] font-extrabold text-emerald-700 uppercase flex items-center gap-1">
+                           <p className="text-[11px] font-extrabold text-emerald-700 uppercase flex items-center gap-1">
                               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 shrink-0" /> Nên làm
                            </p>
                            <p className="text-[12px] text-emerald-950/80 leading-relaxed font-semibold">
@@ -518,7 +518,7 @@ export default function CvTemplatesPage() {
                         </div>
                         {/* Bad side */}
                         <div className="rounded-2xl bg-rose-50/60 border border-rose-100/40 p-3.5 space-y-1">
-                           <p className="text-[10px] font-extrabold text-rose-600 uppercase flex items-center gap-1">
+                           <p className="text-[11px] font-extrabold text-rose-600 uppercase flex items-center gap-1">
                               <XCircle className="w-3.5 h-3.5 text-rose-500 shrink-0" /> Không nên
                            </p>
                            <p className="text-[12px] text-rose-950/80 leading-relaxed font-semibold">
@@ -615,7 +615,7 @@ export default function CvTemplatesPage() {
                                                 {!isEmail && !isPhone && !isLoc && <Calendar className="w-3.5 h-3.5" />}
                                              </span>
                                              <div className="min-w-0">
-                                                <p className="text-[10px] text-slate-500 font-extrabold uppercase leading-none">{info.label}</p>
+                                                <p className="text-[11px] text-slate-500 font-extrabold uppercase leading-none">{info.label}</p>
                                                 <p className="text-[12px] text-slate-800 font-bold mt-1 truncate">{info.value}</p>
                                              </div>
                                           </div>

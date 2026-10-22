@@ -41,7 +41,7 @@ export default function CareerArticles() {
                <article key={article.title} className="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:-translate-y-1 hover:shadow-lg transition-all duration-300 flex flex-col group">
                   <div className="h-44 w-full bg-slate-100 overflow-hidden relative">
                      <img src={imageSrc(article.image)} alt={article.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                     <span className="absolute top-4 left-4 text-[10.5px] font-extrabold bg-sky-50 border border-sky-100 text-sky-700 px-3 py-1 rounded-xl shadow-md uppercase tracking-wider">
+                     <span className="absolute top-4 left-4 text-[11px] font-extrabold bg-sky-50 border border-sky-100 text-sky-700 px-3 py-1 rounded-xl shadow-md uppercase tracking-wider">
                         {article.category}
                      </span>
                   </div>

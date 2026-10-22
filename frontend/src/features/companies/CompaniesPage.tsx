@@ -27,7 +27,7 @@ export default function CompaniesPage() {
    const visibleCompanies = companies
       .filter((company) => selectedField === ALL_FIELDS || company.field === selectedField)
       .sort((left, right) => {
-         if (sortMode === "jobs") return right.openJobs - left.openJobs;
+         if (sortMode === "jobs") return right.openJobs - left.openJobs || right.totalJobs - left.totalJobs;
          if (sortMode === "name") return left.name.localeCompare(right.name, "vi");
          return 0;
       });

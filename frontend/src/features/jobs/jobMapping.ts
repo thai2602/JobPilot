@@ -59,7 +59,7 @@ export const jobTypeOptions = [
 
 export const locationOptions = ["Hà Nội", "Hồ Chí Minh", "Đà Nẵng", "Toàn Quốc"];
 
-const jobTypeLabels: Record<string, string> = {
+export const jobTypeLabels: Record<string, string> = {
    FULL_TIME: "Toàn thời gian",
    PART_TIME: "Bán thời gian",
    INTERNSHIP: "Thực tập",

@@ -10,6 +10,8 @@ export type CompanyItem = {
    employees: string;
    location: string;
    openJobs: number;
+   /** Tổng số tin đã đăng, kể cả tin đã hết hạn. */
+   totalJobs: number;
    color: string;
    description: string;
    benefits: string[];
@@ -108,6 +110,7 @@ export const mapApiCompany = (apiCompany: ApiCompany): CompanyItem => {
       employees: apiCompany.size || "Đang cập nhật",
       location: location || "Đang cập nhật",
       openJobs: openPositions.length,
+      totalJobs: apiCompany.jobCount ?? apiCompany.positions?.length ?? 0,
       color: apiCompany.color || "#047857",
       description: cleanApiText(apiCompany.description) || recruitmentSummary,
       benefits,

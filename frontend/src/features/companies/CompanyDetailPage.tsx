@@ -6,9 +6,10 @@ import { useRouter, useParams } from "next/navigation";
 import { Building2, MapPin, Users, Wallet, Briefcase, ArrowUpRight, Check } from "lucide-react";
 import { fallbackCompanyImage, fallbackCompanyLogo } from "./companyAssets";
 import { isOpenPosition } from "./companyMapping";
+import { jobLevelLabels, jobTypeLabels } from "../jobs/jobMapping";
 import { ApiError } from "../../services/httpClient";
 import { formatSalaryRange } from "../../utils/salary";
-import { cleanApiText, splitApiText } from "../../utils/content";
+import { cleanApiText, splitApiText, toParagraphs } from "../../utils/content";
 import { companiesApi, type ApiCompany } from "../../services/companiesApi";
 
 type CompanyPosition = {
@@ -37,25 +38,7 @@ type CompanyItem = {
    openPositions: CompanyPosition[];
 };
 
-const jobLevelLabels: Record<string, string> = {
-   NHAN_VIEN: "Nhân viên",
-   THUC_TAP_SINH: "Thực tập sinh",
-   TRUONG_NHOM: "Trưởng nhóm",
-   QUAN_LY_GIAM_SAT: "Quản lý/Giám sát",
-   TRUONG_PHO_PHONG: "Trưởng/Phó phòng",
-   GIAM_DOC: "Giám đốc",
-   PHO_GIAM_DOC: "Phó giám đốc",
-   TRUONG_CHI_NHANH: "Trưởng chi nhánh",
-};
-
-const jobTypeLabels: Record<string, string> = {
-   FULL_TIME: "Toàn thời gian",
-   PART_TIME: "Bán thời gian",
-   INTERNSHIP: "Thực tập",
-   CONTRACT: "Hợp đồng",
-   HYBRID: "Hybrid",
-   REMOTE: "Remote",
-};
+const OVERVIEW_PREVIEW_COUNT = 3;
 
 const formatExperience = (value?: string): string => {
    const normalized = cleanApiText(value);
@@ -78,6 +61,11 @@ export default function CompanyDetailPage() {
    const [reloadKey, setReloadKey] = useState(0);
    const [failedLogoSrc, setFailedLogoSrc] = useState("");
    const [failedHeroSrc, setFailedHeroSrc] = useState("");
+   const [showFullOverview, setShowFullOverview] = useState(false);
+
+   useEffect(() => {
+      if (company) document.title = `${company.name} | JobPilot`;
+   }, [company]);
 
    useEffect(() => {
       if (!companySlug) {
@@ -144,7 +132,7 @@ export default function CompanyDetailPage() {
                openPositionsCount: mappedPositions.length,
                field: industry,
                benefits,
-               overview: [overview],
+               overview: toParagraphs(overview),
                skills: positionSkills.length ? positionSkills : ["Doanh nghiệp chưa cung cấp yêu cầu chuyên môn"],
                openPositions: mappedPositions,
             });
@@ -282,11 +270,22 @@ export default function CompanyDetailPage() {
                {/* Overview */}
                <div className="rounded-[24px] border border-slate-200 bg-white p-6 md:p-8 shadow-sm space-y-4">
                   <h2 className="text-lg font-black text-slate-900 border-b border-slate-100 pb-3">Giới thiệu tổng quan</h2>
-                  <div className="space-y-3 text-sm text-slate-700 leading-relaxed font-medium">
-                     {company.overview.map((para, i) => (
+                  <div id="company-overview" className="space-y-3 text-sm text-slate-700 leading-7 max-w-[68ch]">
+                     {(showFullOverview ? company.overview : company.overview.slice(0, OVERVIEW_PREVIEW_COUNT)).map((para, i) => (
                         <p key={i}>{para}</p>
                      ))}
                   </div>
+                  {company.overview.length > OVERVIEW_PREVIEW_COUNT && (
+                     <button
+                        type="button"
+                        onClick={() => setShowFullOverview((open) => !open)}
+                        aria-expanded={showFullOverview}
+                        aria-controls="company-overview"
+                        className="text-sm font-bold text-emerald-700 hover:text-emerald-800"
+                     >
+                        {showFullOverview ? "Thu gọn" : "Xem thêm"}
+                     </button>
+                  )}
                </div>
 
                {/* Open Positions List */}

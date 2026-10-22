@@ -198,7 +198,7 @@ export default function CvEditorShell({ children }: { children: ReactNode }) {
           <img src={logoSrc} alt="" className="h-10 w-10 shrink-0 object-contain" />
           <div className={`${mobile ? "block" : "hidden xl:block"} min-w-0`}>
             <p className="truncate text-[15px] font-black tracking-tight text-slate-950">JobPilot</p>
-            <p className="truncate text-[10px] font-bold uppercase tracking-[0.16em] text-emerald-700">CV Studio</p>
+            <p className="truncate text-[11px] font-bold uppercase tracking-[0.16em] text-emerald-700">CV Studio</p>
           </div>
         </Link>
         {mobile && (
@@ -219,7 +219,7 @@ export default function CvEditorShell({ children }: { children: ReactNode }) {
       <nav aria-label="Điều hướng JobPilot" className="cv-editor-sidebar-scrollbar min-h-0 flex-1 overflow-y-auto px-3 py-4">
         {navGroups.map((group, groupIndex) => (
           <div key={group.label} className={groupIndex ? "mt-5" : ""}>
-            <p className={`${mobile ? "block" : "hidden xl:block"} mb-2 px-3 text-[10px] font-black uppercase tracking-[0.18em] text-slate-500`}>
+            <p className={`${mobile ? "block" : "hidden xl:block"} mb-2 px-3 text-[11px] font-black uppercase tracking-[0.18em] text-slate-500`}>
               {group.label}
             </p>
             <div className="space-y-1">
@@ -278,7 +278,7 @@ export default function CvEditorShell({ children }: { children: ReactNode }) {
             )}
             <span className={mobile ? "min-w-0" : "hidden min-w-0 xl:block"}>
               <span className="block truncate text-xs font-black text-slate-800">{currentUser?.name || "Tài khoản"}</span>
-              <span className="mt-0.5 block truncate text-[10px] font-medium text-slate-500">{currentUser?.email}</span>
+              <span className="mt-0.5 block truncate text-[11px] font-medium text-slate-500">{currentUser?.email}</span>
             </span>
           </Link>
           <button type="button" onClick={handleLogout} aria-label="Đăng xuất" title="Đăng xuất" className={`${mobile ? "grid" : "hidden xl:grid"} h-9 w-9 shrink-0 place-items-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-600`}>
@@ -296,7 +296,7 @@ export default function CvEditorShell({ children }: { children: ReactNode }) {
           <img src={logoSrc} alt="" className="h-9 w-9 shrink-0 object-contain" />
           <div className="min-w-0">
             <p className="truncate text-sm font-black text-slate-900">JobPilot CV Studio</p>
-            <p className="truncate text-[10px] font-semibold text-slate-500">Không gian chỉnh sửa CV</p>
+            <p className="truncate text-[11px] font-semibold text-slate-500">Không gian chỉnh sửa CV</p>
           </div>
         </div>
         <button

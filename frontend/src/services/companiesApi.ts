@@ -22,6 +22,8 @@ export interface ApiCompany {
   updatedAt?: string;
   isDeleted?: boolean;
   positions?: ApiJob[];
+  /** Tổng số tin đã đăng, kể cả tin đã hết hạn. */
+  jobCount?: number;
 }
 
 export interface CompanyListParams {

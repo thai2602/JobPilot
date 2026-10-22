@@ -277,7 +277,7 @@
   border-radius: 999px;
   background: rgba(15, 23, 42, 0.55);
   color: #d1fae5;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -391,7 +391,7 @@
 
 .selectedJob span {
   color: #047857;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -403,6 +403,7 @@
 }
 
 .selectedJob p {
+  color: var(--company-muted);
   margin-top: 3px;
   font-size: 12px;
 }
@@ -629,7 +630,7 @@
   gap: 5px;
   padding: 0 10px;
   border-radius: 999px;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 850;
   backdrop-filter: blur(10px);
 }
@@ -754,7 +755,7 @@
   border-radius: 999px;
   background: #f8fafc;
   color: #475569;
-  font-size: 10.5px;
+  font-size: 11px;
   font-weight: 750;
 }
 
@@ -777,7 +778,7 @@
   border-radius: 8px;
   background: #ecfdf5;
   color: #047857;
-  font-size: 9.5px;
+  font-size: 11px;
   font-weight: 750;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -897,6 +898,7 @@
 }
 
 .emptyState p {
+  color: var(--company-muted);
   max-width: 480px;
   margin-top: 7px;
   font-size: 12px;
@@ -1064,7 +1066,7 @@
   }
 
   .heroStats span {
-    font-size: 9px;
+    font-size: 11px;
     line-height: 1.35;
   }
 

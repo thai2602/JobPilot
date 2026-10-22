@@ -160,12 +160,12 @@ function AppearanceCard() {
                 <div className="flex items-center justify-between gap-1.5">
                   <p className="font-extrabold text-slate-800 text-[13px] leading-tight group-hover:text-slate-900 transition-colors">{name}</p>
                   {active && (
-                    <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-slate-900 text-white leading-none shrink-0 scale-90 font-mono">
+                    <span className="text-[11px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-slate-900 text-white leading-none shrink-0 scale-90 font-mono">
                       Đang dùng
                     </span>
                   )}
                 </div>
-                <p className="text-slate-500 text-[10px] truncate mt-0.5 font-medium">{desc}</p>
+                <p className="text-slate-500 text-[11px] truncate mt-0.5 font-medium">{desc}</p>
               </div>
             </button>
           );
@@ -194,7 +194,7 @@ function AppearanceCard() {
                 title={c.name}
               >
                 {active && (
-                  <span className="absolute inset-0 flex items-center justify-center text-white text-[9px] font-bold leading-none">✓</span>
+                  <span className="absolute inset-0 flex items-center justify-center text-white text-[11px] font-bold leading-none">✓</span>
                 )}
               </button>
             );
