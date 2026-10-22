@@ -10,7 +10,7 @@ function PersonalInfoSection() {
 
   const iconInput = (Icon: typeof Mail, props: React.InputHTMLAttributes<HTMLInputElement>) => (
     <div className="relative">
-      <Icon className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+      <Icon className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
       <input className={`${inputCls} pl-11`} {...props} />
     </div>
   );
@@ -86,7 +86,7 @@ function ExperienceSection() {
   const { items, add, update, remove } = useCvList("experiences", () => ({ company: "", position: "", startDate: "", endDate: "", description: "" }));
   return (
     <ListSection
-      icon={Briefcase} iconClass="border-emerald-100/40 text-emerald-600"
+      icon={Briefcase} iconClass="border-emerald-100/40 text-emerald-700"
       title="Kinh nghiệm làm việc" addLabel="Thêm kinh nghiệm"
       emptyText="Chưa có kinh nghiệm làm việc nào được thêm vào."
       items={items} onAdd={add} onRemove={remove}

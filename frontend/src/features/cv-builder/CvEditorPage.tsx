@@ -1,6 +1,6 @@
 'use client';
 
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import "./cv-builder.css";
 import { CvProvider, useCvContext } from "./CvContext";
 import CvEditorShell from "./CvEditorShell";
@@ -25,6 +25,14 @@ function CvEditorContent() {
   }, [cvData.color]);
 
   const currentCvId = () => (doc.selectedCvId ? Number(doc.selectedCvId) : undefined);
+
+  // Dưới xl khung xem trước / AI nằm dưới form dài; vừa mở thì cuộn tới để người dùng thấy ngay
+  const sidePanelRef = useRef<HTMLDivElement>(null);
+  const sidePanelOpen = isPreviewVisible || isAiReviewVisible;
+  useEffect(() => {
+    if (!sidePanelOpen || window.matchMedia("(min-width: 1280px)").matches) return;
+    sidePanelRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [sidePanelOpen]);
 
   const handleToggleAiReview = async () => {
     setIsPreviewVisible(false);
@@ -57,7 +65,6 @@ function CvEditorContent() {
     setIsAiReviewVisible(false);
   };
 
-  const sidePanelOpen = isPreviewVisible || isAiReviewVisible;
 
   return (
     <div className="min-h-screen bg-slate-50/50 text-slate-900 rounded-[28px]">
@@ -71,7 +78,7 @@ function CvEditorContent() {
             onCreateNew={handleCreateNew}
           />
 
-          <div className={`grid grid-cols-1 ${sidePanelOpen ? "min-[1760px]:grid-cols-[minmax(0,1fr)_minmax(480px,620px)]" : ""} gap-6 items-start`}>
+          <div className={`grid grid-cols-1 ${sidePanelOpen ? "xl:grid-cols-[minmax(0,1fr)_minmax(420px,560px)]" : ""} gap-6 items-start`}>
             <div className="flex flex-col 2xl:flex-row gap-6">
               <EditorSidebar
                 isUploading={doc.isUploading}
@@ -91,9 +98,9 @@ function CvEditorContent() {
             </div>
 
             {sidePanelOpen && (
-              <div className="w-full h-fit flex flex-col" aria-label={isPreviewVisible ? "Xem trước CV" : "AI Nhận xét"} role="region">
+              <div ref={sidePanelRef} className="w-full h-fit flex flex-col scroll-mt-4 xl:sticky xl:top-4 xl:max-h-[calc(100vh-2rem)] xl:overflow-y-auto" aria-label={isPreviewVisible ? "Xem trước CV" : "AI Nhận xét"} role="region">
                 {isPreviewVisible && (
-                  <div ref={previewRef} className="bg-white rounded-[24px] shadow-[0_20px_60px_rgba(0,0,0,0.08)] border border-slate-100 overflow-hidden min-h-[850px] print:shadow-none print:border-none origin-top transition-transform h-fit">
+                  <div ref={previewRef} className="cv-preview bg-white rounded-[24px] shadow-[0_20px_60px_rgba(0,0,0,0.08)] border border-slate-100 overflow-hidden min-h-[850px] print:shadow-none print:border-none origin-top transition-transform h-fit">
                     <CvPreview cvData={cvData} />
                   </div>
                 )}

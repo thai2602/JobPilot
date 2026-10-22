@@ -17,6 +17,7 @@ export type HomeJob = {
    salary: string;
    tags: string[];
    industry?: string;
+   expired: boolean;
 };
 
 export type HomeIndustry = {
@@ -102,6 +103,7 @@ export const mapHomeJob = (job: ApiJob): HomeJob => ({
    place: cleanApiText(job.locationCity) || cleanApiText(job.locationAddress) || "Địa điểm linh hoạt",
    salary: formatSalaryRange(job.salaryMin, job.salaryMax),
    industry: cleanApiText(job.industry) || "Ngành nghề khác",
+   expired: Boolean(job.expired),
    tags: Array.from(new Set([
       cleanApiText(job.jobLevel),
       cleanApiText(job.jobType),
@@ -119,6 +121,7 @@ export const mapRecommendation = (job: JobRecommendation): HomeJob => ({
    place: cleanApiText(job.locationCity) || cleanApiText(job.locationAddress) || "Địa điểm linh hoạt",
    salary: formatSalaryRange(job.salaryMin, job.salaryMax),
    industry: RECOMMENDATION_GROUP,
+   expired: false,
    tags: (job.matchedSkills.length ? job.matchedSkills : [job.jobLevel, job.jobType])
       .filter((tag): tag is string => Boolean(tag))
       .slice(0, 3),
@@ -236,7 +239,8 @@ export const buildMarketStats = (jobs: ApiJob[] | null, companies: ApiCompany[] 
          }).length) : null,
          accent: "#f59e0b",
       },
-      { label: "Việc làm đang tuyển", value: jobs ? countLabel(jobs.length, limit) : null, accent: "#22c55e" },
+      // API trả cả tin hết hạn; chỉ đếm tin còn nhận hồ sơ
+      { label: "Việc làm đang tuyển", value: jobs ? String(jobs.filter((job) => !job.expired).length) : null, accent: "#22c55e" },
       { label: "Doanh nghiệp đầy đủ hồ sơ", value: companies ? countLabel(companies.length, limit) : null, accent: "#6366f1" },
    ];
 };

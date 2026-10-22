@@ -111,6 +111,10 @@ export function useJobActions() {
 
    /** Kiểm tra điều kiện rồi mở hộp chọn CV. */
    const startApplication = (job: Job) => {
+      if (job.expired) {
+         showToast("Tin tuyển dụng này đã hết hạn ứng tuyển.", "error");
+         return;
+      }
       if (!readAuthUser()) {
          showToast("Bạn cần đăng nhập trước khi ứng tuyển.", "error");
          return;

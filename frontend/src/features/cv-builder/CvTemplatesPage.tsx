@@ -20,10 +20,10 @@ const templates = [
       name: "CV Chuẩn Mực",
       level: "Tối ưu hóa cho mọi ngành nghề",
       tag: "Phổ biến nhất",
-      tagColor: "bg-emerald-500/10 border-emerald-500/20 text-emerald-400",
+      tagColor: "bg-emerald-500/10 border-emerald-500/20 text-emerald-700",
       accent: "#10b981",
       preview: "from-emerald-500/20 to-teal-500/20 border-emerald-500/30",
-      iconColor: "text-emerald-400",
+      iconColor: "text-emerald-600",
       description: "Mẫu thiết kế thanh lịch, chuyên nghiệp, cấu trúc rõ ràng phù hợp với hầu hết các doanh nghiệp hiện nay.",
    },
    {
@@ -31,10 +31,10 @@ const templates = [
       name: "CV Tech Pro",
       level: "Tối ưu cho IT & Engineering",
       tag: "Công nghệ",
-      tagColor: "bg-indigo-500/10 border-indigo-500/20 text-indigo-400",
+      tagColor: "bg-indigo-500/10 border-indigo-500/20 text-indigo-700",
       accent: "#6366f1",
       preview: "from-indigo-500/20 to-purple-500/20 border-indigo-500/30",
-      iconColor: "text-indigo-400",
+      iconColor: "text-indigo-600",
       description: "Thiết kế hiện đại, làm nổi bật các dự án cá nhân, kỹ năng kỹ thuật cứng và các chứng chỉ công nghệ hàng đầu.",
    },
    {
@@ -42,10 +42,10 @@ const templates = [
       name: "CV Marketing & Design",
       level: "Dành cho khối Sáng tạo",
       tag: "Sáng tạo",
-      tagColor: "bg-rose-500/10 border-rose-500/20 text-rose-400",
+      tagColor: "bg-rose-500/10 border-rose-500/20 text-rose-700",
       accent: "#f43f5e",
       preview: "from-rose-500/20 to-pink-500/20 border-rose-500/30",
-      iconColor: "text-rose-400",
+      iconColor: "text-rose-600",
       description: "Phối màu cá tính, bố cục phá cách giúp bạn thu hút sự chú ý của nhà tuyển dụng truyền thông và sáng tạo ngay từ cái nhìn đầu tiên.",
    },
    {
@@ -53,10 +53,10 @@ const templates = [
       name: "CV Executive",
       level: "Dành cho Lãnh đạo & PM",
       tag: "Cao cấp",
-      tagColor: "bg-amber-500/10 border-amber-500/20 text-amber-400",
+      tagColor: "bg-amber-500/10 border-amber-500/20 text-amber-700",
       accent: "#f59e0b",
       preview: "from-amber-500/20 to-orange-500/20 border-amber-500/30",
-      iconColor: "text-amber-400",
+      iconColor: "text-amber-600",
       description: "Nhấn mạnh kỹ năng quản lý, lãnh đạo, số liệu hóa các thành quả thực tế và hành trình thăng tiến sự nghiệp xuất sắc.",
    },
 ];
@@ -360,7 +360,7 @@ export default function CvTemplatesPage() {
             <div className="relative max-w-4xl mx-auto text-center space-y-6">
                <div className="flex justify-center mb-4">
                   <div className="p-3 rounded-full bg-emerald-100">
-                     <FileText className="w-8 h-8 text-emerald-600" />
+                     <FileText className="w-8 h-8 text-emerald-700" />
                   </div>
                </div>
                <h1 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight leading-tight">
@@ -372,7 +372,7 @@ export default function CvTemplatesPage() {
                <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
                   <button
                      onClick={openCreateCvModal}
-                     className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 px-6 py-3 text-sm font-semibold text-white shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5"
+                     className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-700 to-emerald-700 px-6 py-3 text-sm font-semibold text-white shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5"
                   >
                      Tạo CV ngay <ArrowRight className="h-4 w-4" />
                   </button>
@@ -432,12 +432,12 @@ export default function CvTemplatesPage() {
                      <div className="p-6 flex-grow flex flex-col justify-between space-y-4">
                         <div className="space-y-2">
                            <div className="flex items-center justify-between gap-2">
-                              <h3 className="font-extrabold text-slate-900 text-[15px] group-hover:text-emerald-600 transition-colors">{t.name}</h3>
+                              <h3 className="font-extrabold text-slate-900 text-[15px] group-hover:text-emerald-800 transition-colors">{t.name}</h3>
                               <span className={`px-2.5 py-0.5 rounded-full border text-[10px] font-extrabold uppercase shrink-0 ${t.tagColor}`}>
                                  {t.tag}
                               </span>
                            </div>
-                           <p className="text-[12px] font-bold text-slate-400">{t.level}</p>
+                           <p className="text-[12px] font-bold text-slate-500">{t.level}</p>
                            <p className="text-slate-500 text-[12.5px] leading-relaxed line-clamp-3">
                               {t.description}
                            </p>
@@ -468,7 +468,7 @@ export default function CvTemplatesPage() {
             <div className="absolute -right-16 -top-16 w-40 h-40 rounded-full bg-emerald-300/10 blur-2xl" />
             <div className="space-y-2 relative z-10">
                <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-emerald-500" /> Bạn muốn một chiếc CV chuyên nghiệp đỉnh cao?
+                  <Sparkles className="w-5 h-5 text-emerald-700" /> Bạn muốn một chiếc CV chuyên nghiệp đỉnh cao?
                </h3>
                <p className="text-sm text-slate-600 max-w-2xl leading-relaxed">
                   Hãy sử dụng công cụ soạn thảo CV nâng cao. Hệ thống cho phép bạn bóc tách dữ liệu từ PDF cũ bằng AI, gợi ý viết mô tả theo chuẩn ATS và chấm điểm hồ sơ hoàn toàn miễn phí.
@@ -476,7 +476,7 @@ export default function CvTemplatesPage() {
             </div>
             <button
                onClick={openCreateCvModal}
-               className="relative z-10 px-6 py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white text-[13.5px] font-extrabold rounded-xl transition-all active:scale-95 cursor-pointer shadow-md shrink-0"
+               className="relative z-10 px-6 py-3.5 bg-emerald-700 hover:bg-emerald-800 text-white text-[13.5px] font-extrabold rounded-xl transition-all active:scale-95 cursor-pointer shadow-md shrink-0"
             >
                Trình soạn thảo CV mới
             </button>
@@ -486,12 +486,12 @@ export default function CvTemplatesPage() {
          <section className="border border-slate-100 rounded-[32px] bg-white p-6 sm:p-8 shadow-sm space-y-8">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                <div className="space-y-1">
-                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded">
+                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded">
                      Hướng dẫn viết CV
                   </span>
                   <h3 className="text-2xl font-black text-slate-950 pt-2">Bí kíp chinh phục nhà tuyển dụng khó tính</h3>
                </div>
-               <p className="text-slate-400 text-[13.5px] max-w-md leading-relaxed">
+               <p className="text-slate-500 text-[13.5px] max-w-md leading-relaxed">
                   CV là cầu nối đầu tiên đưa bạn đến vòng phỏng vấn. Nắm vững những quy tắc vàng dưới đây để tránh những sai lầm đáng tiếc nhất.
                </p>
             </div>
@@ -503,14 +503,14 @@ export default function CvTemplatesPage() {
                      className="border border-slate-100/70 rounded-3xl p-5 bg-slate-50/50 space-y-4 hover:bg-white hover:shadow-md hover:border-slate-100 transition-all duration-300 flex flex-col justify-between"
                   >
                      <h4 className="font-extrabold text-[15px] text-slate-900 flex items-center gap-2">
-                        <FileText className="w-4 h-4 text-emerald-500 shrink-0" /> {tip.title}
+                        <FileText className="w-4 h-4 text-emerald-700 shrink-0" /> {tip.title}
                      </h4>
 
                      <div className="space-y-3 flex-grow">
                         {/* Good side */}
                         <div className="rounded-2xl bg-emerald-50/60 border border-emerald-100/40 p-3.5 space-y-1">
-                           <p className="text-[10px] font-extrabold text-emerald-600 uppercase flex items-center gap-1">
-                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" /> Nên làm
+                           <p className="text-[10px] font-extrabold text-emerald-700 uppercase flex items-center gap-1">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 shrink-0" /> Nên làm
                            </p>
                            <p className="text-[12px] text-emerald-950/80 leading-relaxed font-semibold">
                               {tip.good}
@@ -545,9 +545,9 @@ export default function CvTemplatesPage() {
                   <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-white shrink-0">
                      <div className="space-y-1">
                         <h3 className="text-[17px] font-black text-slate-950 flex items-center gap-2">
-                           <FileText className="w-5 h-5 text-emerald-500" /> Bản xem trước: {previewTitle}
+                           <FileText className="w-5 h-5 text-emerald-700" /> Bản xem trước: {previewTitle}
                         </h3>
-                        <p className="text-[12.5px] text-slate-400 font-bold">
+                        <p className="text-[12.5px] text-slate-500 font-bold">
                            Đây là cấu trúc mẫu tiêu chuẩn. Bạn có thể chọn chỉnh sửa bằng trình editor chuyên nghiệp.
                         </p>
                      </div>
@@ -569,7 +569,7 @@ export default function CvTemplatesPage() {
                            setPreviewCv(null);
                            openCreateCvModal();
                         }}
-                        className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-[12.5px] rounded-xl transition-all shadow-md active:scale-95 cursor-pointer flex items-center gap-1.5"
+                        className="px-5 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-[12.5px] rounded-xl transition-all shadow-md active:scale-95 cursor-pointer flex items-center gap-1.5"
                      >
                         Sử dụng mẫu này sửa ngay <ArrowRight className="w-4 h-4" />
                      </button>
@@ -586,7 +586,7 @@ export default function CvTemplatesPage() {
                            </div>
                            <div className="flex-1 space-y-2">
                               <h2 className="text-2xl font-black text-slate-950 tracking-tight leading-none">{previewCv.fullName}</h2>
-                              <p className="text-emerald-600 text-sm font-extrabold tracking-wide uppercase">{previewCv.title}</p>
+                              <p className="text-emerald-700 text-sm font-extrabold tracking-wide uppercase">{previewCv.title}</p>
                               <p className="text-slate-500 text-[13px] leading-relaxed pt-1">{previewCv.summary}</p>
                            </div>
                         </div>
@@ -598,7 +598,7 @@ export default function CvTemplatesPage() {
                            <div className="space-y-6">
                               {/* Contact detail */}
                               <div className="space-y-3">
-                                 <h4 className="text-[12px] font-extrabold text-slate-400 uppercase tracking-widest flex items-center gap-1.5 border-b border-slate-100 pb-1.5">
+                                 <h4 className="text-[12px] font-extrabold text-slate-500 uppercase tracking-widest flex items-center gap-1.5 border-b border-slate-100 pb-1.5">
                                     <User className="w-3.5 h-3.5" /> Thông tin liên hệ
                                  </h4>
                                  <div className="space-y-2.5">
@@ -608,14 +608,14 @@ export default function CvTemplatesPage() {
                                        const isLoc = info.label === "Địa chỉ";
                                        return (
                                           <div key={info.label} className="flex gap-2.5 items-start">
-                                             <span className="w-6 h-6 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0 mt-0.5 text-slate-400">
+                                             <span className="w-6 h-6 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0 mt-0.5 text-slate-500">
                                                 {isEmail && <Mail className="w-3.5 h-3.5" />}
                                                 {isPhone && <Phone className="w-3.5 h-3.5" />}
                                                 {isLoc && <MapPin className="w-3.5 h-3.5" />}
                                                 {!isEmail && !isPhone && !isLoc && <Calendar className="w-3.5 h-3.5" />}
                                              </span>
                                              <div className="min-w-0">
-                                                <p className="text-[10px] text-slate-400 font-extrabold uppercase leading-none">{info.label}</p>
+                                                <p className="text-[10px] text-slate-500 font-extrabold uppercase leading-none">{info.label}</p>
                                                 <p className="text-[12px] text-slate-800 font-bold mt-1 truncate">{info.value}</p>
                                              </div>
                                           </div>
@@ -626,13 +626,13 @@ export default function CvTemplatesPage() {
 
                               {/* Skills */}
                               <div className="space-y-3">
-                                 <h4 className="text-[12px] font-extrabold text-slate-400 uppercase tracking-widest flex items-center gap-1.5 border-b border-slate-100 pb-1.5">
+                                 <h4 className="text-[12px] font-extrabold text-slate-500 uppercase tracking-widest flex items-center gap-1.5 border-b border-slate-100 pb-1.5">
                                     <Sparkles className="w-3.5 h-3.5" /> Kỹ năng chuyên môn
                                  </h4>
                                  <div className="flex flex-wrap gap-1.5">
                                     {previewCv.skills.map((skill) => (
                                        <span key={skill} className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-slate-50 border border-slate-100 text-[11.5px] font-bold text-slate-700 shadow-sm">
-                                          <Check className="w-3 h-3 text-emerald-500 shrink-0" /> {skill}
+                                          <Check className="w-3 h-3 text-emerald-700 shrink-0" /> {skill}
                                        </span>
                                     ))}
                                  </div>
@@ -640,7 +640,7 @@ export default function CvTemplatesPage() {
 
                               {/* Certificates */}
                               <div className="space-y-3">
-                                 <h4 className="text-[12px] font-extrabold text-slate-400 uppercase tracking-widest flex items-center gap-1.5 border-b border-slate-100 pb-1.5">
+                                 <h4 className="text-[12px] font-extrabold text-slate-500 uppercase tracking-widest flex items-center gap-1.5 border-b border-slate-100 pb-1.5">
                                     <Award className="w-3.5 h-3.5" /> Chứng chỉ
                                  </h4>
                                  <div className="flex flex-col gap-2">
@@ -656,7 +656,7 @@ export default function CvTemplatesPage() {
                               {/* Awards */}
                               {previewCv.awards && previewCv.awards.length > 0 && (
                                  <div className="space-y-3">
-                                    <h4 className="text-[12px] font-extrabold text-slate-400 uppercase tracking-widest flex items-center gap-1.5 border-b border-slate-100 pb-1.5">
+                                    <h4 className="text-[12px] font-extrabold text-slate-500 uppercase tracking-widest flex items-center gap-1.5 border-b border-slate-100 pb-1.5">
                                        <Award className="w-3.5 h-3.5 text-amber-500" /> Giải thưởng
                                     </h4>
                                     <div className="flex flex-col gap-2">
@@ -672,7 +672,7 @@ export default function CvTemplatesPage() {
 
                               {/* Hobbies */}
                               <div className="space-y-3">
-                                 <h4 className="text-[12px] font-extrabold text-slate-400 uppercase tracking-widest flex items-center gap-1.5 border-b border-slate-100 pb-1.5">
+                                 <h4 className="text-[12px] font-extrabold text-slate-500 uppercase tracking-widest flex items-center gap-1.5 border-b border-slate-100 pb-1.5">
                                     <Heart className="w-3.5 h-3.5 text-rose-500 animate-pulse" /> Sở thích
                                  </h4>
                                  <div className="flex flex-wrap gap-1.5">
@@ -690,7 +690,7 @@ export default function CvTemplatesPage() {
                               {/* Objective */}
                               <div className="space-y-3">
                                  <h3 className="text-[14px] font-black text-slate-950 uppercase tracking-wider flex items-center gap-2">
-                                    <BookOpen className="w-4 h-4 text-emerald-500" /> Mục tiêu nghề nghiệp
+                                    <BookOpen className="w-4 h-4 text-emerald-700" /> Mục tiêu nghề nghiệp
                                  </h3>
                                  <div className="bg-emerald-50/20 border border-emerald-100/30 rounded-2xl p-4 text-[13px] text-slate-700 leading-relaxed font-semibold">
                                     {previewCv.objective}
@@ -700,7 +700,7 @@ export default function CvTemplatesPage() {
                               {/* Experience */}
                               <div className="space-y-3">
                                  <h3 className="text-[14px] font-black text-slate-950 uppercase tracking-wider flex items-center gap-2">
-                                    <Briefcase className="w-4 h-4 text-emerald-500" /> Kinh nghiệm làm việc
+                                    <Briefcase className="w-4 h-4 text-emerald-700" /> Kinh nghiệm làm việc
                                  </h3>
                                  <div className="space-y-4">
                                     {previewCv.experience.map(renderEntry)}
@@ -710,7 +710,7 @@ export default function CvTemplatesPage() {
                               {/* Education */}
                               <div className="space-y-3">
                                  <h3 className="text-[14px] font-black text-slate-950 uppercase tracking-wider flex items-center gap-2">
-                                    <GraduationCap className="w-4.5 h-4.5 text-emerald-500" /> Học vấn & Trình độ
+                                    <GraduationCap className="w-4.5 h-4.5 text-emerald-700" /> Học vấn & Trình độ
                                  </h3>
                                  <div className="space-y-4">
                                     {previewCv.education.map(renderEntry)}
@@ -721,7 +721,7 @@ export default function CvTemplatesPage() {
                               {previewCv.activities && previewCv.activities.length > 0 && (
                                  <div className="space-y-3">
                                     <h3 className="text-[14px] font-black text-slate-950 uppercase tracking-wider flex items-center gap-2">
-                                       <FileText className="w-4 h-4 text-emerald-500" /> Hoạt động ngoại khóa
+                                       <FileText className="w-4 h-4 text-emerald-700" /> Hoạt động ngoại khóa
                                     </h3>
                                     <div className="space-y-4">
                                        {previewCv.activities.map(renderEntry)}
@@ -733,7 +733,7 @@ export default function CvTemplatesPage() {
                               {previewCv.references && previewCv.references.length > 0 && (
                                  <div className="space-y-3">
                                     <h3 className="text-[14px] font-black text-slate-950 uppercase tracking-wider flex items-center gap-2">
-                                       <User className="w-4 h-4 text-emerald-500" /> Người giới thiệu
+                                       <User className="w-4 h-4 text-emerald-700" /> Người giới thiệu
                                     </h3>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                        {previewCv.references.map((ref, idx) => (
@@ -763,7 +763,7 @@ export default function CvTemplatesPage() {
                            setPreviewCv(null);
                            openCreateCvModal();
                         }}
-                        className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-[12.5px] rounded-xl transition-all shadow-md cursor-pointer"
+                        className="px-6 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-[12.5px] rounded-xl transition-all shadow-md cursor-pointer"
                      >
                         Sử dụng mẫu để sửa ngay
                      </button>

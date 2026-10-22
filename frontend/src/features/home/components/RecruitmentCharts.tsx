@@ -51,8 +51,8 @@ export default function RecruitmentCharts({ status, trend, distribution, salaryB
                            <YAxis />
                            <Tooltip contentStyle={tooltipStyle} />
                            <Legend />
-                           <Line type="monotone" dataKey="jobs" stroke="#059669" name="Số việc làm" strokeWidth={2} dot={{ fill: "#059669", r: 4 }} />
-                           <Line type="monotone" dataKey="companies" stroke="#0284c7" name="Số công ty tuyển" strokeWidth={2} dot={{ fill: "#0284c7", r: 4 }} />
+                           <Line type="monotone" dataKey="jobs" stroke="#047857" name="Số việc làm" strokeWidth={2} dot={{ fill: "#047857", r: 4 }} />
+                           <Line type="monotone" dataKey="companies" stroke="#0369a1" name="Số công ty tuyển" strokeWidth={2} dot={{ fill: "#0369a1", r: 4 }} />
                         </LineChart>
                      </ResponsiveContainer>
                   ) : (

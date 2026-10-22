@@ -324,7 +324,7 @@ export default function SavedJobsPage() {
             </div>
             <Link
               href="/tim-viec"
-              className="inline-flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-emerald-600 px-5 text-sm font-black text-white shadow-sm transition hover:bg-emerald-500"
+              className="inline-flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-emerald-700 px-5 text-sm font-black text-white shadow-sm transition hover:bg-emerald-800"
             >
               Tìm thêm việc
               <Briefcase className="h-4 w-4" />
@@ -400,7 +400,7 @@ export default function SavedJobsPage() {
         </div>
       ) : savedJobs.length === 0 ? (
         <div className="rounded-[28px] border border-dashed border-slate-300 bg-slate-50 px-6 py-14 text-center">
-          <div className="mx-auto grid h-16 w-16 place-items-center rounded-2xl bg-white text-slate-400 shadow-sm">
+          <div className="mx-auto grid h-16 w-16 place-items-center rounded-2xl bg-white text-slate-500 shadow-sm">
             <Bookmark className="h-7 w-7" />
           </div>
           <h2 className="mt-5 text-xl font-black text-slate-950">Bạn chưa lưu công việc nào</h2>
@@ -409,7 +409,7 @@ export default function SavedJobsPage() {
           </p>
           <Link
             href="/tim-viec"
-            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-sm font-black text-white transition hover:bg-emerald-700"
+            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-emerald-700 px-5 py-3 text-sm font-black text-white transition hover:bg-emerald-800"
           >
             Khám phá việc làm
             <ExternalLink className="h-4 w-4" />
@@ -432,7 +432,7 @@ export default function SavedJobsPage() {
                     {companyInitial}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <Link href={jobHref} className="text-lg font-black leading-7 text-slate-950 transition group-hover:text-emerald-700">
+                    <Link href={jobHref} className="text-lg font-black leading-7 text-slate-950 transition group-hover:text-emerald-800">
                       {toVietnameseJobTitle(item.title)}
                     </Link>
                     <p className="mt-1 flex items-center gap-1.5 text-sm font-semibold text-slate-600">
@@ -445,19 +445,19 @@ export default function SavedJobsPage() {
                 <div className="mt-5 flex flex-wrap gap-2">
                   {item.place && (
                     <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-700">
-                      <MapPin className="h-3.5 w-3.5 text-emerald-600" />
+                      <MapPin className="h-3.5 w-3.5 text-emerald-700" />
                       {item.place}
                     </span>
                   )}
                   {item.salary && (
                     <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-700">
-                      <Wallet className="h-3.5 w-3.5 text-emerald-600" />
+                      <Wallet className="h-3.5 w-3.5 text-emerald-700" />
                       {item.salary}
                     </span>
                   )}
                   {item.type && (
                     <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-700">
-                      <Clock3 className="h-3.5 w-3.5 text-emerald-600" />
+                      <Clock3 className="h-3.5 w-3.5 text-emerald-700" />
                       {item.type}
                     </span>
                   )}
@@ -471,7 +471,7 @@ export default function SavedJobsPage() {
                   <div className="flex items-center gap-2">
                     <Link
                       href={jobHref}
-                      className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-emerald-600 px-3.5 py-2.5 text-xs font-black text-white transition hover:bg-emerald-700 sm:flex-none"
+                      className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-emerald-700 px-3.5 py-2.5 text-xs font-black text-white transition hover:bg-emerald-800 sm:flex-none"
                     >
                       Xem chi tiết
                       <ExternalLink className="h-3.5 w-3.5" />

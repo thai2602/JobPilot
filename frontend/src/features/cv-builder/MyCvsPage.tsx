@@ -81,7 +81,7 @@ export default function MyCvsPage() {
         <p className="mt-2 text-sm text-gray-600">Bạn cần đăng nhập để xem danh sách CV.</p>
         <Link
           href="/dang-nhap?next=/cv-cua-toi"
-          className="mt-5 inline-flex rounded-full bg-emerald-600 px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-emerald-700"
+          className="mt-5 inline-flex rounded-full bg-emerald-700 px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-emerald-800"
         >
           Đến trang đăng nhập
         </Link>
@@ -126,7 +126,7 @@ export default function MyCvsPage() {
       <div style={{ background: "#fff", borderRadius: "20px", border: "1px solid #e2e8f0", padding: "28px", boxShadow: "0 4px 20px rgba(15,23,42,0.06)" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
           <div>
-            <p style={{ fontSize: "11px", fontWeight: 800, color: "#10b981", letterSpacing: "0.08em", textTransform: "uppercase" }}>Danh sách</p>
+            <p style={{ fontSize: "11px", fontWeight: 800, color: "#047857", letterSpacing: "0.08em", textTransform: "uppercase" }}>Danh sách</p>
             <h2 style={{ fontSize: "18px", fontWeight: 800, color: "#0f172a", marginTop: "4px" }}>Các CV đã tạo</h2>
           </div>
           {!loading && (
@@ -164,7 +164,7 @@ export default function MyCvsPage() {
             <p style={{ fontSize: "13px", color: "#64748b", marginTop: "6px" }}>Hãy tạo CV đầu tiên từ trang CV mẫu.</p>
             <button
               onClick={() => router.push("/cv-mau")}
-              style={{ marginTop: "16px", background: "#10b981", color: "#fff", borderRadius: "10px", padding: "10px 20px", fontSize: "13px", fontWeight: 700, border: "none", cursor: "pointer" }}
+              style={{ marginTop: "16px", background: "#047857", color: "#fff", borderRadius: "10px", padding: "10px 20px", fontSize: "13px", fontWeight: 700, border: "none", cursor: "pointer" }}
             >
               Tạo CV ngay
             </button>
@@ -199,7 +199,7 @@ export default function MyCvsPage() {
                     <p style={{ fontSize: "14px", fontWeight: 800, color: "#0f172a", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                       {cv.cvName}
                     </p>
-                    {cv.jobTitle && <p style={{ fontSize: "12px", color: "#10b981", fontWeight: 600, marginTop: "2px" }}>{cv.jobTitle}</p>}
+                    {cv.jobTitle && <p style={{ fontSize: "12px", color: "#047857", fontWeight: 600, marginTop: "2px" }}>{cv.jobTitle}</p>}
                   </div>
                 </div>
 
@@ -222,7 +222,7 @@ export default function MyCvsPage() {
                   )}
                 </div>
 
-                <p style={{ fontSize: "11px", color: "#94a3b8", marginBottom: "14px" }}>
+                <p style={{ fontSize: "11px", color: "#64748b", marginBottom: "14px" }}>
                   Tạo: {formatDate(cv.createdAt)}
                   {cv.updatedAt && cv.updatedAt !== cv.createdAt && ` · Sửa: ${formatDate(cv.updatedAt)}`}
                 </p>
@@ -298,7 +298,7 @@ export default function MyCvsPage() {
                 )}
                 <div>
                   <h2 style={{ fontSize: "22px", fontWeight: 800, color: "#0f172a" }}>{previewCv.fullName ?? "—"}</h2>
-                  {previewCv.jobTitle && <p style={{ fontSize: "14px", color: "#10b981", fontWeight: 600, marginTop: "4px" }}>{previewCv.jobTitle}</p>}
+                  {previewCv.jobTitle && <p style={{ fontSize: "14px", color: "#047857", fontWeight: 600, marginTop: "4px" }}>{previewCv.jobTitle}</p>}
                   <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginTop: "8px" }}>
                     {previewCv.email && <span style={{ fontSize: "12px", color: "#64748b" }}>✉ {previewCv.email}</span>}
                     {previewCv.phone && <span style={{ fontSize: "12px", color: "#64748b" }}>📞 {previewCv.phone}</span>}
@@ -310,7 +310,7 @@ export default function MyCvsPage() {
               {/* Summary */}
               {previewCv.summary && (
                 <div style={{ background: "#f8fafc", borderRadius: "12px", padding: "14px 16px", border: "1px solid #e2e8f0" }}>
-                  <p style={{ fontSize: "11px", fontWeight: 800, color: "#94a3b8", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.06em" }}>Tóm tắt</p>
+                  <p style={{ fontSize: "11px", fontWeight: 800, color: "#64748b", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.06em" }}>Tóm tắt</p>
                   <p style={{ fontSize: "13px", color: "#334155", lineHeight: 1.7 }}>{previewCv.summary}</p>
                 </div>
               )}
@@ -342,7 +342,7 @@ export default function MyCvsPage() {
                             <p style={{ fontSize: "12px", color: "#64748b", marginTop: "2px" }}>{exp.company}</p>
                           </div>
                           {(exp.startDate ?? exp.endDate) && (
-                            <span style={{ fontSize: "11px", color: "#94a3b8", fontWeight: 600, whiteSpace: "nowrap" }}>
+                            <span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600, whiteSpace: "nowrap" }}>
                               {formatDate(exp.startDate)} – {exp.endDate ? formatDate(exp.endDate) : "Nay"}
                             </span>
                           )}
@@ -367,7 +367,7 @@ export default function MyCvsPage() {
                             <p style={{ fontSize: "12px", color: "#64748b", marginTop: "2px" }}>{edu.major || edu.degree}</p>
                           </div>
                           {(edu.startDate ?? edu.endDate) && (
-                            <span style={{ fontSize: "11px", color: "#94a3b8", fontWeight: 600, whiteSpace: "nowrap" }}>
+                            <span style={{ fontSize: "11px", color: "#64748b", fontWeight: 600, whiteSpace: "nowrap" }}>
                               {formatDate(edu.startDate)} – {edu.endDate ? formatDate(edu.endDate) : "Nay"}
                             </span>
                           )}
@@ -386,7 +386,7 @@ export default function MyCvsPage() {
                     {previewCv.projects.map((proj) => (
                       <div key={proj.id} style={{ border: "1px solid #e2e8f0", borderRadius: "12px", padding: "12px 14px", background: "#fff" }}>
                         <p style={{ fontSize: "13px", fontWeight: 800, color: "#0f172a" }}>{proj.name || proj.projectName}</p>
-                        {(proj.technologies?.length || proj.techStack) && <p style={{ fontSize: "11px", color: "#10b981", fontWeight: 600, marginTop: "3px" }}>{proj.technologies?.join(", ") || proj.techStack}</p>}
+                        {(proj.technologies?.length || proj.techStack) && <p style={{ fontSize: "11px", color: "#047857", fontWeight: 600, marginTop: "3px" }}>{proj.technologies?.join(", ") || proj.techStack}</p>}
                         {proj.description && <p style={{ fontSize: "12px", color: "#475569", marginTop: "6px", lineHeight: 1.6 }}>{proj.description}</p>}
                       </div>
                     ))}

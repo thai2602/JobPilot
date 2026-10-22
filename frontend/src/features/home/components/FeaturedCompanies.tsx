@@ -25,11 +25,11 @@ function CompanyCard({ company }: { company: HomeCompany }) {
          </div>
          <div className="mt-4 space-y-2 text-sm text-slate-700">
             <div className="flex items-center gap-2">
-               <MapPin className="h-3.5 w-3.5 text-gray-400" />
+               <MapPin className="h-3.5 w-3.5 text-gray-500" />
                <span className="text-xs">{company.location}</span>
             </div>
             <div className="flex items-center gap-2">
-               <Users className="h-3.5 w-3.5 text-gray-400" />
+               <Users className="h-3.5 w-3.5 text-gray-500" />
                <span className="text-xs">{company.employees}</span>
             </div>
          </div>

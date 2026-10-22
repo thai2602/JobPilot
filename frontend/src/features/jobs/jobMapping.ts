@@ -27,7 +27,17 @@ export type Job = {
    jobLevel?: string;
    experienceYears?: string;
    expiredAt?: string;
+   /** Đã đóng hoặc quá hạn nộp: hiển thị nhưng không cho ứng tuyển */
+   expired: boolean;
+   /** "dd/mm/yyyy" hoặc null khi tin không có hạn nộp */
+   deadline: string | null;
    locationAddress?: string;
+};
+
+const formatDate = (value?: string): string | null => {
+   if (!value) return null;
+   const date = new Date(value);
+   return Number.isNaN(date.getTime()) ? null : date.toLocaleDateString("vi-VN");
 };
 
 export const jobLevelLabels: Record<string, string> = {
@@ -93,13 +103,15 @@ export const mapApiJob = (apiJob: ApiJob): Job => {
       field: cleanApiText(apiJob.industry) || "Nhóm ngành khác",
       type: formatJobType(apiJob.jobType),
       salary: formatSalaryRange(apiJob.salaryMin, apiJob.salaryMax),
+      // Địa điểm đã có chip riêng nên không lặp lại trong tag
       tags: [
          apiJob.jobLevel ? (jobLevelLabels[apiJob.jobLevel] ?? apiJob.jobLevel) : null,
          apiJob.experienceYears ? formatExperience(apiJob.experienceYears) : null,
-         place,
       ].filter((tag): tag is string => Boolean(tag)),
       hot: false,
-      posted: "Vừa cập nhật",
+      posted: apiJob.expired ? `Hết hạn ${formatDate(apiJob.expiredAt) ?? ""}`.trim() : "Vừa cập nhật",
+      expired: Boolean(apiJob.expired),
+      deadline: formatDate(apiJob.expiredAt),
       image: apiJob.company?.logoUrl || companyAvatars[0],
       companyUrl: `/cong-ty/${apiJob.company?.slug ?? ""}`,
       slug: apiJob.slug,

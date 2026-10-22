@@ -32,6 +32,8 @@ export interface ApiJob {
   createdAt?: string;
   updatedAt?: string;
   isDeleted?: boolean;
+  /** Tin đã đóng hoặc quá hạn nộp: vẫn hiển thị nhưng không nhận ứng tuyển */
+  expired?: boolean;
 }
 
 export interface JobListParams {

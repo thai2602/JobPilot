@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { CheckCircle, Clock, ChevronRight, TrendingUp, Lightbulb, MessageSquare, Shield, Search, Building, Users, Heart, BookOpen, X } from "lucide-react";
+import { CheckCircle, Clock, ChevronRight, TrendingUp, Lightbulb, MessageSquare, Shield, Search, BookOpen, X } from "lucide-react";
 import articleBanner1 from "../../assets/banner/company/image_1.png";
 import articleBanner2 from "../../assets/banner/company/image_2.png";
 import articleBanner3 from "../../assets/banner/company/image_3.png";
@@ -77,38 +77,6 @@ const guides = [
       color: "#10b981",
       featured: false,
       type: "guide",
-   },
-   {
-      title: "Review công ty NovaTech: Môi trường làm việc",
-      category: "Review công ty",
-      tags: ["NovaTech", "Review", "Môi trường"],
-      readTime: "5 phút",
-      icon: Building,
-      color: "#10b981",
-      featured: false,
-      type: "review",
-   },
-   {
-      title: "Văn hóa doanh nghiệp tại BluePixel",
-      category: "Văn hóa doanh nghiệp",
-      tags: ["BluePixel", "Văn hóa", "Doanh nghiệp"],
-      readTime: "7 phút",
-      icon: Heart,
-      color: "#10b981",
-      bg: "linear-gradient(135deg, #ecfdf5, #d1fae5)",
-      featured: false,
-      type: "review",
-   },
-   {
-      title: "Môi trường làm việc tại ScaleHub",
-      category: "Môi trường làm việc",
-      tags: ["ScaleHub", "Môi trường", "Làm việc"],
-      readTime: "6 phút",
-      icon: Users,
-      color: "#10b981",
-      bg: "linear-gradient(135deg, #ecfdf5, #a7f3d0)",
-      featured: false,
-      type: "review",
    },
 ];
 
@@ -185,33 +153,6 @@ const articleContents: Record<string, { intro: string; sections: { heading: stri
       ],
       conclusion: "Nâng cấp kỹ năng mềm giúp bạn làm việc hiệu quả hơn và tạo ấn tượng chuyên nghiệp bền vững.",
    },
-   "Review công ty NovaTech: Môi trường làm việc": {
-      intro: "NovaTech có nhịp làm việc nhanh, chú trọng sản phẩm và văn hóa phản hồi liên tục.",
-      sections: [
-         { heading: "1. Điểm mạnh", body: "Đội ngũ kỹ thuật mạnh, quy trình agile rõ ràng, cơ hội học từ dự án thực tế." },
-         { heading: "2. Lưu ý", body: "Khối lượng công việc có thể cao theo sprint, cần tự quản lý thời gian tốt." },
-         { heading: "3. Phù hợp với ai", body: "Ứng viên thích môi trường tăng trưởng nhanh và chủ động trong công việc." },
-      ],
-      conclusion: "NovaTech phù hợp với người muốn phát triển năng lực chuyên môn trong môi trường sản phẩm năng động.",
-   },
-   "Văn hóa doanh nghiệp tại BluePixel": {
-      intro: "BluePixel nổi bật ở văn hóa sáng tạo, tôn trọng cá tính và chất lượng trải nghiệm người dùng.",
-      sections: [
-         { heading: "1. Môi trường", body: "Cởi mở, khuyến khích thảo luận ý tưởng và thử nghiệm các phương án thiết kế mới." },
-         { heading: "2. Quy trình", body: "Làm việc chặt với team sản phẩm và kỹ thuật, review thiết kế định kỳ." },
-         { heading: "3. Cơ hội", body: "Thích hợp cho UI/UX muốn nâng năng lực research và design system." },
-      ],
-      conclusion: "BluePixel phù hợp với ứng viên đề cao sáng tạo và muốn làm sản phẩm có trải nghiệm tinh chỉnh.",
-   },
-   "Môi trường làm việc tại ScaleHub": {
-      intro: "ScaleHub tập trung vào cloud và backend với tiêu chuẩn vận hành ổn định, bảo mật cao.",
-      sections: [
-         { heading: "1. Đặc thù công việc", body: "Nhiều bài toán hạ tầng, tối ưu hiệu năng và xử lý sự cố hệ thống." },
-         { heading: "2. Văn hóa kỹ thuật", body: "Ưu tiên automation, monitoring và cải tiến quy trình liên tục." },
-         { heading: "3. Phát triển nghề nghiệp", body: "Phù hợp cho backend/devops muốn nâng trình độ ở hệ thống lớn." },
-      ],
-      conclusion: "ScaleHub là môi trường tốt cho ứng viên thích kỹ thuật chuyên sâu và tính ổn định hệ thống.",
-   },
 };
 
 const articleIllustrations: Record<string, any> = {
@@ -222,21 +163,12 @@ const articleIllustrations: Record<string, any> = {
    "Kinh nghiệm phỏng vấn: Trả lời câu hỏi hành vi": articleBanner2,
    "Cách viết CV hiệu quả cho ngành CNTT": articleBanner3,
    "Kỹ năng mềm cần thiết cho nhân viên văn phòng": articleBanner1,
-   "Review công ty NovaTech: Môi trường làm việc": articleBanner2,
-   "Văn hóa doanh nghiệp tại BluePixel": articleBanner3,
-   "Môi trường làm việc tại ScaleHub": articleBanner1,
 };
 
-const categories = [
-   { label: "CV & Hồ sơ", count: 12, color: "#0f4c51" },
-   { label: "Phỏng vấn", count: 8, color: "#0f4c51" },
-   { label: "Thương lượng", count: 6, color: "#0f4c51" },
-   { label: "Phát triển sự nghiệp", count: 15, color: "#0f4c51" },
-   { label: "Kỹ năng mềm", count: 10, color: "#0f4c51" },
-   { label: "Review công ty", count: 20, color: "#0f4c51" },
-   { label: "Môi trường làm việc", count: 18, color: "#0f4c51" },
-   { label: "Văn hóa doanh nghiệp", count: 14, color: "#0f4c51" },
-];
+const categories = Array.from(
+   guides.reduce((counts, guide) => counts.set(guide.category, (counts.get(guide.category) ?? 0) + 1), new Map<string, number>()),
+   ([label, count]) => ({ label, count }),
+);
 
 export default function HandbookPage() {
    const [searchQuery, setSearchQuery] = useState("");
@@ -272,7 +204,7 @@ export default function HandbookPage() {
             <div className="relative max-w-4xl mx-auto text-center space-y-6">
                <div className="flex justify-center mb-4">
                   <div className="p-3 rounded-full bg-emerald-100">
-                     <BookOpen className="w-8 h-8 text-emerald-600" />
+                     <BookOpen className="w-8 h-8 text-emerald-700" />
                   </div>
                </div>
                <h1 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight leading-tight">
@@ -282,7 +214,7 @@ export default function HandbookPage() {
                   Bộ nội dung hướng dẫn từ viết CV đến phỏng vấn, đàm phán lương và phát triển sự nghiệp thành công.
                </p>
                <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-                  <button className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 px-6 py-3 text-sm font-semibold text-white shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5">
+                  <button className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-700 to-emerald-700 px-6 py-3 text-sm font-semibold text-white shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5">
                      Đọc bài viết nổi bật <Lightbulb className="h-4 w-4" />
                   </button>
                   <Link href="/tim-viec" className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-900 shadow-sm hover:shadow-md transition-all hover:border-slate-400">
@@ -297,7 +229,7 @@ export default function HandbookPage() {
             <aside className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm lg:sticky lg:top-8 z-10">
                <div className="mb-4">
                   <div className="relative">
-                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
                      <input
                         type="text"
                         placeholder="Tìm kiếm bài viết..."
@@ -309,7 +241,7 @@ export default function HandbookPage() {
                </div>
 
                <div className="mb-6">
-                  <h3 className="text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-3">Danh mục</h3>
+                  <h3 className="text-xs font-extrabold text-slate-500 uppercase tracking-wider mb-3">Danh mục</h3>
                   <div className="flex flex-col gap-2">
                      {categories.map((cat) => (
                         <button
@@ -330,7 +262,7 @@ export default function HandbookPage() {
 
                {featuredGuides.length > 0 && (
                   <div>
-                     <h3 className="text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-3" style={{ fontFamily: 'var(--font-heading)' }}>Nổi bật</h3>
+                     <h3 className="text-xs font-extrabold text-slate-500 uppercase tracking-wider mb-3" style={{ fontFamily: 'var(--font-heading)' }}>Nổi bật</h3>
                      <div className="space-y-3">
                         {featuredGuides.slice(0, 3).map(f => (
                            <div key={f.title} className="flex items-start gap-3">
@@ -416,7 +348,7 @@ export default function HandbookPage() {
                                  </span>
                               </div>
                            </div>
-                           <ChevronRight className="w-5 h-5 text-gray-400" />
+                           <ChevronRight className="w-5 h-5 text-gray-500" />
                         </div>
                      );
                   })}

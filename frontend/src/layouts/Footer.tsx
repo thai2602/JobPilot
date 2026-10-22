@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { isCvEditorRoute } from "../utils/routes";
-import { Phone, Mail, MapPin } from "lucide-react";
 import { useEffect, useState } from "react";
 import logoImg from "../assets/logo/Screenshot_2026-05-07_133557-removebg-preview.png";
 import { readAuthUser, subscribeAuthUserChange, type AuthUser } from "../utils/auth";
@@ -52,20 +51,6 @@ export default function Footer() {
                      <p className="text-sm text-gray-600 leading-relaxed">
                         Nền tảng tư vấn và kết nối việc làm, hỗ trợ ứng viên định hướng nghề nghiệp và tối ưu CV.
                      </p>
-                     <div className="flex flex-col gap-2 mt-4">
-                        <a href="tel:02473021122" className="flex items-center gap-2 text-sm text-slate-600 hover:text-emerald-700 transition-colors">
-                           <Phone className="w-4 h-4 flex-shrink-0" />
-                           024 7302 1122
-                        </a>
-                        <a href="mailto:hotro@jobpilot.vn" className="flex items-center gap-2 text-sm text-slate-600 hover:text-emerald-700 transition-colors">
-                           <Mail className="w-4 h-4 flex-shrink-0" />
-                           hotro@jobpilot.vn
-                        </a>
-                        <span className="flex items-start gap-2 text-sm text-gray-600">
-                           <MapPin className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                           100 Nguyen Van Cu, Quan 1, TP Ho Chi Minh
-                        </span>
-                     </div>
                   </div>
 
                   {/* Services */}
@@ -127,7 +112,6 @@ export default function Footer() {
                            { label: "Tư vấn nghề nghiệp", href: "/cam-nang" },
                            { label: "Hướng dẫn viết CV", href: "/cv-mau" },
                            { label: "Kinh nghiệm phỏng vấn", href: "/cam-nang" },
-                           { label: "Liên hệ hỗ trợ", href: "mailto:hotro@jobpilot.vn" },
                         ].map((item, i) => {
                            const isActive = pathname === item.href;
                            return (

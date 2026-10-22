@@ -29,7 +29,7 @@ type Props = {
 export default function AiReviewPanel({ feedback, isLoading, isStreaming, progress, onRescore }: Props) {
   return (
     <div className="bg-white rounded-[24px] shadow-[0_20px_60px_rgba(0,0,0,0.08)] border border-slate-100 overflow-hidden flex flex-col min-h-[600px] h-fit">
-      <div className="bg-emerald-600 px-6 py-5 flex justify-between items-center text-white shrink-0 relative overflow-hidden">
+      <div className="bg-emerald-700 px-6 py-5 flex justify-between items-center text-white shrink-0 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-white via-transparent to-transparent"></div>
         <div className="flex items-center gap-4 relative z-10">
           <div className="w-12 h-12 bg-white/20 rounded-[14px] flex items-center justify-center backdrop-blur-md shadow-inner">
@@ -60,7 +60,7 @@ export default function AiReviewPanel({ feedback, isLoading, isStreaming, progre
           </div>
         )}
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center h-full text-emerald-600 gap-5">
+          <div className="flex flex-col items-center justify-center h-full text-emerald-700 gap-5">
             <div className="relative">
               <div className="w-14 h-14 border-4 border-emerald-500/20 rounded-full"></div>
               <div className="w-14 h-14 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin absolute inset-0"></div>
@@ -79,7 +79,7 @@ export default function AiReviewPanel({ feedback, isLoading, isStreaming, progre
                 )}
               </>
             ) : (
-              <p className="text-slate-400 italic text-[14px] text-center pt-10">
+              <p className="text-slate-500 italic text-[14px] text-center pt-10">
                 Chưa có nhận xét nào. Nhấn <strong>AI Chấm điểm CV</strong> để bắt đầu.
               </p>
             )}

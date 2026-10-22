@@ -3,11 +3,11 @@ import type { LucideIcon } from "lucide-react";
 import { Plus, Trash2 } from "lucide-react";
 import { useCvContext, type CvData } from "../CvContext";
 
-export const inputCls = "w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-[13.5px] font-medium text-slate-900 outline-none transition-all focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 focus:bg-white placeholder:text-slate-400";
+export const inputCls = "w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-[13.5px] font-medium text-slate-900 outline-none transition-all focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 focus:bg-white placeholder:text-slate-500";
 export const labelCls = "block text-[12.5px] font-bold text-slate-700 mb-1.5";
 export const itemLabelCls = "block text-[12px] font-bold text-slate-500 uppercase";
 const addBtnCls = "px-3.5 py-2 text-[12.5px] font-bold text-violet-700 bg-violet-50 rounded-xl hover:bg-violet-100 hover:scale-105 transition-all cursor-pointer flex items-center gap-1.5 active:scale-95";
-const removeBtnCls = "absolute top-3 right-3 p-1.5 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer";
+const removeBtnCls = "absolute top-3 right-3 p-1.5 text-slate-500 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer";
 const cardCls = "border border-slate-100 rounded-[16px] p-4 bg-white shadow-sm relative group hover:border-violet-200 transition-colors";
 
 /** Textarea tự giãn chiều cao theo nội dung. */

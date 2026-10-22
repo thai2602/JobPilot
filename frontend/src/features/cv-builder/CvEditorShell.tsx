@@ -158,6 +158,8 @@ export default function CvEditorShell({ children }: { children: ReactNode }) {
 
   const isItemActive = (item: NavItem) => {
     if (item.editorRoute) return isCvEditorRoute(pathname);
+    // /cv-cua-toi/chinh-sua/:id là trang chỉnh sửa, đã được mục "Chỉnh sửa CV" đánh dấu
+    if (isCvEditorRoute(pathname)) return false;
     if (item.href === "/") return pathname === "/";
     return pathname === item.href || pathname.startsWith(`${item.href}/`);
   };
@@ -196,7 +198,7 @@ export default function CvEditorShell({ children }: { children: ReactNode }) {
           <img src={logoSrc} alt="" className="h-10 w-10 shrink-0 object-contain" />
           <div className={`${mobile ? "block" : "hidden xl:block"} min-w-0`}>
             <p className="truncate text-[15px] font-black tracking-tight text-slate-950">JobPilot</p>
-            <p className="truncate text-[10px] font-bold uppercase tracking-[0.16em] text-emerald-600">CV Studio</p>
+            <p className="truncate text-[10px] font-bold uppercase tracking-[0.16em] text-emerald-700">CV Studio</p>
           </div>
         </Link>
         {mobile && (
@@ -217,7 +219,7 @@ export default function CvEditorShell({ children }: { children: ReactNode }) {
       <nav aria-label="Điều hướng JobPilot" className="cv-editor-sidebar-scrollbar min-h-0 flex-1 overflow-y-auto px-3 py-4">
         {navGroups.map((group, groupIndex) => (
           <div key={group.label} className={groupIndex ? "mt-5" : ""}>
-            <p className={`${mobile ? "block" : "hidden xl:block"} mb-2 px-3 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400`}>
+            <p className={`${mobile ? "block" : "hidden xl:block"} mb-2 px-3 text-[10px] font-black uppercase tracking-[0.18em] text-slate-500`}>
               {group.label}
             </p>
             <div className="space-y-1">
@@ -252,8 +254,8 @@ export default function CvEditorShell({ children }: { children: ReactNode }) {
         <div className={`${mobile ? "block" : "hidden xl:block"} mb-3 rounded-2xl bg-slate-950 p-4 text-white`}>
           <div className="flex items-center justify-between gap-3">
             <div>
-              <p className="text-xs font-black">Tiến độ nội dung</p>
-              <p className="mt-1 text-[10px] font-semibold text-slate-400">{completion.count}/{completion.total} nhóm đã có dữ liệu</p>
+              <p className="text-xs font-black text-white">Tiến độ nội dung</p>
+              <p className="mt-1 text-[11px] font-semibold text-slate-300">{completion.count}/{completion.total} nhóm đã có dữ liệu</p>
             </div>
             <span className="text-sm font-black text-emerald-300">{completion.percent}%</span>
           </div>
@@ -279,7 +281,7 @@ export default function CvEditorShell({ children }: { children: ReactNode }) {
               <span className="mt-0.5 block truncate text-[10px] font-medium text-slate-500">{currentUser?.email}</span>
             </span>
           </Link>
-          <button type="button" onClick={handleLogout} aria-label="Đăng xuất" title="Đăng xuất" className={`${mobile ? "grid" : "hidden xl:grid"} h-9 w-9 shrink-0 place-items-center rounded-lg text-slate-400 hover:bg-rose-50 hover:text-rose-600`}>
+          <button type="button" onClick={handleLogout} aria-label="Đăng xuất" title="Đăng xuất" className={`${mobile ? "grid" : "hidden xl:grid"} h-9 w-9 shrink-0 place-items-center rounded-lg text-slate-500 hover:bg-rose-50 hover:text-rose-600`}>
             <LogOut className="h-4 w-4" />
           </button>
         </div>

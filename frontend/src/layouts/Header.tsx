@@ -209,7 +209,7 @@ export default function Header() {
                               <Link
                                  href={link.href}
                                  className={`px-3.5 py-2 text-sm font-semibold leading-5 transition-colors rounded-full whitespace-nowrap ${isActive
-                                    ? "bg-emerald-600 text-white shadow-sm"
+                                    ? "bg-emerald-700 text-white shadow-sm"
                                     : "text-emerald-800 hover:text-emerald-900 hover:bg-emerald-100"
                                     }`}
                               >
@@ -242,7 +242,7 @@ export default function Header() {
                                  className="h-8 w-8 rounded-full border border-emerald-200 object-cover"
                               />
                            ) : (
-                              <div className="grid h-8 w-8 place-items-center rounded-full bg-emerald-600 text-sm font-bold text-white">
+                              <div className="grid h-8 w-8 place-items-center rounded-full bg-emerald-700 text-sm font-bold text-white">
                                  {userInitial}
                               </div>
                            )}
@@ -258,35 +258,35 @@ export default function Header() {
                               <Link
                                  href="/ho-so-nguoi-dung"
                                  role="menuitem"
-                                 className="block rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-emerald-50 hover:text-emerald-700"
+                                 className="block rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-emerald-50 hover:text-emerald-800"
                               >
                                  Trung tâm tài khoản
                               </Link>
                               <Link
                                  href="/cv-cua-toi"
                                  role="menuitem"
-                                 className="block rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-emerald-50 hover:text-emerald-700"
+                                 className="block rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-emerald-50 hover:text-emerald-800"
                               >
                                  CV của tôi
                               </Link>
                               <Link
                                  href="/cong-viec-da-ung-tuyen"
                                  role="menuitem"
-                                 className="block rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-emerald-50 hover:text-emerald-700"
+                                 className="block rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-emerald-50 hover:text-emerald-800"
                               >
                                  Công việc đã ứng tuyển
                               </Link>
                               <Link
                                  href="/viec-lam-da-luu"
                                  role="menuitem"
-                                 className="block rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-emerald-50 hover:text-emerald-700"
+                                 className="block rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-emerald-50 hover:text-emerald-800"
                               >
                                  Việc làm đã lưu
                               </Link>
                               <Link
                                  href="/cv-editor"
                                  role="menuitem"
-                                 className="block rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-emerald-50 hover:text-emerald-700"
+                                 className="block rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-emerald-50 hover:text-emerald-800"
                               >
                                  Chỉnh sửa CV
                               </Link>
@@ -348,7 +348,7 @@ export default function Header() {
                               onClick={() => setMobileOpen(false)}
                               className={`px-3 py-3 text-sm font-semibold rounded-lg ${isActive
                                  ? "text-emerald-700 bg-emerald-50"
-                                 : "text-slate-700 hover:text-emerald-700 hover:bg-emerald-50"
+                                 : "text-slate-700 hover:text-emerald-800 hover:bg-emerald-50"
                                  }`}
                            >
                               {link.label}
@@ -376,7 +376,7 @@ export default function Header() {
                                     className="h-9 w-9 rounded-full border border-emerald-200 object-cover"
                                  />
                               ) : (
-                                 <div className="grid h-9 w-9 place-items-center rounded-full bg-emerald-600 text-sm font-bold text-white">
+                                 <div className="grid h-9 w-9 place-items-center rounded-full bg-emerald-700 text-sm font-bold text-white">
                                     {userInitial}
                                  </div>
                               )}
@@ -393,7 +393,7 @@ export default function Header() {
                                     href="/ho-so-nguoi-dung"
                                     role="menuitem"
                                     onClick={() => setMobileOpen(false)}
-                                    className="block rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-emerald-50 hover:text-emerald-700"
+                                    className="block rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-emerald-50 hover:text-emerald-800"
                                  >
                                     Trung tâm tài khoản
                                  </Link>
@@ -401,7 +401,7 @@ export default function Header() {
                                     href="/cv-cua-toi"
                                     role="menuitem"
                                     onClick={() => setMobileOpen(false)}
-                                    className="block rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-emerald-50 hover:text-emerald-700"
+                                    className="block rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-emerald-50 hover:text-emerald-800"
                                  >
                                     CV của tôi
                                  </Link>
@@ -409,7 +409,7 @@ export default function Header() {
                                     href="/cong-viec-da-ung-tuyen"
                                     role="menuitem"
                                     onClick={() => setMobileOpen(false)}
-                                    className="block rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-emerald-50 hover:text-emerald-700"
+                                    className="block rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-emerald-50 hover:text-emerald-800"
                                  >
                                     Công việc đã ứng tuyển
                                  </Link>
@@ -417,7 +417,7 @@ export default function Header() {
                                     href="/viec-lam-da-luu"
                                     role="menuitem"
                                     onClick={() => setMobileOpen(false)}
-                                    className="block rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-emerald-50 hover:text-emerald-700"
+                                    className="block rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-emerald-50 hover:text-emerald-800"
                                  >
                                     Việc làm đã lưu
                                  </Link>
@@ -425,7 +425,7 @@ export default function Header() {
                                     href="/cv-editor"
                                     role="menuitem"
                                     onClick={() => setMobileOpen(false)}
-                                    className="block rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-emerald-50 hover:text-emerald-700"
+                                    className="block rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-emerald-50 hover:text-emerald-800"
                                  >
                                     Chỉnh sửa CV
                                  </Link>

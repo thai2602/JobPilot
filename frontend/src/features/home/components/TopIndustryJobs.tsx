@@ -24,7 +24,7 @@ function TopIndustryCard({ industry, isApplied, onApply }: ApplyProps & { indust
                   <div key={applicationKey(industry.industry, job)} className="rounded-lg border border-gray-100 bg-gray-50/50 p-4">
                      <Link
                         href={job.slug ? `/tim-viec/${job.slug}` : "/tim-viec"}
-                        className="font-semibold text-gray-900 text-sm hover:text-emerald-700"
+                        className="font-semibold text-gray-900 text-sm hover:text-emerald-800"
                      >
                         {job.title}
                      </Link>
@@ -35,7 +35,7 @@ function TopIndustryCard({ industry, isApplied, onApply }: ApplyProps & { indust
                            {job.place}
                         </span>
                         <span className="inline-flex items-center gap-2 rounded-full bg-transparent border border-emerald-100/40 px-3 py-1 text-xs font-semibold text-emerald-700">
-                           <Wallet className="h-3 w-3 text-emerald-600" />
+                           <Wallet className="h-3 w-3 text-emerald-700" />
                            {job.salary}
                         </span>
                      </div>
@@ -49,10 +49,10 @@ function TopIndustryCard({ industry, isApplied, onApply }: ApplyProps & { indust
                      <button
                         type="button"
                         onClick={() => onApply(industry.industry, job)}
-                        disabled={applied}
-                        className="mt-4 inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-3.5 py-2 text-xs font-semibold text-white transition-colors hover:bg-emerald-500 disabled:cursor-not-allowed disabled:bg-gray-300"
+                        disabled={applied || job.expired}
+                        className="mt-4 inline-flex items-center gap-2 rounded-lg bg-emerald-700 px-3.5 py-2 text-xs font-semibold text-white transition-colors hover:bg-emerald-800 disabled:cursor-not-allowed disabled:bg-gray-300"
                      >
-                        {applied ? "Đã ứng tuyển" : "Ứng tuyển"}
+                        {applied ? "Đã ứng tuyển" : job.expired ? "Đã hết hạn" : "Ứng tuyển"}
                      </button>
                   </div>
                );

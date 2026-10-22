@@ -224,7 +224,7 @@ export default function FloatingChatbot() {
               }
               setIsOpen(true);
             }}
-            className="w-full h-full rounded-full text-white flex items-center justify-center cursor-pointer shadow-[0_10px_35px_rgba(16,185,129,0.25)] transition-all duration-300 hover:scale-105 group bg-gradient-to-tr from-emerald-500 to-teal-600 relative overflow-hidden"
+            className="w-full h-full rounded-full text-white flex items-center justify-center cursor-pointer shadow-[0_10px_35px_rgba(16,185,129,0.25)] transition-all duration-300 hover:scale-105 group bg-gradient-to-tr from-emerald-700 to-teal-700 relative overflow-hidden"
             title="Trò chuyện với AI Assistant"
           >
             <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -242,14 +242,14 @@ export default function FloatingChatbot() {
           <div className="border-b border-slate-100 bg-white px-5 py-4 flex items-center justify-between text-slate-800 relative">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-emerald-500/10 rounded-2xl flex items-center justify-center border border-emerald-500/15">
-                <Bot className="w-5 h-5 text-emerald-600" />
+                <Bot className="w-5 h-5 text-emerald-700" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
                   <h3 className="font-extrabold text-[15px] tracking-tight text-slate-800">AI Assistant</h3>
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
                 </div>
-                <p className="text-[10.5px] text-slate-400 font-bold mt-0.5">Trợ lý định hướng nghề nghiệp</p>
+                <p className="text-[10.5px] text-slate-500 font-bold mt-0.5">Trợ lý định hướng nghề nghiệp</p>
               </div>
             </div>
 
@@ -257,7 +257,7 @@ export default function FloatingChatbot() {
               {messages.length > 0 && (
                 <button
                   onClick={clearHistory}
-                  className="p-2 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer text-slate-400 hover:text-rose-500"
+                  className="p-2 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer text-slate-500 hover:text-rose-500"
                   title="Xóa cuộc trò chuyện"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -278,7 +278,7 @@ export default function FloatingChatbot() {
             {messages.length === 0 && (
               <div className="flex flex-col items-center justify-center h-full text-center py-4 space-y-5 px-3">
                 <div className="w-14 h-14 rounded-[20px] bg-emerald-500/10 flex items-center justify-center text-emerald-650 shadow-inner">
-                  <Sparkles className="w-7 h-7 text-emerald-600" />
+                  <Sparkles className="w-7 h-7 text-emerald-700" />
                 </div>
                 <div>
                   <h4 className="text-[15px] font-black text-slate-800 tracking-tight">Xin chào! Tôi là AI Assistant</h4>
@@ -295,7 +295,7 @@ export default function FloatingChatbot() {
                       className="w-full text-left text-[11.5px] px-4 py-3 rounded-2xl border border-slate-200/60 bg-white hover:border-emerald-500/40 hover:bg-emerald-500/5 text-slate-650 transition-all duration-300 shadow-sm font-extrabold flex items-center justify-between group cursor-pointer"
                     >
                       <span>{s}</span>
-                      <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-600 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                      <ArrowUpRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-800 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                     </button>
                   ))}
                 </div>
@@ -309,7 +309,7 @@ export default function FloatingChatbot() {
               >
                 <div
                   className={`w-8 h-8 rounded-xl flex-shrink-0 flex items-center justify-center mt-0.5 border ${msg.role === "assistant"
-                    ? "bg-slate-50 border-slate-100 text-emerald-600"
+                    ? "bg-slate-50 border-slate-100 text-emerald-700"
                     : "bg-slate-100 border-slate-200 text-slate-500"
                     }`}
                 >
@@ -318,7 +318,7 @@ export default function FloatingChatbot() {
 
                 <div
                   className={`max-w-[78%] rounded-2xl px-4 py-3 text-[13px] leading-relaxed ${msg.role === "user"
-                    ? "bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-tr-sm shadow-md shadow-emerald-500/10 chatbot-user-bubble"
+                    ? "bg-gradient-to-r from-emerald-700 to-teal-700 text-white rounded-tr-sm shadow-md shadow-emerald-500/10 chatbot-user-bubble"
                     : "bg-white border border-slate-100 text-slate-700 shadow-sm rounded-tl-sm font-semibold"
                     }`}
                 >
@@ -343,8 +343,8 @@ export default function FloatingChatbot() {
                       </ReactMarkdown>
                     </div>
                   ) : msg.isStreaming ? (
-                    <span className="flex items-center gap-2 text-slate-400 py-0.5">
-                      <Loader2 className="w-3.5 h-3.5 animate-spin text-emerald-500" />
+                    <span className="flex items-center gap-2 text-slate-500 py-0.5">
+                      <Loader2 className="w-3.5 h-3.5 animate-spin text-emerald-700" />
                       <span className="text-[11.5px] font-bold">Đang soạn câu trả lời...</span>
                     </span>
                   ) : null}
@@ -377,7 +377,7 @@ export default function FloatingChatbot() {
                 onKeyDown={handleKeyDown}
                 placeholder="Hỏi AI Assistant..."
                 disabled={isLoading}
-                className="flex-1 resize-none bg-transparent text-[13px] font-bold text-slate-800 placeholder:text-slate-400 !outline-none !border-none !ring-0 !shadow-none disabled:opacity-50 max-h-auto leading-normal overflow-hidden"
+                className="flex-1 resize-none bg-transparent text-[13px] font-bold text-slate-800 placeholder:text-slate-500 !outline-none !border-none !ring-0 !shadow-none disabled:opacity-50 max-h-auto leading-normal overflow-hidden"
                 style={{ height: "20px", outline: "none", border: "none", boxShadow: "none" }}
               />
               <button

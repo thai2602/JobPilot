@@ -71,7 +71,7 @@ export default function ExecutiveTemplate({ cvData }: TemplateProps) {
                 <div key={i} className="space-y-0.5">
                   <div className="flex justify-between items-baseline gap-2">
                     <p className="font-extrabold text-[13px] text-slate-900 leading-snug">{x.school}</p>
-                    <span className="text-[10px] font-bold text-slate-400 shrink-0">{x.startDate} – {x.endDate}</span>
+                    <span className="text-[10px] font-bold text-slate-500 shrink-0">{x.startDate} – {x.endDate}</span>
                   </div>
                   {x.major && <p className="text-[11.5px] text-slate-500 font-semibold">{x.major}</p>}
                 </div>
@@ -102,10 +102,10 @@ export default function ExecutiveTemplate({ cvData }: TemplateProps) {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-[12.5px]">
             {cvData.attachments.map((x, i) => (
               <div key={i} className="flex gap-2">
-                <span className="text-slate-400 mt-0.5">•</span>
+                <span className="text-slate-500 mt-0.5">•</span>
                 <div>
                   <p className="font-extrabold text-slate-800 leading-tight">{x.name}</p>
-                  <p className="text-[11px] text-slate-400 font-bold">{x.organization} {x.yearOrLevel ? `| ${x.yearOrLevel}` : ""}</p>
+                  <p className="text-[11px] text-slate-500 font-bold">{x.organization} {x.yearOrLevel ? `| ${x.yearOrLevel}` : ""}</p>
                 </div>
               </div>
             ))}

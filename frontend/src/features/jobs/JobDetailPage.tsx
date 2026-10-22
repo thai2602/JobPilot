@@ -81,6 +81,7 @@ export default function JobDetailPage() {
    };
 
    const handleApply = () => {
+      if (job?.expired) { showToast("Tin tuyển dụng này đã hết hạn ứng tuyển.", "error"); return; }
       if (!readAuthUser()) { showToast("Bạn cần đăng nhập trước khi ứng tuyển.", "error"); return; }
       if (!hasCreatedCv()) { showToast("Bạn chưa có CV. Vui lòng tạo CV trước.", "error"); return; }
       if (isApplied) { showToast("Bạn đã ứng tuyển vị trí này rồi.", "error"); return; }
@@ -207,7 +208,7 @@ export default function JobDetailPage() {
             ) : (
                <p className="text-slate-500 font-medium">Đang tải thông tin việc làm...</p>
             )}
-            <Link href="/tim-viec" className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-600 hover:text-emerald-700">
+            <Link href="/tim-viec" className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-700 hover:text-emerald-800">
                <ArrowLeft className="w-4 h-4" /> Quay lại danh sách việc làm
             </Link>
          </div>
@@ -218,10 +219,10 @@ export default function JobDetailPage() {
       <div className="space-y-8 max-w-[1100px] mx-auto">
          {/* Breadcrumb */}
          <nav className="flex items-center gap-2 text-xs font-semibold text-slate-500">
-            <Link href="/" className="hover:text-emerald-600 transition-colors">Trang chủ</Link>
-            <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-            <Link href="/tim-viec" className="hover:text-emerald-600 transition-colors">Tìm việc</Link>
-            <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+            <Link href="/" className="hover:text-emerald-800 transition-colors">Trang chủ</Link>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
+            <Link href="/tim-viec" className="hover:text-emerald-800 transition-colors">Tìm việc</Link>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
             <span className="text-slate-800 font-bold truncate max-w-[200px]">{toVietnameseJobTitle(job.title)}</span>
          </nav>
 
@@ -230,7 +231,7 @@ export default function JobDetailPage() {
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                <div className="flex items-start gap-4 flex-1">
                   <div className="w-16 h-16 rounded-2xl border border-slate-100 flex items-center justify-center bg-slate-50 p-2 shrink-0">
-                     <Building2 className="w-8 h-8 text-emerald-600" />
+                     <Building2 className="w-8 h-8 text-emerald-700" />
                   </div>
                   <div className="space-y-1.5 flex-1">
                      <div className="flex items-center gap-2 flex-wrap">
@@ -246,7 +247,7 @@ export default function JobDetailPage() {
                      <p className="text-sm font-bold text-slate-600 flex items-center gap-2">
                         <span>{job.company}</span>
                         {job.companyUrl && (
-                           <Link href={job.companyUrl} className="text-emerald-600 hover:text-emerald-700 inline-flex items-center gap-1 text-xs">
+                           <Link href={job.companyUrl} className="text-emerald-700 hover:text-emerald-800 inline-flex items-center gap-1 text-xs">
                               Xem công ty <ExternalLink className="w-3 h-3" />
                            </Link>
                         )}
@@ -267,12 +268,12 @@ export default function JobDetailPage() {
                   </button>
                   <button
                      onClick={handleApply}
-                     disabled={isApplied}
+                     disabled={isApplied || job.expired}
                      className={`flex-1 md:flex-none px-8 py-3 rounded-xl text-sm font-extrabold text-white transition-all shadow-md cursor-pointer ${
-                        isApplied ? "bg-slate-300 text-slate-500 cursor-not-allowed" : "bg-emerald-600 hover:bg-emerald-700 active:scale-95 shadow-emerald-600/20"
+                        isApplied || job.expired ? "bg-slate-300 text-slate-500 cursor-not-allowed" : "bg-emerald-600 hover:bg-emerald-800 active:scale-95 shadow-emerald-600/20"
                      }`}
                   >
-                     {isApplied ? "Đã ứng tuyển" : "Ứng tuyển ngay"}
+                     {isApplied ? "Đã ứng tuyển" : job.expired ? "Đã hết hạn ứng tuyển" : "Ứng tuyển ngay"}
                   </button>
                </div>
             </div>
@@ -280,27 +281,28 @@ export default function JobDetailPage() {
             {/* Quick Info Bar */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-slate-100">
                <div className="space-y-1">
-                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Mức lương</p>
-                  <p className="text-sm font-extrabold text-emerald-600 flex items-center gap-1.5">
-                     <Wallet className="w-4 h-4 text-emerald-500" /> {job.salary}
+                  <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Mức lương</p>
+                  <p className="text-sm font-extrabold text-emerald-700 flex items-center gap-1.5">
+                     <Wallet className="w-4 h-4 text-emerald-700" /> {job.salary}
                   </p>
                </div>
                <div className="space-y-1">
-                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Địa điểm</p>
+                  <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Địa điểm</p>
                   <p className="text-sm font-bold text-slate-700 flex items-center gap-1.5">
-                     <MapPin className="w-4 h-4 text-slate-400" /> {job.place}
+                     <MapPin className="w-4 h-4 text-slate-500" /> {job.place}
                   </p>
                </div>
                <div className="space-y-1">
-                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Hình thức</p>
+                  <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Hình thức</p>
                   <p className="text-sm font-bold text-slate-700 flex items-center gap-1.5">
-                     <Clock3 className="w-4 h-4 text-slate-400" /> {job.type}
+                     <Clock3 className="w-4 h-4 text-slate-500" /> {job.type}
                   </p>
                </div>
                <div className="space-y-1">
-                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Ngày đăng</p>
-                  <p className="text-sm font-bold text-slate-700 flex items-center gap-1.5">
-                     <CalendarClock className="w-4 h-4 text-slate-400" /> {job.posted || "Vừa cập nhật"}
+                  <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Hạn nộp hồ sơ</p>
+                  <p className={`text-sm font-bold flex items-center gap-1.5 ${job.expired ? "text-rose-600" : "text-slate-700"}`}>
+                     <CalendarClock className={`w-4 h-4 ${job.expired ? "text-rose-400" : "text-slate-500"}`} />
+                     {job.deadline ?? "Không thời hạn"}{job.expired ? " (đã hết hạn)" : ""}
                   </p>
                </div>
             </div>
@@ -322,8 +324,8 @@ export default function JobDetailPage() {
                            onClick={() => setActiveTab(tab.id as any)}
                            className={`pb-3 text-sm font-bold transition-all border-b-2 cursor-pointer ${
                               activeTab === tab.id
-                                 ? "border-emerald-600 text-emerald-600"
-                                 : "border-transparent text-slate-400 hover:text-slate-600"
+                                 ? "border-emerald-600 text-emerald-700"
+                                 : "border-transparent text-slate-500 hover:text-slate-600"
                            }`}
                         >
                            {tab.label}
@@ -357,8 +359,8 @@ export default function JobDetailPage() {
                {/* Company Info Box */}
                <div className="rounded-[24px] border border-slate-200/80 bg-white p-6 shadow-sm space-y-4">
                   <h3 className="text-base font-extrabold text-slate-900 border-b border-slate-100 pb-3">Giới thiệu công ty</h3>
-                  <p className="text-xs text-slate-600 leading-relaxed font-medium">
-                     {job.companyDescription || "Công ty hàng đầu trong lĩnh vực với môi trường làm việc chuyên nghiệp, năng động."}
+                  <p className={`text-xs leading-relaxed font-medium ${job.companyDescription ? "text-slate-600" : "text-slate-500 italic"}`}>
+                     {job.companyDescription || "Doanh nghiệp chưa cung cấp phần giới thiệu."}
                   </p>
                </div>
 
@@ -373,9 +375,9 @@ export default function JobDetailPage() {
                               href={`/tim-viec/${rj.slug || generateSlug(`${rj.company}-${rj.title}`)}`}
                               className="block p-3 rounded-xl border border-slate-100 hover:border-emerald-200 hover:bg-emerald-50/40 transition-all group"
                            >
-                              <p className="text-xs font-bold text-slate-800 group-hover:text-emerald-700 truncate">{toVietnameseJobTitle(rj.title)}</p>
+                              <p className="text-xs font-bold text-slate-800 group-hover:text-emerald-800 truncate">{toVietnameseJobTitle(rj.title)}</p>
                               <p className="text-[11px] text-slate-500 font-medium">{rj.company}</p>
-                              <p className="text-[11px] font-bold text-emerald-600 mt-1">{rj.salary}</p>
+                              <p className="text-[11px] font-bold text-emerald-700 mt-1">{rj.salary}</p>
                            </Link>
                         ))}
                      </div>
@@ -387,7 +389,7 @@ export default function JobDetailPage() {
          {/* Toast Notification */}
          {toast && (
             <div className="fixed bottom-6 right-6 z-50 animate-bounce">
-               <div className={`px-5 py-3 rounded-2xl shadow-xl text-xs font-bold text-white ${toast.kind === "success" ? "bg-emerald-600" : "bg-rose-600"}`}>
+               <div className={`px-5 py-3 rounded-2xl shadow-xl text-xs font-bold text-white ${toast.kind === "success" ? "bg-emerald-700" : "bg-rose-600"}`}>
                   {toast.message}
                </div>
             </div>

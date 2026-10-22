@@ -23,7 +23,7 @@ export default function TechProTemplate({ cvData }: TemplateProps) {
         <div className="bg-slate-50/80 p-6 space-y-6 border-r border-slate-100 rounded-bl-[24px]">
           {/* Contact */}
           <div className="space-y-3">
-            <h4 className="text-[11px] font-extrabold uppercase tracking-widest border-b border-slate-200 pb-1 text-slate-400">Liên hệ</h4>
+            <h4 className="text-[11px] font-extrabold uppercase tracking-widest border-b border-slate-200 pb-1 text-slate-500">Liên hệ</h4>
             <ul className="space-y-2.5 text-[12px] font-bold text-slate-600 break-all">
               {cvData.email && <li className="flex gap-2"><Mail className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: accentColor }} /> <span>{cvData.email}</span></li>}
               {cvData.phone && <li className="flex gap-2"><Phone className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: accentColor }} /> <span>{cvData.phone}</span></li>}
@@ -40,7 +40,7 @@ export default function TechProTemplate({ cvData }: TemplateProps) {
           {/* Skills */}
           {cvData.skills.length > 0 && (
             <div className="space-y-3">
-              <h4 className="text-[11px] font-extrabold uppercase tracking-widest border-b border-slate-200 pb-1 text-slate-400">Kỹ năng</h4>
+              <h4 className="text-[11px] font-extrabold uppercase tracking-widest border-b border-slate-200 pb-1 text-slate-500">Kỹ năng</h4>
               <div className="flex flex-wrap gap-1.5">
                 {cvData.skills.map((s, i) => (
                   <span key={i} className="px-2 py-1 rounded-lg text-[11px] font-bold bg-white border border-slate-200/50 text-slate-700 shadow-sm">
@@ -54,12 +54,12 @@ export default function TechProTemplate({ cvData }: TemplateProps) {
           {/* Certifications */}
           {cvData.attachments && cvData.attachments.length > 0 && (
             <div className="space-y-3">
-              <h4 className="text-[11px] font-extrabold uppercase tracking-widest border-b border-slate-200 pb-1 text-slate-400">Chứng chỉ</h4>
+              <h4 className="text-[11px] font-extrabold uppercase tracking-widest border-b border-slate-200 pb-1 text-slate-500">Chứng chỉ</h4>
               <div className="flex flex-col gap-2">
                 {cvData.attachments.map((x, i) => (
                   <div key={i} className="text-[11.5px] leading-relaxed">
                     <p className="font-extrabold text-slate-800">{x.name}</p>
-                    <p className="text-[10px] text-slate-400 font-bold">{x.organization} {x.yearOrLevel ? `(${x.yearOrLevel})` : ""}</p>
+                    <p className="text-[10px] text-slate-500 font-bold">{x.organization} {x.yearOrLevel ? `(${x.yearOrLevel})` : ""}</p>
                   </div>
                 ))}
               </div>
@@ -86,7 +86,7 @@ export default function TechProTemplate({ cvData }: TemplateProps) {
                   <div key={i} className="space-y-1">
                     <div className="flex justify-between items-start gap-2">
                       <p className="font-extrabold text-[14px] text-slate-900 leading-tight">{x.position}</p>
-                      <span className="text-[10.5px] font-bold text-slate-400 shrink-0">{x.startDate} – {x.endDate}</span>
+                      <span className="text-[10.5px] font-bold text-slate-500 shrink-0">{x.startDate} – {x.endDate}</span>
                     </div>
                     <p className="text-[12px] font-bold text-slate-500">{x.company}</p>
                     {x.description && <p className="text-[12.5px] text-slate-600 leading-relaxed pt-1 whitespace-pre-wrap">{x.description}</p>}
@@ -105,7 +105,7 @@ export default function TechProTemplate({ cvData }: TemplateProps) {
                   <div key={i} className="space-y-0.5">
                     <div className="flex justify-between items-start gap-2">
                       <p className="font-extrabold text-[13.5px] text-slate-900 leading-tight">{x.school}</p>
-                      <span className="text-[10.5px] font-bold text-slate-400 shrink-0">{x.startDate} – {x.endDate}</span>
+                      <span className="text-[10.5px] font-bold text-slate-500 shrink-0">{x.startDate} – {x.endDate}</span>
                     </div>
                     {x.major && <p className="text-[12px] font-bold text-slate-500">{x.major}</p>}
                   </div>
@@ -127,7 +127,7 @@ export default function TechProTemplate({ cvData }: TemplateProps) {
                     </div>
                     {x.description && <p className="text-[12px] text-slate-600 leading-relaxed line-clamp-2">{x.description}</p>}
                     {x.technologies && (
-                      <p className="text-[10.5px] font-extrabold text-slate-400 truncate">Tech: {x.technologies}</p>
+                      <p className="text-[10.5px] font-extrabold text-slate-500 truncate">Tech: {x.technologies}</p>
                     )}
                   </div>
                 ))}

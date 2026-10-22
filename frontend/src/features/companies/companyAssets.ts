@@ -50,10 +50,6 @@ import companyImage18 from "../../assets/company_image/image_18.png";
 import companyImage19 from "../../assets/company_image/image_19.png";
 import companyImage20 from "../../assets/company_image/image_20.png";
 
-import banner1 from "../../assets/banner/company/image_1.png";
-import banner2 from "../../assets/banner/company/image_2.png";
-import banner3 from "../../assets/banner/company/image_3.png";
-
 export const companyAvatars = [
    image1,
    image2,
@@ -108,24 +104,6 @@ export const companyImages = [
    companyImage18,
    companyImage19,
    companyImage20,
-];
-
-export const companyBannerItems = [
-   {
-      image: banner1,
-      title: "NovaTech - Công nghệ dẫn đầu",
-      description: "Khám phá nhà tuyển dụng sáng tạo với văn hóa đổi mới và cơ hội nghề nghiệp rộng mở.",
-   },
-   {
-      image: banner2,
-      title: "BluePixel - Thiết kế ấn tượng",
-      description: "Tham gia vào các dự án thiết kế UX/UI, xây dựng sản phẩm đẹp và trải nghiệm cao cấp.",
-   },
-   {
-      image: banner3,
-      title: "ScaleHub - Hạ tầng đám mây tối ưu",
-      description: "Ứng tuyển vào những vị trí backend, DevOps và cloud trong môi trường công nghệ cao.",
-   },
 ];
 
 type ImageSource = string | { src: string };

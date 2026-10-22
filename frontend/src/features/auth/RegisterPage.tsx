@@ -114,7 +114,7 @@ function getPasswordStrength(password: string): PasswordStrength {
       return { label: "Trung bình", bars: 2, color: "#f59e0b" };
    }
 
-   return { label: "Mạnh", bars: 4, color: "#10b981" };
+   return { label: "Mạnh", bars: 4, color: "#047857" };
 }
 
 const perks = [
@@ -335,7 +335,7 @@ export default function RegisterPage() {
                </h1>
                <p style={{ fontSize: "14px", color: "#64748b", marginBottom: "32px" }}>
                   Đã có tài khoản?{" "}
-                  <Link href="/dang-nhap" style={{ color: "#10b981", fontWeight: 700, textDecoration: "none" }}>
+                  <Link href="/dang-nhap" style={{ color: "#047857", fontWeight: 700, textDecoration: "none" }}>
                      Đăng nhập
                   </Link>
                </p>
@@ -348,7 +348,7 @@ export default function RegisterPage() {
                      <div style={{ position: "relative" }}>
                         <User style={{
                            position: "absolute", left: "13px", top: "50%", transform: "translateY(-50%)",
-                           width: 15, height: 15, color: "#94a3b8",
+                           width: 15, height: 15, color: "#64748b",
                         }} />
                         <input
                            id="register-name"
@@ -379,7 +379,7 @@ export default function RegisterPage() {
                      <div style={{ position: "relative" }}>
                         <Mail style={{
                            position: "absolute", left: "13px", top: "50%", transform: "translateY(-50%)",
-                           width: 15, height: 15, color: "#94a3b8",
+                           width: 15, height: 15, color: "#64748b",
                         }} />
                         <input
                            id="register-email"
@@ -409,7 +409,7 @@ export default function RegisterPage() {
                      <div style={{ position: "relative" }}>
                         <Lock style={{
                            position: "absolute", left: "13px", top: "50%", transform: "translateY(-50%)",
-                           width: 15, height: 15, color: "#94a3b8",
+                           width: 15, height: 15, color: "#64748b",
                         }} />
                         <input
                            id="register-password"
@@ -438,7 +438,7 @@ export default function RegisterPage() {
                            aria-pressed={showPassword}
                            style={{
                               position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)",
-                              background: "none", border: "none", cursor: "pointer", color: "#94a3b8",
+                              background: "none", border: "none", cursor: "pointer", color: "#64748b",
                            }}
                         >
                            {showPassword ? <EyeOff style={{ width: 15, height: 15 }} /> : <Eye style={{ width: 15, height: 15 }} />}
@@ -452,7 +452,7 @@ export default function RegisterPage() {
                            }} />
                         ))}
                      </div>
-                     <p id="password-strength" aria-live="polite" style={{ fontSize: "11px", color: "#94a3b8", marginTop: "4px" }}>
+                     <p id="password-strength" aria-live="polite" style={{ fontSize: "11px", color: "#64748b", marginTop: "4px" }}>
                         Độ mạnh: <span style={{ color: passwordStrength.color, fontWeight: 700 }}>{passwordStrength.label}</span>
                      </p>
                   </div>
@@ -464,7 +464,7 @@ export default function RegisterPage() {
                      <div style={{ position: "relative" }}>
                         <Lock style={{
                            position: "absolute", left: "13px", top: "50%", transform: "translateY(-50%)",
-                           width: 15, height: 15, color: "#94a3b8",
+                           width: 15, height: 15, color: "#64748b",
                         }} />
                         <input
                            id="register-confirm-password"
@@ -491,7 +491,7 @@ export default function RegisterPage() {
                            aria-pressed={showConfirmPassword}
                            style={{
                               position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)",
-                              background: "none", border: "none", cursor: "pointer", color: "#94a3b8",
+                              background: "none", border: "none", cursor: "pointer", color: "#64748b",
                            }}
                         >
                            {showConfirmPassword ? <EyeOff style={{ width: 15, height: 15 }} /> : <Eye style={{ width: 15, height: 15 }} />}
@@ -515,7 +515,7 @@ export default function RegisterPage() {
                         <button
                            type="button"
                            onClick={() => setErrorMessage("Tài liệu Điều khoản dịch vụ chưa được cung cấp trong dự án và cần hoàn thiện trước khi phát hành production.")}
-                           style={{ color: "#10b981", fontWeight: 600, border: 0, padding: 0, background: "transparent", cursor: "pointer" }}
+                           style={{ color: "#047857", fontWeight: 600, border: 0, padding: 0, background: "transparent", cursor: "pointer" }}
                         >
                            Điều khoản dịch vụ
                         </button>
@@ -523,7 +523,7 @@ export default function RegisterPage() {
                         <button
                            type="button"
                            onClick={() => setErrorMessage("Tài liệu Chính sách bảo mật chưa được cung cấp trong dự án và cần hoàn thiện trước khi phát hành production.")}
-                           style={{ color: "#10b981", fontWeight: 600, border: 0, padding: 0, background: "transparent", cursor: "pointer" }}
+                           style={{ color: "#047857", fontWeight: 600, border: 0, padding: 0, background: "transparent", cursor: "pointer" }}
                         >
                            Chính sách bảo mật
                         </button>
@@ -543,7 +543,7 @@ export default function RegisterPage() {
                      disabled={isSubmitting || isGoogleSubmitting}
                      style={{
                         width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
-                        background: "linear-gradient(135deg, #34d399, #10b981)",
+                        background: "linear-gradient(135deg, #059669, #047857)",
                         color: "#fff", borderRadius: "12px", padding: "13px",
                         fontSize: "15px", fontWeight: 700, border: "none", cursor: "pointer",
                         opacity: isSubmitting ? 0.8 : 1,
@@ -558,7 +558,7 @@ export default function RegisterPage() {
 
                   <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                      <div style={{ flex: 1, height: "1px", background: "#f1f5f9" }} />
-                     <span style={{ fontSize: "12px", color: "#94a3b8" }}>hoặc</span>
+                     <span style={{ fontSize: "12px", color: "#64748b" }}>hoặc</span>
                      <div style={{ flex: 1, height: "1px", background: "#f1f5f9" }} />
                   </div>
 
@@ -625,35 +625,20 @@ export default function RegisterPage() {
                         background: "rgba(255,255,255,0.88)", border: "1px solid rgba(16,185,129,0.22)",
                         display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
                      }}>
-                        <CheckCircle2 style={{ width: 13, height: 13, color: "#10b981" }} />
+                        <CheckCircle2 style={{ width: 13, height: 13, color: "#047857" }} />
                      </div>
                      <span style={{ fontSize: "14px", color: "#0f172a", lineHeight: 1.5 }}>{perk}</span>
                   </div>
                ))}
             </div>
 
-            <div style={{
+            <p style={{
                marginTop: "40px", paddingTop: "28px",
                borderTop: "1px solid rgba(148,163,184,0.18)",
+               fontSize: "12px", color: "#475569", lineHeight: 1.6,
             }}>
-               <div style={{ display: "flex", gap: "-8px" }}>
-                  {["A", "B", "C", "D"].map((l, i) => (
-                     <div key={l} style={{
-                        width: "32px", height: "32px", borderRadius: "50%",
-                        background: ["#d1fae5", "#a7f3d0", "#6ee7b7", "#a7f3d0"][i],
-                        border: "2px solid #047857",
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                        fontSize: "12px", fontWeight: 800, color: "#047857",
-                        marginLeft: i > 0 ? "-8px" : "0",
-                     }}>
-                        {l}
-                     </div>
-                  ))}
-               </div>
-               <p style={{ fontSize: "12px", color: "#475569", marginTop: "10px" }}>
-                  <span style={{ color: "#10b981", fontWeight: 700 }}>15,000+</span> bạn trẻ đã tìm được việc cùng JobPilot
-               </p>
-            </div>
+               Miễn phí, không cần thẻ thanh toán. Bạn có thể xoá dữ liệu trên thiết bị bất cứ lúc nào trong trang hồ sơ.
+            </p>
          </div>
       </div>
    );

@@ -53,7 +53,7 @@ export default function ApplyCvModal({ isOpen, onClose, onConfirm }: ApplyCvModa
                </div>
                <button
                   onClick={onClose}
-                  className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer"
+                  className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer"
                >
                   <X className="w-5 h-5" />
                </button>
@@ -65,7 +65,7 @@ export default function ApplyCvModal({ isOpen, onClose, onConfirm }: ApplyCvModa
                   <div className="text-center py-8 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
                      <FileText className="w-10 h-10 text-slate-300 mx-auto mb-2" />
                      <p className="text-sm font-bold text-slate-600">Bạn chưa có CV nào</p>
-                     <p className="text-xs text-slate-400 mt-1 max-w-[200px] mx-auto">Vui lòng tạo ít nhất một CV để thực hiện ứng tuyển.</p>
+                     <p className="text-xs text-slate-500 mt-1 max-w-[200px] mx-auto">Vui lòng tạo ít nhất một CV để thực hiện ứng tuyển.</p>
                   </div>
                ) : (
                   cvs.map((cv) => {
@@ -80,7 +80,7 @@ export default function ApplyCvModal({ isOpen, onClose, onConfirm }: ApplyCvModa
                                  : "border-slate-100 bg-slate-50/30 hover:bg-slate-50 hover:border-slate-200"
                            }`}
                         >
-                           <div className={`p-2 rounded-xl shrink-0 ${isSelected ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-400"}`}>
+                           <div className={`p-2 rounded-xl shrink-0 ${isSelected ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-500"}`}>
                               <FileText className="w-5 h-5" />
                            </div>
                            <div className="flex-1 min-w-0 pr-6">
@@ -88,7 +88,7 @@ export default function ApplyCvModal({ isOpen, onClose, onConfirm }: ApplyCvModa
                               <p className="text-xs text-slate-500 font-semibold mt-1 truncate">{cv.jobTitle || "Chưa thiết lập tiêu đề"}</p>
                            </div>
                            {isSelected && (
-                              <CheckCircle2 className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-600 shrink-0" />
+                              <CheckCircle2 className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-700 shrink-0" />
                            )}
                         </div>
                      );

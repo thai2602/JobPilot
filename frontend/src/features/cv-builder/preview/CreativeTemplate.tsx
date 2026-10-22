@@ -27,9 +27,9 @@ export default function CreativeTemplate({ cvData }: TemplateProps) {
       <div className="p-8 flex flex-col gap-6 bg-white rounded-b-[24px]">
         {/* Contact Quick Bar */}
         <div className="flex flex-wrap gap-4 items-center justify-between border-b border-slate-100 pb-4 text-[12.5px] font-bold text-slate-500">
-          {cvData.email && <span className="flex items-center gap-1.5"><Mail className="w-4 h-4 text-slate-400" /> {cvData.email}</span>}
-          {cvData.phone && <span className="flex items-center gap-1.5"><Phone className="w-4 h-4 text-slate-400" /> {cvData.phone}</span>}
-          {cvData.location && <span className="flex items-center gap-1.5"><MapPin className="w-4 h-4 text-slate-400" /> {cvData.location}</span>}
+          {cvData.email && <span className="flex items-center gap-1.5"><Mail className="w-4 h-4 text-slate-500" /> {cvData.email}</span>}
+          {cvData.phone && <span className="flex items-center gap-1.5"><Phone className="w-4 h-4 text-slate-500" /> {cvData.phone}</span>}
+          {cvData.location && <span className="flex items-center gap-1.5"><MapPin className="w-4 h-4 text-slate-500" /> {cvData.location}</span>}
         </div>
 
         {/* Main content grid */}
@@ -53,7 +53,7 @@ export default function CreativeTemplate({ cvData }: TemplateProps) {
                       <div className="absolute -left-[5.5px] top-1.5 w-2.5 h-2.5 rounded-full" style={{ backgroundColor: accentColor }} />
                       <div className="flex justify-between items-baseline gap-2">
                         <p className="font-extrabold text-[13.5px] text-slate-900">{x.position}</p>
-                        <span className="text-[10.5px] font-bold text-slate-400 shrink-0">{x.startDate}–{x.endDate}</span>
+                        <span className="text-[10.5px] font-bold text-slate-500 shrink-0">{x.startDate}–{x.endDate}</span>
                       </div>
                       <p className="text-[11.5px] font-extrabold" style={{ color: accentColor }}>{x.company}</p>
                       {x.description && <p className="text-[12.5px] text-slate-500 leading-relaxed whitespace-pre-wrap">{x.description}</p>}
@@ -90,7 +90,7 @@ export default function CreativeTemplate({ cvData }: TemplateProps) {
                     <div key={i} className="space-y-0.5">
                       <p className="font-extrabold text-[13px] text-slate-900 leading-tight">{x.school}</p>
                       <p className="text-[11.5px] text-slate-500 font-semibold">{x.major}</p>
-                      <p className="text-[10px] text-slate-400 font-bold">{x.startDate} – {x.endDate}</p>
+                      <p className="text-[10px] text-slate-500 font-bold">{x.startDate} – {x.endDate}</p>
                     </div>
                   ))}
                 </div>
@@ -107,7 +107,7 @@ export default function CreativeTemplate({ cvData }: TemplateProps) {
                       <span className="text-amber-500 shrink-0">★</span>
                       <div>
                         <p className="text-slate-800 leading-normal">{x.name}</p>
-                        <p className="text-[10.5px] text-slate-400 font-medium">{x.organization}</p>
+                        <p className="text-[10.5px] text-slate-500 font-medium">{x.organization}</p>
                       </div>
                     </li>
                   ))}

@@ -4,13 +4,17 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type ChangeEvent, type FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import {
-   Activity, Briefcase, Check, Clock3, Download, FileText, LogOut, Mail,
+   Bookmark, Briefcase, Check, Download, FileText, LogOut, Mail,
    Pencil, Save, ShieldCheck, Trash2, Upload, UserRound, X,
 } from "lucide-react";
 import {
    clearAuthUser, readAuthSessionInfo, readAuthUser, subscribeAuthUserChange,
    updateAuthUser, type AuthSessionInfo, type AuthUser,
 } from "../../utils/auth";
+import { applicationsApi } from "../../services/applicationsApi";
+import { cvApi } from "../../services/cvApi";
+import { savedJobsApi } from "../../services/savedJobsApi";
+import { userApi } from "../../services/userApi";
 
 const hometownOptions = [
    "An Giang", "Bắc Ninh", "Cà Mau", "Cần Thơ", "Cao Bằng", "Đà Nẵng", "Đắk Lắk",
@@ -66,7 +70,12 @@ const formatDateTime = (date?: Date | string) => {
    });
 };
 
-const resizeAvatar = (file: File): Promise<string> =>
+const formatDate = (date: string) => {
+   const parsed = new Date(date);
+   return Number.isNaN(parsed.getTime()) ? "Không xác định" : parsed.toLocaleDateString("vi-VN");
+};
+
+const resizeAvatar =(file: File): Promise<string> =>
    new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onerror = () => reject(new Error("Không thể đọc file ảnh."));
@@ -104,6 +113,8 @@ export default function UserProfilePage() {
    const [isProcessingAvatar, setIsProcessingAvatar] = useState(false);
    const [feedback, setFeedback] = useState<Feedback>(null);
    const [counts, setCounts] = useState({ cvs: 0, applications: 0, savedJobs: 0 });
+   // Ngày tạo tài khoản lấy từ server; undefined = đang tải, null = không lấy được
+   const [joinedAt, setJoinedAt] = useState<string | null | undefined>(undefined);
 
    const hydrate = (user: AuthUser | null) => {
       setCurrentUser(user);
@@ -134,6 +145,25 @@ export default function UserProfilePage() {
          window.removeEventListener("storage", syncCounts);
       };
    }, []);
+
+   // Số liệu và ngày tham gia lấy từ server; localStorage chỉ là giá trị tạm trong lúc chờ
+   useEffect(() => {
+      if (!currentUser) return;
+      let cancelled = false;
+      userApi.getMe()
+         .then((me) => { if (!cancelled) setJoinedAt(me.createdAt ?? null); })
+         .catch(() => { if (!cancelled) setJoinedAt(null); });
+      Promise.allSettled([cvApi.listMine(), applicationsApi.listMine(), savedJobsApi.listMine()])
+         .then(([cvs, applications, savedJobs]) => {
+            if (cancelled) return;
+            setCounts((local) => ({
+               cvs: cvs.status === "fulfilled" ? cvs.value.length : local.cvs,
+               applications: applications.status === "fulfilled" ? applications.value.length : local.applications,
+               savedJobs: savedJobs.status === "fulfilled" ? savedJobs.value.length : local.savedJobs,
+            }));
+         });
+      return () => { cancelled = true; };
+   }, [currentUser?.email]);
 
    const isDirty = useMemo(() => JSON.stringify(form) !== JSON.stringify(initialForm), [form, initialForm]);
 
@@ -250,7 +280,7 @@ export default function UserProfilePage() {
       link.download = `jobpilot-du-lieu-${new Date().toISOString().slice(0, 10)}.json`;
       link.click();
       URL.revokeObjectURL(url);
-      setFeedback({ kind: "success", message: "Đã xuất dữ liệu tài khoản, không bao gồm JWT." });
+      setFeedback({ kind: "success", message: "Đã tải xuống dữ liệu tài khoản (không kèm mã đăng nhập)." });
    };
 
    const handleClearDeviceData = () => {
@@ -284,11 +314,11 @@ export default function UserProfilePage() {
    if (!currentUser) {
       return (
          <section className="mx-auto max-w-2xl rounded-[28px] border border-slate-200 bg-white p-8 text-center shadow-sm">
-            <div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-emerald-50 text-emerald-600"><UserRound className="h-7 w-7" /></div>
+            <div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-emerald-50 text-emerald-700"><UserRound className="h-7 w-7" /></div>
             <h1 className="mt-5 text-2xl font-black text-slate-900">Tài khoản JobPilot</h1>
             <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-600">Đăng nhập để quản lý hồ sơ, CV và các hoạt động ứng tuyển của bạn.</p>
             <div className="mt-6 flex flex-wrap justify-center gap-3">
-               <Link href="/dang-nhap?next=/ho-so-nguoi-dung" className="rounded-full bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-emerald-700">Đăng nhập</Link>
+               <Link href="/dang-nhap?next=/ho-so-nguoi-dung" className="rounded-full bg-emerald-700 px-5 py-2.5 text-sm font-bold text-white hover:bg-emerald-800">Đăng nhập</Link>
                <Link href="/dang-ky" className="rounded-full border border-slate-200 px-5 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50">Tạo tài khoản</Link>
             </div>
          </section>
@@ -312,7 +342,7 @@ export default function UserProfilePage() {
                   </div>
                   <div className="min-w-0">
                      <p className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-300">Trung tâm tài khoản</p>
-                     <h1 className="mt-2 truncate text-2xl font-black tracking-tight md:text-3xl">{form.name}</h1>
+                     <h1 className="mt-2 truncate text-2xl font-black tracking-tight text-white md:text-3xl">{form.name}</h1>
                      <p className="mt-1 truncate text-sm text-slate-300">{currentUser.email}</p>
                   </div>
                </div>
@@ -324,15 +354,15 @@ export default function UserProfilePage() {
             </div>
          </div>
 
-         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+         <div className="grid grid-cols-3 gap-2.5 sm:gap-4">
             {[
                { label: "CV của tôi", value: counts.cvs, href: "/cv-cua-toi", icon: FileText, tone: "text-violet-600 bg-violet-50" },
-               { label: "Đã ứng tuyển", value: counts.applications, href: "/cong-viec-da-ung-tuyen", icon: Briefcase, tone: "text-emerald-600 bg-emerald-50" },
-               { label: "Việc làm đã lưu", value: counts.savedJobs, href: "/viec-lam-da-luu", icon: Activity, tone: "text-rose-600 bg-rose-50" },
+               { label: "Đã ứng tuyển", value: counts.applications, href: "/cong-viec-da-ung-tuyen", icon: Briefcase, tone: "text-emerald-700 bg-emerald-50" },
+               { label: "Việc làm đã lưu", value: counts.savedJobs, href: "/viec-lam-da-luu", icon: Bookmark, tone: "text-rose-600 bg-rose-50" },
             ].map(({ label, value, href, icon: Icon, tone }) => (
-               <Link key={label} href={href} className="group flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-                  <span className={`grid h-11 w-11 place-items-center rounded-xl ${tone}`}><Icon className="h-5 w-5" /></span>
-                  <span><strong className="block text-xl font-black text-slate-900">{value}</strong><span className="text-xs font-semibold text-slate-500 group-hover:text-slate-700">{label}</span></span>
+               <Link key={label} href={href} className="group flex flex-col items-start gap-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md sm:flex-row sm:items-center sm:gap-4 sm:p-4">
+                  <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl sm:h-11 sm:w-11 ${tone}`}><Icon className="h-5 w-5" /></span>
+                  <span><strong className="block text-xl font-black text-slate-900">{value}</strong><span className="text-xs font-semibold leading-4 text-slate-600 group-hover:text-slate-800">{label}</span></span>
                </Link>
             ))}
          </div>
@@ -340,22 +370,22 @@ export default function UserProfilePage() {
          {feedback && <div role={feedback.kind === "error" ? "alert" : "status"} aria-live="polite" className={`flex items-start justify-between gap-3 rounded-2xl border px-4 py-3 text-sm font-semibold ${feedbackClass}`}><span>{feedback.message}</span><button type="button" onClick={() => setFeedback(null)} aria-label="Đóng thông báo"><X className="h-4 w-4" /></button></div>}
 
          <div className="grid gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(300px,0.8fr)]">
-            <form onSubmit={handleSaveProfile} className="rounded-[26px] border border-slate-200 bg-white p-5 shadow-sm md:p-7">
+            <form onSubmit={handleSaveProfile} className="self-start rounded-[26px] border border-slate-200 bg-white p-5 shadow-sm md:p-7">
                <div className="flex flex-wrap items-start justify-between gap-4">
-                  <div><h2 className="text-lg font-black text-slate-900">Thông tin cá nhân</h2><p className="mt-1 text-sm text-slate-500">Thông tin mở rộng được lưu trên trình duyệt hiện tại.</p></div>
-                  {!isEditing ? <button type="button" onClick={() => setIsEditing(true)} className="inline-flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-bold text-emerald-700 hover:bg-emerald-100"><Pencil className="h-4 w-4" />Chỉnh sửa</button> : <div className="flex gap-2"><button type="button" onClick={handleCancelEdit} className="rounded-xl border border-slate-200 px-3 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50">Hủy</button><button type="submit" disabled={!isDirty || isProcessingAvatar} className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"><Save className="h-4 w-4" />Lưu thay đổi</button></div>}
+                  <div><h2 className="text-lg font-black text-slate-900">Thông tin cá nhân</h2><p className="mt-1 text-sm text-slate-600">Họ tên, ảnh và các thông tin dưới đây chỉ lưu trên trình duyệt này, chưa đồng bộ lên máy chủ.</p></div>
+                  {!isEditing ? <button type="button" onClick={() => setIsEditing(true)} className="inline-flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-bold text-emerald-700 hover:bg-emerald-100"><Pencil className="h-4 w-4" />Chỉnh sửa</button> : <div className="flex gap-2"><button type="button" onClick={handleCancelEdit} className="rounded-xl border border-slate-200 px-3 py-2 text-sm font-bold text-slate-600 hover:bg-slate-50">Hủy</button><button type="submit" disabled={!isDirty || isProcessingAvatar} className="inline-flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-50"><Save className="h-4 w-4" />Lưu thay đổi</button></div>}
                </div>
 
                <div className="mt-6 flex flex-wrap items-center gap-4 rounded-2xl bg-slate-50 p-4">
-                  {form.avatarDataUrl ? <img src={form.avatarDataUrl} alt="Ảnh đại diện" className="h-16 w-16 rounded-2xl object-cover" /> : <div className="grid h-16 w-16 place-items-center rounded-2xl bg-emerald-600 text-xl font-black text-white">{userInitial}</div>}
+                  {form.avatarDataUrl ? <img src={form.avatarDataUrl} alt="Ảnh đại diện" className="h-16 w-16 rounded-2xl object-cover" /> : <div className="grid h-16 w-16 place-items-center rounded-2xl bg-emerald-700 text-xl font-black text-white">{userInitial}</div>}
                   <div className="min-w-0 flex-1"><p className="text-sm font-black text-slate-800">Ảnh đại diện</p><p className="mt-1 text-xs leading-5 text-slate-500">JPG, PNG hoặc WebP, tối đa 5 MB. Ảnh được thu nhỏ về 512 px.</p></div>
                   {isEditing && <div className="flex gap-2"><input ref={avatarInputRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handleAvatarChange} /><button type="button" disabled={isProcessingAvatar} onClick={() => avatarInputRef.current?.click()} className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100 disabled:opacity-50"><Upload className="h-4 w-4" />{isProcessingAvatar ? "Đang xử lý" : "Thay ảnh"}</button>{form.avatarDataUrl && <button type="button" onClick={() => updateField("avatarDataUrl", "")} className="rounded-xl border border-rose-200 bg-white p-2 text-rose-600 hover:bg-rose-50" aria-label="Xóa ảnh đại diện"><Trash2 className="h-4 w-4" /></button>}</div>}
                </div>
 
                <fieldset disabled={!isEditing} className="mt-6 grid gap-4 md:grid-cols-2 disabled:opacity-75">
                   <label className="text-sm font-bold text-slate-700">Họ và tên<input name="name" autoComplete="name" required value={form.name} onChange={(event) => updateField("name", event.target.value)} maxLength={80} className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 disabled:bg-slate-50" /></label>
-                  <label className="text-sm font-bold text-slate-700">Email đăng nhập<span className="mt-2 flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm font-medium text-slate-500"><Mail className="h-4 w-4" />{currentUser.email}</span><span className="mt-1 block text-[11px] font-medium text-slate-400">Email chỉ có thể đổi khi backend hỗ trợ xác minh lại.</span></label>
-                  <label className="text-sm font-bold text-slate-700">Số điện thoại<input name="phone" autoComplete="tel" type="tel" value={form.phone} onChange={(event) => updateField("phone", event.target.value)} placeholder="0912345678" className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 disabled:bg-slate-50" /></label>
+                  <label className="text-sm font-bold text-slate-700">Email đăng nhập<span className="mt-2 flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm font-medium text-slate-500"><Mail className="h-4 w-4" />{currentUser.email}</span><span className="mt-1 block text-xs font-medium text-slate-500">Hiện chưa hỗ trợ đổi email đăng nhập.</span></label>
+                  <label className="text-sm font-bold text-slate-700">Số điện thoại<input name="phone" autoComplete="tel" type="tel" value={form.phone} onChange={(event) => updateField("phone", event.target.value)} placeholder={isEditing ? "Ví dụ: 0912345678" : "Chưa cập nhật"} className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 disabled:bg-slate-50" /></label>
                   <label className="text-sm font-bold text-slate-700">Tỉnh/thành<select name="hometown" value={form.hometown} onChange={(event) => updateField("hometown", event.target.value)} className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm outline-none focus:border-emerald-500 disabled:bg-slate-50"><option value="">Chưa cập nhật</option>{hometownOptions.map((item) => <option key={item} value={item}>{item}</option>)}</select></label>
                   <label className="text-sm font-bold text-slate-700">Giới tính<select name="gender" value={form.gender} onChange={(event) => updateField("gender", event.target.value as ProfileForm["gender"])} className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm outline-none focus:border-emerald-500 disabled:bg-slate-50"><option value="">Chưa cập nhật</option><option value="Nam">Nam</option><option value="Nữ">Nữ</option><option value="Khác">Khác</option></select></label>
                   <label className="text-sm font-bold text-slate-700">Độ tuổi<input name="age" autoComplete="off" type="number" min={16} max={80} value={form.age} onChange={(event) => updateField("age", event.target.value)} placeholder="Chưa cập nhật" className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm outline-none focus:border-emerald-500 disabled:bg-slate-50" /></label>
@@ -364,30 +394,26 @@ export default function UserProfilePage() {
 
             <div className="space-y-6">
                <div className="rounded-[26px] border border-slate-200 bg-white p-5 shadow-sm">
-                  <div className="flex items-center gap-3"><span className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-50 text-emerald-600"><ShieldCheck className="h-5 w-5" /></span><div><h2 className="font-black text-slate-900">Tài khoản & phiên</h2><p className="text-xs text-slate-500">Thông tin bảo mật hiện tại</p></div></div>
-                  <dl className="mt-5 space-y-4 text-sm">
-                     <div className="flex justify-between gap-4"><dt className="text-slate-500">Trạng thái</dt><dd className="inline-flex items-center gap-1.5 font-bold text-emerald-700"><span className="h-2 w-2 rounded-full bg-emerald-500" />Đang hoạt động</dd></div>
-                     <div className="flex justify-between gap-4"><dt className="text-slate-500">Đăng nhập bằng</dt><dd className="font-bold text-slate-800">{currentUser.authProvider === "GOOGLE" ? "Google" : "Email & mật khẩu"}</dd></div>
-                     <div className="flex justify-between gap-4"><dt className="text-slate-500">Đăng nhập gần nhất</dt><dd className="text-right font-semibold text-slate-700">{formatDateTime(currentUser.lastLoginAt)}</dd></div>
-                     <div className="flex justify-between gap-4"><dt className="text-slate-500">Ngày tham gia</dt><dd className="text-right font-semibold text-slate-700">{formatDateTime(currentUser.createdAt)}</dd></div>
-                     <div className="flex justify-between gap-4"><dt className="text-slate-500">Phiên hết hạn</dt><dd className="text-right font-semibold text-slate-700">{sessionInfo.expiresAt ? formatDateTime(sessionInfo.expiresAt) : "Backend chưa cung cấp"}</dd></div>
+                  <div className="flex items-center gap-3"><span className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-50 text-emerald-700"><ShieldCheck className="h-5 w-5" /></span><div><h2 className="text-base font-black text-slate-900">Tài khoản & đăng nhập</h2><p className="text-xs text-slate-500">Trạng thái tài khoản và phiên hiện tại</p></div></div>
+                  <dl className="mt-5 space-y-3.5 text-sm">
+                     <div className="flex justify-between gap-4"><dt className="shrink-0 text-slate-600">Trạng thái</dt><dd className="inline-flex items-center gap-1.5 font-bold text-emerald-700"><span className="h-2 w-2 rounded-full bg-emerald-500" />Đang hoạt động</dd></div>
+                     <div className="flex justify-between gap-4"><dt className="shrink-0 text-slate-600">Đăng nhập bằng</dt><dd className="text-right font-bold text-slate-800">{currentUser.authProvider === "GOOGLE" ? "Google" : "Email & mật khẩu"}</dd></div>
+                     <div className="flex justify-between gap-4"><dt className="shrink-0 text-slate-600">Ngày tham gia</dt><dd className="text-right font-semibold text-slate-800">{joinedAt === undefined ? "Đang tải..." : joinedAt ? formatDate(joinedAt) : "Không xác định"}</dd></div>
+                     <div className="flex justify-between gap-4"><dt className="shrink-0 text-slate-600">Lần đăng nhập này</dt><dd className="text-right font-semibold text-slate-800">{formatDateTime(currentUser.lastLoginAt)}</dd></div>
+                     {sessionInfo.expiresAt && <div className="flex justify-between gap-4"><dt className="shrink-0 text-slate-600">Tự đăng xuất lúc</dt><dd className="text-right font-semibold text-slate-800">{formatDateTime(sessionInfo.expiresAt)}</dd></div>}
                   </dl>
-                  <div className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-800">Đổi mật khẩu, xác minh email và xóa tài khoản cần endpoint bảo mật từ backend; frontend không giả lập các thao tác này.</div>
+                  <p className="mt-5 rounded-xl bg-slate-50 p-3 text-xs leading-5 text-slate-600">Đổi mật khẩu và xoá tài khoản sẽ sớm được hỗ trợ.</p>
                </div>
 
                <div className="rounded-[26px] border border-slate-200 bg-white p-5 shadow-sm">
-                  <div className="flex items-center gap-3"><span className="grid h-10 w-10 place-items-center rounded-xl bg-sky-50 text-sky-600"><Download className="h-5 w-5" /></span><div><h2 className="font-black text-slate-900">Dữ liệu cá nhân</h2><p className="text-xs text-slate-500">Quyền kiểm soát trên thiết bị</p></div></div>
+                  <div className="flex items-center gap-3"><span className="grid h-10 w-10 place-items-center rounded-xl bg-sky-50 text-sky-600"><Download className="h-5 w-5" /></span><div><h2 className="text-base font-black text-slate-900">Dữ liệu trên thiết bị</h2><p className="text-xs text-slate-500">Xuất hoặc xoá dữ liệu lưu trong trình duyệt</p></div></div>
                   <div className="mt-5 space-y-2">
-                     <button type="button" onClick={handleExportData} className="flex w-full items-center justify-between rounded-xl border border-slate-200 px-3.5 py-3 text-left text-sm font-bold text-slate-700 hover:bg-slate-50"><span className="inline-flex items-center gap-2"><Download className="h-4 w-4" />Xuất dữ liệu JSON</span><span className="text-xs font-medium text-slate-400">Không gồm JWT</span></button>
+                     <button type="button" onClick={handleExportData} className="flex w-full items-center justify-between rounded-xl border border-slate-200 px-3.5 py-3 text-left text-sm font-bold text-slate-700 hover:bg-slate-50"><span className="inline-flex items-center gap-2"><Download className="h-4 w-4" />Tải dữ liệu của tôi</span><span className="text-xs font-medium text-slate-500">File .json</span></button>
                      <button type="button" onClick={handleClearDeviceData} className="flex w-full items-center gap-2 rounded-xl border border-slate-200 px-3.5 py-3 text-left text-sm font-bold text-slate-700 hover:bg-slate-50"><Trash2 className="h-4 w-4" />Xóa dữ liệu tạm trên thiết bị</button>
                      <button type="button" onClick={handleLogout} className="flex w-full items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-3.5 py-3 text-left text-sm font-bold text-rose-700 hover:bg-rose-100"><LogOut className="h-4 w-4" />Đăng xuất trên thiết bị này</button>
                   </div>
                </div>
 
-               <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-xs leading-5 text-slate-600">
-                  <p className="flex items-center gap-2 font-bold text-slate-800"><Clock3 className="h-4 w-4" />Lưu ý về đồng bộ</p>
-                  <p className="mt-2">Họ tên, avatar, số điện thoại và thông tin mở rộng hiện lưu ở trình duyệt. CV, ứng tuyển và việc đã lưu được đồng bộ lại từ backend khi có kết nối.</p>
-               </div>
             </div>
          </div>
       </section>

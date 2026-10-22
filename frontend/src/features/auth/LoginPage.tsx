@@ -143,7 +143,6 @@ export default function LoginPage() {
             name: buildNameFromEmail(trimmedEmail),
             email: trimmedEmail,
             authProvider: "LOCAL",
-            createdAt: now,
             lastLoginAt: now,
          }, loginRes.accessToken);
 
@@ -206,7 +205,6 @@ export default function LoginPage() {
                      email: googleProfile.email,
                      avatarDataUrl: googleProfile.picture,
                      authProvider: "GOOGLE",
-                     createdAt: now,
                      lastLoginAt: now,
                   }, loginRes.accessToken);
 
@@ -314,21 +312,22 @@ export default function LoginPage() {
                padding: "20px", backdropFilter: "blur(8px)",
                border: "1px solid rgba(148,163,184,0.18)",
             }}>
-               <p style={{ color: "#334155", fontSize: "13px", lineHeight: 1.7, marginBottom: "12px" }}>
-                  "JobPilot giúp mình tìm được việc ưng ý chỉ trong 3 tuần — CV mẫu rất xịn!"
+               <p style={{ color: "#0f172a", fontSize: "13px", fontWeight: 700, marginBottom: "10px" }}>
+                  Sau khi đăng nhập, bạn có thể:
                </p>
-               <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                  <div style={{
-                     width: "32px", height: "32px", borderRadius: "50%",
-                     background: "linear-gradient(135deg, #e2e8f0, #cbd5e1)",
-                     display: "flex", alignItems: "center", justifyContent: "center",
-                     fontSize: "13px", fontWeight: 800, color: "#0f172a",
-                  }}>A</div>
-                  <div>
-                     <p style={{ color: "#0f172a", fontSize: "13px", fontWeight: 700 }}>Anh Tuấn</p>
-                     <p style={{ color: "#475569", fontSize: "11px" }}>Frontend Developer tại NovaTech</p>
-                  </div>
-               </div>
+               {/* Tính năng thật của tài khoản, thay cho lời chứng thực giả trước đây */}
+               <ul style={{ display: "grid", gap: "8px", color: "#334155", fontSize: "13px", lineHeight: 1.5 }}>
+                  {[
+                     "Tạo và chỉnh sửa CV theo mẫu, nhờ AI chấm điểm",
+                     "Lưu việc làm và theo dõi hồ sơ đã ứng tuyển",
+                     "Nhận gợi ý việc làm phù hợp với CV",
+                  ].map((item) => (
+                     <li key={item} style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
+                        <span aria-hidden="true" style={{ color: "#047857", fontWeight: 800 }}>✓</span>
+                        {item}
+                     </li>
+                  ))}
+               </ul>
             </div>
          </div>
 
@@ -361,7 +360,7 @@ export default function LoginPage() {
                            width: "42px",
                            height: "42px",
                            borderRadius: "999px",
-                           background: "#10b981",
+                           background: "#047857",
                            color: "#fff",
                            fontWeight: 800,
                            display: "flex",
@@ -380,7 +379,7 @@ export default function LoginPage() {
                         <button
                            style={{
                               flex: 1,
-                              background: "linear-gradient(135deg, #10b981, #059669)",
+                              background: "linear-gradient(135deg, #047857, #065f46)",
                               color: "#fff",
                               borderRadius: "12px",
                               padding: "12px",
@@ -421,7 +420,7 @@ export default function LoginPage() {
                      </h1>
                      <p style={{ fontSize: "14px", color: "#64748b", marginBottom: "32px" }}>
                         Chưa có tài khoản?{" "}
-                        <Link href="/dang-ky" style={{ color: "#10b981", fontWeight: 700, textDecoration: "none" }}>
+                        <Link href="/dang-ky" style={{ color: "#047857", fontWeight: 700, textDecoration: "none" }}>
                            Đăng ký miễn phí
                         </Link>
                      </p>
@@ -458,8 +457,8 @@ export default function LoginPage() {
                               <label htmlFor="login-password" style={{ fontSize: "13px", fontWeight: 700, color: "#374151" }}>Mật khẩu</label>
                               <button
                                  type="button"
-                                 onClick={() => setErrorMessage("Backend hiện chưa có API đặt lại mật khẩu. Vui lòng liên hệ hotro@jobpilot.vn để được hỗ trợ.")}
-                                 style={{ fontSize: "12px", color: "#10b981", fontWeight: 600, border: 0, padding: 0, background: "transparent", cursor: "pointer" }}
+                                 onClick={() => setErrorMessage("Tính năng đặt lại mật khẩu chưa được hỗ trợ. Vui lòng liên hệ quản trị viên hệ thống.")}
+                                 style={{ fontSize: "12px", color: "#047857", fontWeight: 600, border: 0, padding: 0, background: "transparent", cursor: "pointer" }}
                               >
                                  Quên mật khẩu?
                               </button>
@@ -492,7 +491,7 @@ export default function LoginPage() {
                                  aria-pressed={showPassword}
                                  style={{
                                     position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)",
-                                    background: "none", border: "none", cursor: "pointer", color: "#94a3b8",
+                                    background: "none", border: "none", cursor: "pointer", color: "#64748b",
                                  }}
                               >
                                  {showPassword ? <EyeOff style={{ width: 16, height: 16 }} /> : <Eye style={{ width: 16, height: 16 }} />}
@@ -506,7 +505,7 @@ export default function LoginPage() {
 
                         <button type="submit" disabled={isSubmitting || isGoogleSubmitting} style={{
                            width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
-                           background: "linear-gradient(135deg, #34d399, #10b981)",
+                           background: "linear-gradient(135deg, #059669, #047857)",
                            color: "#fff", borderRadius: "12px", padding: "13px",
                            fontSize: "15px", fontWeight: 700, border: "none", cursor: "pointer",
                            opacity: isSubmitting ? 0.8 : 1,
@@ -521,7 +520,7 @@ export default function LoginPage() {
 
                         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                            <div style={{ flex: 1, height: "1px", background: "#f1f5f9" }} />
-                           <span style={{ fontSize: "12px", color: "#94a3b8", fontWeight: 500 }}>hoặc</span>
+                           <span style={{ fontSize: "12px", color: "#64748b", fontWeight: 500 }}>hoặc</span>
                            <div style={{ flex: 1, height: "1px", background: "#f1f5f9" }} />
                         </div>
 

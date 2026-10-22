@@ -153,7 +153,7 @@ export default function ChatbotPage() {
             <h1 className="font-semibold text-slate-800 text-base leading-tight">
               CV Assistant
             </h1>
-            <p className="text-xs text-slate-400">Phân tích & tư vấn CV bằng AI</p>
+            <p className="text-xs text-slate-500">Phân tích & tư vấn CV bằng AI</p>
           </div>
         </div>
 
@@ -161,7 +161,7 @@ export default function ChatbotPage() {
           <button
             onClick={clearHistory}
             title="Xoá lịch sử"
-            className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-rose-500 transition-colors px-3 py-1.5 rounded-lg hover:bg-rose-50"
+            className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-rose-500 transition-colors px-3 py-1.5 rounded-lg hover:bg-rose-50"
           >
             <Trash2 className="w-3.5 h-3.5" />
             Xoá hội thoại
@@ -180,7 +180,7 @@ export default function ChatbotPage() {
               <h2 className="text-xl font-semibold text-slate-700 mb-1">
                 Xin chào! Tôi là CV Assistant
               </h2>
-              <p className="text-sm text-slate-400 max-w-sm">
+              <p className="text-sm text-slate-500 max-w-sm">
                 Tôi có thể phân tích CV, đề xuất cải thiện và tư vấn theo tiêu chuẩn ATS.
               </p>
             </div>
@@ -190,7 +190,7 @@ export default function ChatbotPage() {
                 <button
                   key={s}
                   onClick={() => sendMessage(s)}
-                  className="text-xs px-3 py-2 rounded-xl border border-slate-200 bg-white hover:border-emerald-400 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 transition-all duration-200 shadow-sm"
+                  className="text-xs px-3 py-2 rounded-xl border border-slate-200 bg-white hover:border-emerald-400 hover:bg-emerald-50 hover:text-emerald-800 text-slate-600 transition-all duration-200 shadow-sm"
                 >
                   {s}
                 </button>
@@ -226,7 +226,7 @@ export default function ChatbotPage() {
               {msg.content
                 ? <span className="whitespace-pre-wrap">{msg.content}</span>
                 : msg.isStreaming
-                  ? <span className="flex items-center gap-1.5 text-slate-400">
+                  ? <span className="flex items-center gap-1.5 text-slate-500">
                       <Loader2 className="w-3.5 h-3.5 animate-spin" />
                       <span className="text-xs">Đang xử lý...</span>
                     </span>
@@ -259,7 +259,7 @@ export default function ChatbotPage() {
             onKeyDown={handleKeyDown}
             placeholder="Nhập câu hỏi... (Enter để gửi, Shift+Enter xuống dòng)"
             disabled={isLoading}
-            className="flex-1 resize-none bg-transparent text-sm text-slate-700 placeholder:text-slate-400 outline-none disabled:opacity-50 max-h-40 leading-relaxed"
+            className="flex-1 resize-none bg-transparent text-sm text-slate-700 placeholder:text-slate-500 outline-none disabled:opacity-50 max-h-40 leading-relaxed"
             style={{ height: "24px" }}
           />
           <button
@@ -272,7 +272,7 @@ export default function ChatbotPage() {
               : <Send className="w-4 h-4 text-white" />}
           </button>
         </div>
-        <p className="text-center text-[10px] text-slate-400 mt-2">
+        <p className="text-center text-[10px] text-slate-500 mt-2">
           AI có thể mắc lỗi. Vui lòng kiểm tra thông tin quan trọng.
         </p>
       </div>

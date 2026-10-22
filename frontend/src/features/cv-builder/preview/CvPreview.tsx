@@ -20,8 +20,8 @@ export default function CvPreview({ cvData }: TemplateProps) {
   if (!hasSections && !cvData.fullName && !cvData.jobTitle && !cvData.summary) {
     return (
       <div className="flex flex-col items-center justify-center py-32 opacity-40">
-        <FileText className="w-20 h-20 mb-5 text-slate-400" />
-        <p className="text-slate-400 text-[14px] font-semibold text-center leading-relaxed">
+        <FileText className="w-20 h-20 mb-5 text-slate-500" />
+        <p className="text-slate-500 text-[14px] font-semibold text-center leading-relaxed">
           Bản xem trước CV<br />Hãy điền thông tin ở biểu mẫu bên trái để hiển thị.
         </p>
       </div>

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
-import { Building2, MapPin, Star, Users, Wallet, Briefcase, ArrowUpRight, Check } from "lucide-react";
+import { Building2, MapPin, Users, Wallet, Briefcase, ArrowUpRight, Check } from "lucide-react";
 import { fallbackCompanyImage, fallbackCompanyLogo } from "./companyAssets";
 import { isOpenPosition } from "./companyMapping";
 import { ApiError } from "../../services/httpClient";
@@ -27,8 +27,6 @@ type CompanyItem = {
    tagline: string;
    logo: any;
    heroImage: any;
-   rating: any;
-   reviewCount: number;
    employees: string;
    location: string;
    openPositionsCount: number;
@@ -141,8 +139,6 @@ export default function CompanyDetailPage() {
                tagline: description || recruitmentSummary,
                logo: apiItem.logoUrl || fallbackCompanyLogo(apiItem.name),
                heroImage: fallbackCompanyImage(apiItem.name),
-               rating: null,
-               reviewCount: 0,
                employees: apiItem.size || "Chưa được cung cấp",
                location,
                openPositionsCount: mappedPositions.length,
@@ -186,7 +182,7 @@ export default function CompanyDetailPage() {
                   setLoadError(null);
                   setReloadKey((key) => key + 1);
                }}
-               className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700"
+               className="inline-flex items-center gap-2 rounded-xl bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-800"
             >
                Thử lại
             </button>
@@ -201,7 +197,7 @@ export default function CompanyDetailPage() {
             <p className="text-sm text-slate-500">Công ty bạn đang tìm kiếm không tồn tại hoặc đã bị gỡ bỏ.</p>
             <Link
                href="/cong-ty"
-               className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700"
+               className="inline-flex items-center gap-2 rounded-xl bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-800"
             >
                Quay lại danh sách công ty
             </Link>
@@ -256,30 +252,23 @@ export default function CompanyDetailPage() {
                   </div>
                </div>
 
-               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-slate-100">
+               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-4 border-t border-slate-100">
                   <div className="space-y-1">
-                     <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Quy mô</p>
+                     <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Quy mô</p>
                      <p className="text-sm font-bold text-slate-800 flex items-center gap-1.5">
-                        <Users className="w-4 h-4 text-emerald-600" /> {company.employees}
+                        <Users className="w-4 h-4 text-emerald-700" /> {company.employees}
                      </p>
                   </div>
                   <div className="space-y-1">
-                     <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Địa điểm</p>
+                     <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Địa điểm</p>
                      <p className="text-sm font-bold text-slate-800 flex items-center gap-1.5">
-                        <MapPin className="w-4 h-4 text-emerald-600" /> {company.location}
+                        <MapPin className="w-4 h-4 text-emerald-700" /> {company.location}
                      </p>
                   </div>
                   <div className="space-y-1">
-                     <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Ngành nghề</p>
+                     <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Ngành nghề</p>
                      <p className="text-sm font-bold text-slate-800 flex items-center gap-1.5">
-                        <Building2 className="w-4 h-4 text-emerald-600" /> {company.field}
-                     </p>
-                  </div>
-                  <div className="space-y-1">
-                     <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Đánh giá</p>
-                     <p className={`text-sm font-extrabold flex items-center gap-1.5 ${company.rating ? "text-amber-600" : "text-slate-500"}`}>
-                        <Star className={`w-4 h-4 ${company.rating ? "fill-amber-400 text-amber-400" : "text-slate-300"}`} />
-                        {company.rating ? `${company.rating} (${company.reviewCount} đánh giá)` : "Chưa có đánh giá"}
+                        <Building2 className="w-4 h-4 text-emerald-700" /> {company.field}
                      </p>
                   </div>
                </div>
@@ -314,7 +303,7 @@ export default function CompanyDetailPage() {
                            <div key={idx} className="rounded-2xl border border-slate-100 bg-slate-50/50 p-5 space-y-3 hover:border-emerald-200 transition-colors">
                               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                                  <h3 className="font-extrabold text-slate-900 text-base">{pos.title}</h3>
-                                 <span className="text-sm font-black text-emerald-600">{pos.salary}</span>
+                                 <span className="text-sm font-black text-emerald-700">{pos.salary}</span>
                               </div>
                               <p className="text-xs text-slate-600 font-medium line-clamp-2">{pos.description}</p>
                               <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
@@ -347,7 +336,7 @@ export default function CompanyDetailPage() {
                   <ul className="space-y-2.5">
                      {company.benefits.map((benefit, i) => (
                         <li key={i} className="flex items-start gap-2 text-xs font-semibold text-slate-700">
-                           <span className="w-4 h-4 rounded-full bg-emerald-50 text-emerald-600 grid place-items-center shrink-0 mt-0.5">✓</span>
+                           <span className="w-4 h-4 rounded-full bg-emerald-50 text-emerald-700 grid place-items-center shrink-0 mt-0.5">✓</span>
                            {benefit}
                         </li>
                       ))}

@@ -2,9 +2,9 @@ import Link from "next/link";
 import { ArrowRight, Briefcase, Building2, Compass, FileText, ShieldCheck, Wallet } from "lucide-react";
 
 const highlights = [
-   { title: "Công ty đã xác minh", desc: "Nhà tuyển dụng được kiểm duyệt trước khi đăng tin.", accent: "#059669", icon: ShieldCheck },
-   { title: "Phủ sóng 34 tỉnh thành", desc: "Cơ hội việc làm rộng khắp, dễ chọn nơi làm phù hợp.", accent: "#0284c7", icon: Compass },
-   { title: "Minh bạch thu nhập", desc: "Khoảng lương hiển thị rõ trước khi bạn ứng tuyển.", accent: "#7c3aed", icon: Wallet },
+   { title: "Tin tổng hợp, có nguồn", desc: "Tin tuyển dụng được tổng hợp từ các trang việc làm công khai, ghi rõ hạn nộp.", accent: "#047857", icon: ShieldCheck },
+   { title: "Lọc theo địa điểm", desc: "Tìm nhanh việc làm theo tỉnh thành, cấp bậc và hình thức làm việc.", accent: "#0369a1", icon: Compass },
+   { title: "Minh bạch thu nhập", desc: "Hiển thị khoảng lương khi nhà tuyển dụng công bố, kèm thống kê lương theo ngành.", accent: "#7c3aed", icon: Wallet },
 ];
 
 const quickLinks = [
@@ -73,7 +73,7 @@ export function SignUpCta() {
             </div>
             <Link
                href="/dang-ky"
-               className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 px-6 py-3 text-sm font-semibold text-white shadow transition-colors lg:shrink-0"
+               className="inline-flex items-center gap-2 rounded-lg bg-emerald-700 hover:bg-emerald-800 px-6 py-3 text-sm font-semibold text-white shadow transition-colors lg:shrink-0"
             >
                Đăng ký tài khoản
             </Link>

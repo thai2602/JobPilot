@@ -36,7 +36,7 @@ function ToolsCard(props: Props) {
   const { isUploading, uploadProgress, isAiReviewVisible, isAiBusy, aiProgress, isPreviewVisible, saveStatus } = props;
   return (
     <div className="bg-white rounded-[24px] border border-slate-100 shadow-[0_8px_30px_rgba(0,0,0,0.04)] p-5">
-      <h2 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-4 px-1">Công cụ hỗ trợ</h2>
+      <h2 className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-4 px-1">Công cụ hỗ trợ</h2>
 
       <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 2xl:flex 2xl:flex-col">
         <div className="min-w-0">
@@ -78,7 +78,7 @@ function ToolsCard(props: Props) {
             onClick={props.onToggleAiReview}
             aria-pressed={isAiReviewVisible}
             className={`flex w-full items-center gap-3 rounded-xl px-4 py-3.5 text-[14px] font-bold transition-all cursor-pointer ${isAiReviewVisible
-              ? "bg-emerald-600 text-white shadow-[0_8px_20px_rgba(5,150,105,0.25)] hover:bg-emerald-700"
+              ? "bg-emerald-700 text-white shadow-[0_8px_20px_rgba(5,150,105,0.25)] hover:bg-emerald-800"
               : "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
               }`}
           >
@@ -136,7 +136,7 @@ function AppearanceCard() {
     <div className="bg-white rounded-[24px] border border-slate-100 shadow-[0_8px_30px_rgba(0,0,0,0.04)] p-5">
       <div className="flex items-center gap-2 mb-4 px-1">
         <Palette className="w-4 h-4 text-violet-600" />
-        <h2 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Mẫu giao diện</h2>
+        <h2 className="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Mẫu giao diện</h2>
       </div>
       <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 2xl:flex 2xl:flex-col" role="radiogroup" aria-label="Chọn mẫu giao diện CV">
         {TEMPLATE_OPTIONS.map(({ id, name, desc, icon: Icon }) => {
@@ -153,7 +153,7 @@ function AppearanceCard() {
                 : "border-slate-100 hover:border-slate-300 hover:-translate-y-0.5 hover:shadow-sm"
                 }`}
             >
-              <div className={`p-2 rounded-lg shrink-0 transition-colors ${active ? "bg-slate-100 text-slate-800" : "bg-slate-50 text-slate-400 group-hover:bg-slate-100 group-hover:text-slate-600"}`}>
+              <div className={`p-2 rounded-lg shrink-0 transition-colors ${active ? "bg-slate-100 text-slate-800" : "bg-slate-50 text-slate-500 group-hover:bg-slate-100 group-hover:text-slate-600"}`}>
                 <Icon className="w-4 h-4" />
               </div>
               <div className="min-w-0 flex-1">
@@ -165,7 +165,7 @@ function AppearanceCard() {
                     </span>
                   )}
                 </div>
-                <p className="text-slate-400 text-[10px] truncate mt-0.5 font-medium">{desc}</p>
+                <p className="text-slate-500 text-[10px] truncate mt-0.5 font-medium">{desc}</p>
               </div>
             </button>
           );
@@ -175,7 +175,7 @@ function AppearanceCard() {
       <div className="h-px bg-slate-100 my-4"></div>
 
       <div className="px-1">
-        <h2 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3">Màu sắc chủ đạo</h2>
+        <h2 className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-3">Màu sắc chủ đạo</h2>
         <div className="flex flex-wrap gap-2 items-center" role="group" aria-label="Chọn màu chủ đạo của CV">
           {ACCENT_COLORS.map((c) => {
             const active = cvData.color === c.hex;

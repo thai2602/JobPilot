@@ -3,6 +3,9 @@ import { apiRequest } from "./httpClient";
 export interface CurrentUserResult {
   userId: number;
   email: string;
+  authProvider?: string;
+  /** Ngày tạo tài khoản theo server (ISO), có thể thiếu với dữ liệu cũ */
+  createdAt?: string | null;
 }
 
 export const userApi = {

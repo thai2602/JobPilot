@@ -23,9 +23,9 @@ export default function ClassicTemplate({ cvData }: TemplateProps) {
         <section>
           <h3 className={accentH3} style={{ color: accentColor }}>Thông tin liên hệ</h3>
           <ul className="list-none p-0 m-0 grid grid-cols-1 sm:grid-cols-2 gap-3 text-[13px] text-slate-600 font-semibold">
-            {cvData.email && <li className="flex items-center gap-2.5"><div className="p-1.5 rounded-lg bg-slate-50 text-slate-400"><Mail className="w-4 h-4" /></div> {cvData.email}</li>}
-            {cvData.phone && <li className="flex items-center gap-2.5"><div className="p-1.5 rounded-lg bg-slate-50 text-slate-400"><Phone className="w-4 h-4" /></div> {cvData.phone}</li>}
-            {cvData.location && <li className="flex items-center gap-2.5"><div className="p-1.5 rounded-lg bg-slate-50 text-slate-400"><MapPin className="w-4 h-4" /></div> {cvData.location}</li>}
+            {cvData.email && <li className="flex items-center gap-2.5"><div className="p-1.5 rounded-lg bg-slate-50 text-slate-500"><Mail className="w-4 h-4" /></div> {cvData.email}</li>}
+            {cvData.phone && <li className="flex items-center gap-2.5"><div className="p-1.5 rounded-lg bg-slate-50 text-slate-500"><Phone className="w-4 h-4" /></div> {cvData.phone}</li>}
+            {cvData.location && <li className="flex items-center gap-2.5"><div className="p-1.5 rounded-lg bg-slate-50 text-slate-500"><MapPin className="w-4 h-4" /></div> {cvData.location}</li>}
             {(cvData.socials || []).map((s, idx) => s.url && (
               <li key={idx} className="flex items-center gap-2.5">
                 <div className="p-1.5 rounded-lg bg-slate-50"><SocialIcon platform={s.platform} /></div>

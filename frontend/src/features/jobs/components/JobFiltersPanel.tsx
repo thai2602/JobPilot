@@ -1,4 +1,5 @@
-import { SlidersHorizontal } from "lucide-react";
+import { useState } from "react";
+import { Check, ChevronDown, SlidersHorizontal } from "lucide-react";
 import { jobLevelLabels, jobTypeOptions, locationOptions } from "../jobMapping";
 import type { JobFilters } from "../useJobsList";
 
@@ -18,28 +19,30 @@ function FilterGroup({ title, options, selected, onSelect }: {
    onSelect: (value: string | null) => void;
 }) {
    return (
-      <div className="space-y-3">
-         <h3 className="text-[12px] font-extrabold text-slate-400 uppercase tracking-wider">{title}</h3>
-         <div className="flex flex-col gap-1.5">
+      <fieldset className="space-y-2.5">
+         <legend className="text-[12px] font-extrabold text-slate-500 uppercase tracking-wider mb-2.5">{title}</legend>
+         {/* Mobile: chip xếp hàng cho gọn; desktop: danh sách dọc */}
+         <div className="flex flex-wrap gap-2 lg:flex-col lg:flex-nowrap lg:gap-1.5">
             {options.map(({ value, label }) => {
                const active = selected === value;
                return (
                   <button
                      key={value}
                      type="button"
+                     aria-pressed={active}
                      onClick={() => onSelect(active ? null : value)}
-                     className={`w-full px-3.5 py-2.5 rounded-xl text-[13px] font-bold text-left transition-all duration-300 cursor-pointer flex items-center justify-between border bg-white ${active
-                        ? "border-slate-900 -translate-y-1 shadow-[0_12px_24px_rgba(0,0,0,0.06)] scale-[1.02] border-2 text-slate-900"
-                        : "border-slate-100 text-slate-600 hover:bg-slate-50 hover:text-slate-900 hover:-translate-y-0.5 hover:shadow-sm"
+                     className={`px-3.5 py-2.5 rounded-xl text-[13px] font-bold text-left transition-colors cursor-pointer flex items-center justify-between gap-2 border lg:w-full ${active
+                        ? "border-emerald-600 bg-emerald-50 text-emerald-800"
+                        : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900"
                         }`}
                   >
                      <span>{label}</span>
-                     {active && <span className="w-1.5 h-1.5 rounded-full bg-slate-900 animate-pulse" />}
+                     {active && <Check className="w-4 h-4 shrink-0" aria-hidden="true" />}
                   </button>
                );
             })}
          </div>
-      </div>
+      </fieldset>
    );
 }
 
@@ -47,43 +50,60 @@ const locationChoices = locationOptions.map((location) => ({ value: location, la
 const levelChoices = Object.entries(jobLevelLabels).map(([value, label]) => ({ value, label }));
 
 export default function JobFiltersPanel({ filters, onChange, onClear, hasActiveFilters }: Props) {
+   // Chỉ dùng trên mobile; từ lg trở lên bộ lọc luôn mở
+   const [open, setOpen] = useState(false);
+   const activeCount = [filters.location, filters.jobType, filters.level].filter(Boolean).length;
+
    return (
-      <aside className="bg-white border border-slate-100 rounded-3xl p-6 shadow-sm space-y-6 lg:sticky lg:top-8 z-10">
-         <div className="flex items-center justify-between">
-            <h2 className="text-[15px] font-black text-slate-900 flex items-center gap-2">
-               <SlidersHorizontal className="w-4.5 h-4.5 text-slate-500" /> Bộ lọc thông minh
-            </h2>
+      <aside className="bg-white border border-slate-100 rounded-3xl shadow-sm lg:sticky lg:top-24 z-10">
+         <div className="flex items-center justify-between gap-3 p-4 lg:p-6 lg:pb-0">
+            <button
+               type="button"
+               onClick={() => setOpen((value) => !value)}
+               aria-expanded={open}
+               aria-controls="job-filter-groups"
+               className="flex items-center gap-2 text-[15px] font-black text-slate-900 cursor-pointer lg:cursor-default"
+            >
+               <SlidersHorizontal className="w-4.5 h-4.5 text-slate-500" aria-hidden="true" />
+               Bộ lọc
+               {activeCount > 0 && (
+                  <span className="min-w-5 h-5 px-1.5 rounded-full bg-emerald-700 text-white text-[11px] font-bold inline-flex items-center justify-center">
+                     {activeCount}
+                  </span>
+               )}
+               <ChevronDown className={`w-4 h-4 text-slate-500 transition-transform lg:hidden ${open ? "rotate-180" : ""}`} aria-hidden="true" />
+            </button>
             {hasActiveFilters && (
                <button
+                  type="button"
                   onClick={onClear}
-                  className="text-[11.5px] font-extrabold text-rose-500 hover:text-rose-700 bg-rose-50 hover:bg-rose-100/70 px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer"
+                  className="text-[12px] font-extrabold text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100/70 px-3 py-2 rounded-lg transition-colors cursor-pointer"
                >
                   Xóa tất cả
                </button>
             )}
          </div>
 
-         <hr className="border-slate-100" />
-         <FilterGroup
-            title="Địa điểm làm việc"
-            options={locationChoices}
-            selected={filters.location}
-            onSelect={(location) => onChange({ location })}
-         />
-         <hr className="border-slate-100" />
-         <FilterGroup
-            title="Hình thức làm việc"
-            options={jobTypeOptions}
-            selected={filters.jobType}
-            onSelect={(jobType) => onChange({ jobType })}
-         />
-         <hr className="border-slate-100" />
-         <FilterGroup
-            title="Cấp bậc yêu cầu"
-            options={levelChoices}
-            selected={filters.level}
-            onSelect={(level) => onChange({ level })}
-         />
+         <div id="job-filter-groups" className={`${open ? "block" : "hidden"} lg:block px-4 pb-5 lg:px-6 lg:pb-6 space-y-5 pt-4`}>
+            <FilterGroup
+               title="Địa điểm làm việc"
+               options={locationChoices}
+               selected={filters.location}
+               onSelect={(location) => onChange({ location })}
+            />
+            <FilterGroup
+               title="Hình thức làm việc"
+               options={jobTypeOptions}
+               selected={filters.jobType}
+               onSelect={(jobType) => onChange({ jobType })}
+            />
+            <FilterGroup
+               title="Cấp bậc yêu cầu"
+               options={levelChoices}
+               selected={filters.level}
+               onSelect={(level) => onChange({ level })}
+            />
+         </div>
       </aside>
    );
 }

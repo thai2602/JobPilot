@@ -108,7 +108,7 @@ export const mapApiCompany = (apiCompany: ApiCompany): CompanyItem => {
       employees: apiCompany.size || "Đang cập nhật",
       location: location || "Đang cập nhật",
       openJobs: openPositions.length,
-      color: apiCompany.color || "#059669",
+      color: apiCompany.color || "#047857",
       description: cleanApiText(apiCompany.description) || recruitmentSummary,
       benefits,
       logo: apiCompany.logoUrl || fallbackCompanyLogo(apiCompany.name),
