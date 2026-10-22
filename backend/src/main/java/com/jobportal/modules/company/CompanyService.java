@@ -5,12 +5,24 @@ import com.jobportal.common.exception.NotFoundException;
 import com.jobportal.modules.job.Job;
 import com.jobportal.modules.job.JobRepository;
 import com.jobportal.modules.job.JobService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Tuple;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -22,6 +34,7 @@ public class CompanyService {
 
     private final CompanyRepository companyRepository;
     private final JobRepository jobRepository;
+    private final EntityManager entityManager;
 
     /**
      * Active companies with their open positions.
@@ -41,6 +54,70 @@ public class CompanyService {
                     : companyRepository.findActiveCompanies(pageable);
         }
         return toResponses(companies);
+    }
+
+    public CompanyDirectoryResponse getDirectory(CompanyFilter filter, int offset, int limit) {
+        LocalDateTime now = LocalDateTime.now();
+        int safeOffset = Math.max(0, offset);
+        int safeLimit = JobService.clampLimit(limit);
+        Page<Company> page = companyRepository.findAll(
+                CompanySpecifications.matching(filter, now),
+                new OffsetBasedPageRequest(safeOffset, safeLimit, filter.sort().sort()));
+        return new CompanyDirectoryResponse(
+                toResponses(page.getContent()),
+                page.getTotalElements(),
+                safeOffset,
+                safeLimit,
+                facets(filter, now));
+    }
+
+    private CompanyDirectoryResponse.Facets facets(CompanyFilter filter, LocalDateTime now) {
+        // Giá trị ngành thô có thể ghép nhiều ngành chuẩn: cộng số lượng cho từng ngành chuẩn trong đó
+        Map<String, Long> industryCounts = new HashMap<>();
+        for (Tuple row : countBy("industry", filter.withoutIndustry(), now)) {
+            for (String label : CompanyIndustries.split(row.get(0, String.class))) {
+                industryCounts.merge(label, row.get(1, Long.class), Long::sum);
+            }
+        }
+        List<CompanyDirectoryResponse.Option> industries = CompanyIndustries.CANONICAL.stream()
+                .filter(industryCounts::containsKey)
+                .map(label -> new CompanyDirectoryResponse.Option(label, label, industryCounts.get(label)))
+                .sorted(Comparator.comparingLong(CompanyDirectoryResponse.Option::count).reversed())
+                .toList();
+
+        Map<CompanySizeGroup, Long> sizeCounts = new EnumMap<>(CompanySizeGroup.class);
+        for (Tuple row : countBy("size", filter.withSize(null), now)) {
+            CompanySizeGroup.of(row.get(0, String.class))
+                    .ifPresent(group -> sizeCounts.merge(group, row.get(1, Long.class), Long::sum));
+        }
+        List<CompanyDirectoryResponse.Option> sizes = Arrays.stream(CompanySizeGroup.values())
+                .map(group -> new CompanyDirectoryResponse.Option(group.name(), group.label(), sizeCounts.getOrDefault(group, 0L)))
+                .toList();
+
+        List<CompanyDirectoryResponse.Option> regions = Arrays.stream(CompanyRegion.values())
+                .map(region -> new CompanyDirectoryResponse.Option(
+                        region.name(),
+                        region.label(),
+                        companyRepository.count(CompanySpecifications.matching(filter.withRegion(region), now))))
+                .toList();
+
+        long hiring = companyRepository.count(CompanySpecifications.matching(filter.withHiringOnly(true), now));
+        return new CompanyDirectoryResponse.Facets(industries, sizes, regions, hiring);
+    }
+
+    /** Đếm công ty khớp bộ lọc, nhóm theo một cột; sắp theo số lượng giảm dần. */
+    private List<Tuple> countBy(String attribute, CompanyFilter filter, LocalDateTime now) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Tuple> query = cb.createTupleQuery();
+        Root<Company> root = query.from(Company.class);
+        Specification<Company> spec = CompanySpecifications.matching(filter, now);
+        Expression<String> key = root.get(attribute);
+        Expression<Long> count = cb.count(root);
+        query.multiselect(key, count)
+                .where(spec.toPredicate(root, query, cb))
+                .groupBy(key)
+                .orderBy(cb.desc(count), cb.asc(key));
+        return entityManager.createQuery(query).getResultList();
     }
 
     public CompanyResponse getCompanyBySlug(String slug) {

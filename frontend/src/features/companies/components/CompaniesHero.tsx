@@ -7,7 +7,7 @@ type Props = {
    searchTerm: string;
    onSearchTermChange: (value: string) => void;
    onSearch: (query: string) => void;
-   stats: { companies: number; openJobs: number; fields: number };
+   stats: { companies: number; hiring: number; fields: number };
    spotlight: CompanyItem[];
 };
 
@@ -65,16 +65,16 @@ export default function CompaniesHero({ searchTerm, onSearchTermChange, onSearch
 
                <div className={styles.heroStats} aria-label="Thống kê danh bạ công ty">
                   <div>
-                     <strong>{stats.companies || "—"}</strong>
-                     <span>doanh nghiệp đã tải</span>
+                     <strong>{stats.companies ? stats.companies.toLocaleString("vi-VN") : "—"}</strong>
+                     <span>doanh nghiệp</span>
                   </div>
                   <div>
-                     <strong>{stats.openJobs || "—"}</strong>
-                     <span>vị trí đang mở</span>
+                     <strong>{stats.hiring || "—"}</strong>
+                     <span>công ty đang tuyển</span>
                   </div>
                   <div>
                      <strong>{stats.fields || "—"}</strong>
-                     <span>lĩnh vực nổi bật</span>
+                     <span>lĩnh vực</span>
                   </div>
                </div>
             </div>

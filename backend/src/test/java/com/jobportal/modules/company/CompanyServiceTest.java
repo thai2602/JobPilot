@@ -2,6 +2,7 @@ package com.jobportal.modules.company;
 
 import com.jobportal.common.exception.NotFoundException;
 import com.jobportal.modules.job.JobRepository;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,11 +31,14 @@ class CompanyServiceTest {
     @Mock
     private JobRepository jobRepository;
 
+    @Mock
+    private EntityManager entityManager;
+
     private CompanyService companyService;
 
     @BeforeEach
     void setUp() {
-        companyService = new CompanyService(companyRepository, jobRepository);
+        companyService = new CompanyService(companyRepository, jobRepository, entityManager);
     }
 
     @Test

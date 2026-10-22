@@ -499,48 +499,6 @@
   cursor: pointer;
 }
 
-.filterBar {
-  display: flex;
-  gap: 8px;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  margin-top: 22px;
-  padding-bottom: 4px;
-  overflow-x: auto;
-  scrollbar-width: thin;
-}
-
-.industryFilter,
-.industryFilterActive {
-  min-height: 40px;
-  padding: 0 16px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 750;
-  white-space: nowrap;
-  cursor: pointer;
-}
-
-.industryFilter {
-  border: 1px solid var(--company-line);
-  background: rgba(255, 255, 255, 0.88);
-  color: #475569;
-}
-
-.industryFilter:hover {
-  border-color: #a7f3d0;
-  background: #ecfdf5;
-  color: #047857;
-}
-
-.industryFilterActive {
-  border: 1px solid #059669;
-  background: #047857;
-  color: #fff;
-  box-shadow: 0 8px 22px -12px rgba(5, 150, 105, 0.8);
-}
-
 .companyGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -582,8 +540,6 @@
 .bannerDot:focus-visible,
 .bannerDotActive:focus-visible,
 .carouselToggle:focus-visible,
-.industryFilter:focus-visible,
-.industryFilterActive:focus-visible,
 .loadMoreButton:focus-visible,
 .emptyState button:focus-visible,
 .selectedJob > button:focus-visible {
@@ -1090,11 +1046,6 @@
 
   .directoryHeader h2 {
     font-size: 26px;
-  }
-
-  .filterBar {
-    margin-right: -16px;
-    padding-right: 16px;
   }
 
   .companyVisual {

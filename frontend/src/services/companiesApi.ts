@@ -33,14 +33,53 @@ export interface CompanyListParams {
   completeOnly?: boolean;
 }
 
-const listPath = (params: CompanyListParams = {}) => {
-  const url = new URL(buildApiUrl("/api/companies", params));
+export type CompanySizeGroup = "SMALL" | "MEDIUM" | "LARGE";
+export type CompanyRegion = "HA_NOI" | "HO_CHI_MINH" | "DA_NANG" | "OTHER";
+export type CompanySort = "featured" | "name" | "recent";
+
+export interface CompanyDirectoryParams {
+  offset?: number;
+  limit?: number;
+  search?: string;
+  industry?: string;
+  size?: CompanySizeGroup;
+  region?: CompanyRegion;
+  hiring?: boolean;
+  sort?: CompanySort;
+}
+
+export interface CompanyFacetOption {
+  value: string;
+  label: string;
+  count: number;
+}
+
+export interface CompanyDirectoryResponse {
+  items: ApiCompany[];
+  total: number;
+  offset: number;
+  limit: number;
+  /** Số lượng mỗi lựa chọn, đếm cùng các bộ lọc còn lại. */
+  facets: {
+    industries: CompanyFacetOption[];
+    sizes: CompanyFacetOption[];
+    regions: CompanyFacetOption[];
+    hiring: number;
+  };
+}
+
+const apiPath = (path: string, params: object = {}) => {
+  const url = new URL(buildApiUrl(path, params));
   return `${url.pathname}${url.search}`;
 };
 
 export const companiesApi = {
   list(params: CompanyListParams = {}): Promise<ApiCompany[]> {
-    return apiRequest<ApiCompany[]>(listPath(params), { auth: false });
+    return apiRequest<ApiCompany[]>(apiPath("/api/companies", params), { auth: false });
+  },
+
+  directory(params: CompanyDirectoryParams = {}): Promise<CompanyDirectoryResponse> {
+    return apiRequest<CompanyDirectoryResponse>(apiPath("/api/companies/directory", params), { auth: false });
   },
 
   getBySlug(slug: string): Promise<ApiCompany> {
